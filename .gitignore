@@ -1,4 +1,4 @@
-/.DS_Store
+.DS_Store
 /Lektüre/
 /Lektüre/
 /Notizen/
@@ -7,3 +7,19 @@
 /opencode.jsonc
 /Inhaltsverzeichnis.md
 /Links.md
+
+# LaTeX build artifacts
+/*.aux
+/*.bbl
+/*.bcf
+/*.blg
+/*.fdb_latexmk
+/*.fls
+/*.lof
+/*.log
+/*.lot
+/*.out
+/*.run.xml
+/*.toc
+/*.synctex.gz
+/kapitel/*.aux
