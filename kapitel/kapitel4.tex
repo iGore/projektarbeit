@@ -4,7 +4,7 @@ Dieses Kapitel beschreibt die prototypische Umsetzung der konzipierten Pipeline 
 
 \subsection{Architektur des Agenten-Workflows}
 
-Die prototypische Implementierung folgt der in Kapitel \ref{konzeption} beschriebenen Rollentrennung. Auf der Orchestrierungsebene werden Aufrufe, Zwischenergebnisse und Prüfschritte so koordiniert, dass einzelne Agenten nur den für ihren Arbeitsschritt notwendigen Kontext erhalten.
+Die prototypische Implementierung folgt der in Kapitel \ref{konzeption} beschriebenen Rollentrennung. Auf der Orchestrierungsebene werden Aufrufe, Zwischenergebnisse und Prüfschritte so koordiniert, dass einzelne Agenten nur den für ihren Arbeitsschritt notwendigen Kontext erhalten. Die Grenzen solcher Autonomie sind auch in aktuellen industrie- und praxisnahen Beiträgen zur KI-gestützten Codegenerierung ein zentrales Thema \parencite{boeckeler2025autonomy}.
 
 \subsection{Integration des Model Context Protocols}
 
@@ -12,7 +12,7 @@ Die Anbindung der Analysefunktionen erfolgt über das Model Context Protocol. Da
 
 \subsection{Context-Scaling durch gezielten Wissensabruf}
 
-Ein zentrales Implementierungsziel besteht darin, umfangreiche Codebasen innerhalb begrenzter Kontextfenster verarbeitbar zu machen. Deshalb setzt der Prototyp auf gezielten Wissensabruf statt auf vollständige Prompt-Inklusion. Relevante Informationen werden selektiv nachgeladen, sobald sie für einen konkreten Arbeitsschritt benötigt werden.
+Ein zentrales Implementierungsziel besteht darin, umfangreiche Codebasen innerhalb begrenzter Kontextfenster verarbeitbar zu machen. Deshalb setzt der Prototyp auf gezielten Wissensabruf statt auf vollständige Prompt-Inklusion. Relevante Informationen werden selektiv nachgeladen, sobald sie für einen konkreten Arbeitsschritt benötigt werden. Verwandte Arbeiten wie CodeGRAG untersuchen hierfür graphgestützte Retrieval-Ansätze als Brücke zwischen natürlicher Sprache und Programmiersprache \parencite{du2024codegrag}.
 
 \subsection{Herausforderungen bei der Workflow-Steuerung}
 
