@@ -4,24 +4,24 @@ Dieses Kapitel beschreibt die prototypische Umsetzung der konzipierten Pipeline.
 
 \subsection{Architektur des Agenten-Workflows (Orchestrierungsebene)}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Die prototypische Implementierung folgt der in Kapitel \ref{konzeption} beschriebenen Rollentrennung. Auf der Orchestrierungsebene werden Aufrufe, Zwischenergebnisse und Prüfschritte so koordiniert, dass einzelne Agenten nur den für ihren Arbeitsschritt notwendigen Kontext erhalten.
 
 \subsection{MCP-Integration: Anbindung der statischen Analyse-Engine}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Die Anbindung der Analysefunktionen erfolgt über das Model Context Protocol. Dadurch können statische Analysewerkzeuge, Code-Repräsentationen und Hilfsdienste standardisiert angesprochen werden.
 
 \subsection{Strategien zum Context-Scaling: Gezielter Wissensabruf zur Einhaltung von Token-Limits}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Ein zentrales Implementierungsziel besteht darin, umfangreiche Codebasen innerhalb begrenzter Kontextfenster verarbeitbar zu machen. Deshalb setzt der Prototyp auf gezielten Wissensabruf statt auf vollständige Prompt-Inklusion. Relevante Informationen werden selektiv nachgeladen, sobald sie für einen konkreten Arbeitsschritt benötigt werden.
 
 \subsection{Herausforderungen bei der Workflow-Steuerung}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Die Steuerung eines agentischen Workflows bringt eigene Herausforderungen mit sich. Dazu gehören robuste Übergaben zwischen den Rollen, eine konsistente Behandlung von Fehlerfällen und die Sicherstellung, dass Verifikationsschritte nicht umgangen werden.
 
 \subsubsection{Mapping von Bibliotheks-Abhängigkeiten}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Ein praktisches Problem der Migration liegt im Mapping von Bibliotheks-Abhängigkeiten. Unterschiede zwischen Ökosystemen erfordern die Entscheidung, ob Funktionen direkt übertragen, angepasst oder auf alternative Bibliotheken abgebildet werden müssen.
 
 \subsubsection{Laufzeit-Monitoring und Fehlerbehandlung in Agenten-Dialogen}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Die Prototypumsetzung erfordert außerdem ein Laufzeit-Monitoring der Agenten-Dialoge. Fehlerbehandlung, Abbruchkriterien und Wiederholungslogiken sind notwendig, damit der Workflow kontrolliert und reproduzierbar ausgeführt werden kann.

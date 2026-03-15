@@ -4,40 +4,42 @@ Dieses Kapitel beschreibt das konzeptionelle Design der orchestrierten Migration
 
 \subsection{Das adaptierte Horseshoe-Modell: Die SDD-Spezifikation als Spitze der Abstraktion}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Das konzeptionelle Grundmodell der Arbeit orientiert sich am Horseshoe-Modell des Reverse Engineering. Dabei wird die textuelle SDD-Spezifikation als zentrale Abstraktionsebene interpretiert.
+
+Diese Spezifikation bildet die Brücke zwischen Wissensextraktion und Code-Synthese. Sie soll fachliche Anforderungen und strukturelle Randbedingungen so präzise erfassen, dass der anschließende Abstieg in die Zielsprache nachvollziehbar bleibt.
 
 \subsection{Rollenverteilung im orchestrierten Workflow}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Der Workflow wird in spezialisierte Rollen zerlegt, um nicht-deterministische Modellantworten durch klare Zuständigkeiten und Zwischenschritte zu kontrollieren. Dadurch entsteht eine Pipeline, in der Ergebnisse schrittweise weiterverarbeitet und überprüft werden.
 
 \subsubsection{The Analyzer: Extraktion der Logik via Code Intelligence}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+The Analyzer erschließt die bestehende Codebasis mithilfe statischer Analyse und strukturierter Code-Intelligence. Ziel ist die Gewinnung fachlicher und technischer Informationen auf Basis von Symbol- und Abhängigkeitsbeziehungen.
 
 \subsubsection{The Spec-Writer: Erstellung technischer Anforderungen in Markdown}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+The Spec-Writer überführt die Analyseergebnisse in textuelle Spezifikationen. Diese Markdown-Artefakte sollen sowohl für menschliche Prüfung als auch für nachgelagerte Generierungsschritte nutzbar sein.
 
 \subsubsection{The Verifier: Konsistenzprüfung zur Vermeidung von Halluzinationen}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+The Verifier prüft, ob die Spezifikation mit dem rekonstruierbaren Quellkontext übereinstimmt. Dadurch wird verhindert, dass implizite Annahmen oder halluzinierte Details unbemerkt in die Implementierung einfließen.
 
 \subsubsection{The Builder: Generierung des Zielcodes aus der validierten Spec}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+The Builder erzeugt aus der validierten Spezifikation den Zielcode. Die Erzeugung basiert damit nicht direkt auf dem Legacy-Code, sondern auf einem geprüften Zwischenartefakt.
 
 \subsection{Interaktionsmuster und iterative Validierung}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Die Pipeline ist als iterativer Prozess mit Rückkopplungsschleifen zu verstehen. Analyseergebnisse, Spezifikationen und Verifikationsergebnisse beeinflussen sich wechselseitig, sodass unklare oder fehlerhafte Ableitungen frühzeitig korrigiert werden können.
 
 \subsubsection{Feedback-Schleifen zwischen Spezifikation und Quell-Kontext}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Feedback-Schleifen zwischen Spezifikation und Quell-Kontext ermöglichen eine schrittweise Schärfung der Anforderungen. Erkennt der Verifier Unstimmigkeiten, müssen Analyzer und Spec-Writer ihre Artefakte gezielt nacharbeiten, bevor eine Implementierung zulässig ist.
 
 \subsubsection{Automatisierter Abgleich gegen den Code Knowledge Graph}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Der automatische Abgleich gegen den Code Knowledge Graph liefert dafür eine deterministische Referenz. Er ermöglicht den Vergleich modellgenerierter Aussagen mit Symbolen, Abhängigkeiten und Strukturen der Ausgangsbasis.
 
 \subsection{Phasenmodell: Ingestion, Spec-Generation und Code-Synthese}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Das Phasenmodell der Pipeline gliedert sich in Ingestion, Spec-Generation und Code-Synthese. In der Ingestion wird die Codebasis strukturiert erschlossen, in der Spec-Generation in ein überprüfbares Zwischenartefakt überführt und in der Code-Synthese in eine Zielimplementierung transformiert.

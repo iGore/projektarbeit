@@ -4,48 +4,48 @@ Dieses Kapitel ordnet die technischen und methodischen Grundlagen der Arbeit ein
 
 \subsection{Agentenbasierte Code-Migration}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Agentenbasierte Code-Migration beschreibt Migrationsprozesse, bei denen spezialisierte Software-Agenten einzelne Aufgaben des Reverse Engineering, der Wissensextraktion, der Spezifikation und der Code-Erzeugung übernehmen. Gegenüber monolithischen Ansätzen verspricht diese Form der Aufgabenteilung eine bessere Nachvollziehbarkeit und klarere Verantwortlichkeiten.
 
 \subsubsection{Herausforderungen bei Paradigmenwechseln und technologischen Brüchen}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Ein wesentlicher Schwierigkeitsfaktor der Migration liegt in technologischen Brüchen zwischen Quell- und Zielsystem. Unterschiede in Typisierung, Laufzeitmodell, Fehlerbehandlung oder Nebenläufigkeit erschweren eine rein syntaktische Übertragung und machen eine semantische Rekonstruktion der Fachlogik erforderlich.
 
 \subsubsection{Beherrschung von Nicht-Determinismus und Halluzinationen in LLMs}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Werden LLMs in Migrationsprozessen eingesetzt, entsteht zusätzlich die Herausforderung nicht-deterministischer Ausgaben. Halluzinationen und inkonsistente Ableitungen gefährden insbesondere bei umfangreichen Codebasen die Korrektheit der Ergebnisse. Deshalb müssen generierte Artefakte gegen belastbare Quellinformationen überprüft werden.
 
 \subsection{Methodik: Spec-Driven Development (SDD)}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Spec-Driven Development verlagert den Schwerpunkt der Migration von der unmittelbaren Code-Erzeugung auf eine vorgelagerte Beschreibung der fachlichen und technischen Anforderungen. Die Spezifikation fungiert dabei als Zwischenartefakt, das sowohl der Analyse als auch der späteren Generierung als Referenz dient.
 
 \subsubsection{Das Konzept „Specification First“ im Software-Reengineering}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Im Software-Reengineering bedeutet ``Specification First'', dass vorhandene Systemlogik zunächst rekonstruiert und in eine explizite technische Beschreibung überführt wird. Dadurch wird Wissen aus schwer zugänglichem Legacy-Code in eine Form gebracht, die überprüfbar und transformierbar ist.
 
 \subsubsection{Vorteile der Abstraktion gegenüber direkter Code-Transpilierung}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Die Abstraktion über Spezifikationen bietet Vorteile gegenüber direkter Transpilierung, weil sie architektonische Intentionen, Fachlogik und Randbedingungen explizit macht. Damit sinkt das Risiko, dass ein Zielsystem zwar syntaktisch korrekt, aber konzeptionell fehlerhaft oder schwer wartbar entsteht.
 
 \subsection{Multi-Agent Systems (MAS) \& Knowledge Engineering}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Multi-Agent Systems ermöglichen die Zerlegung komplexer Migrationsaufgaben in klar spezialisierte Rollen. Entscheidend ist dabei, dass die beteiligten Agenten nicht nur generieren, sondern auf strukturierte Repräsentationen des Quellkontexts zugreifen können.
 
 \subsubsection{Spezialisierung durch Rollendekomposition: Analyse, Spezifikation, Verifikation}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Die Rollendekomposition in Analyse, Spezifikation, Verifikation und Implementierung schafft eine nachvollziehbare Prozessstruktur. Jeder Agent bearbeitet nur einen begrenzten Aufgabenbereich, wodurch Ergebnisse gezielter geprüft werden können.
 
 \subsubsection{Der Code Knowledge Graph als deterministisches Kontext-Gedächtnis}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Ein Code Knowledge Graph dient als strukturierte Repräsentation von Symbolen, Abhängigkeiten und Beziehungen innerhalb der Codebasis. Als deterministisches Kontext-Gedächtnis kann er Agenten gezielt mit belastbaren Informationen versorgen und damit die Abhängigkeit von unstrukturiertem Prompt-Kontext verringern.
 
 \subsection{Model Context Protocol (MCP) als Integrationsstandard}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Das Model Context Protocol bildet in der vorliegenden Arbeit den Integrationsstandard zwischen Agenten und externen Werkzeugen. Es ermöglicht, Analysefunktionen, Datenquellen und Hilfsdienste standardisiert bereitzustellen.
 
 \subsubsection{Architektur und Fähigkeiten: Resources, Prompts und Tools}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+MCP unterscheidet funktional zwischen Resources, Prompts und Tools. Dadurch können sowohl statische Informationen als auch aktive Analyseoperationen kontrolliert in agentische Workflows eingebunden werden.
 
 \subsubsection{Effizientes Kontext-Management durch Entkopplung von Agenten und Tooling}
 
-Die inhaltliche Ausarbeitung dieses Abschnitts folgt in der finalen Fassung.
+Die Entkopplung von Agenten und Tooling erleichtert ein effizientes Kontext-Management. Statt große Quelltextmengen dauerhaft im Kontextfenster eines Modells zu halten, können Informationen bedarfsorientiert abgefragt werden. Dies ist eine zentrale Voraussetzung für die Analyse umfangreicher Codebasen innerhalb begrenzter Token-Limits.
