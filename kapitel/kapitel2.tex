@@ -4,18 +4,18 @@ Dieses Kapitel ordnet die technischen und methodischen Grundlagen der Arbeit ein
 
 \subsection{Agentenbasierte Code-Migration}
 
-Agentenbasierte Code-Migration beschreibt Migrationsprozesse, bei denen spezialisierte Software-Agenten einzelne Aufgaben des Reverse Engineering, der Wissensextraktion, der Spezifikation und der Code-Erzeugung übernehmen. Gegenüber monolithischen Ansätzen verspricht diese Form der Aufgabenteilung eine bessere Nachvollziehbarkeit und klarere Verantwortlichkeiten. Einen aktuellen Überblick über LLM-gestützte Reverse-Engineering-Ansätze geben 
+Agentenbasierte Code-Migration beschreibt Migrationsprozesse, bei denen spezialisierte Software-Agenten einzelne Aufgaben des Reverse Engineering, der Wissensextraktion, der Spezifikation und der Code-Erzeugung übernehmen. Gegenüber monolithischen Ansätzen verspricht diese Form der Aufgabenteilung eine bessere Nachvollziehbarkeit und klarere Verantwortlichkeiten. Einen aktuellen Überblick über Ansätze mit großen Sprachmodellen im Reverse Engineering geben 
 \textcite{hu2025sokreverseengineering}.
 
-\subsubsection{Herausforderungen bei Paradigmenwechseln und technologischen Brüchen}
+\subsubsection{Paradigmenwechsel und technologische Brüche}
 
 Ein wesentlicher Schwierigkeitsfaktor der Migration liegt in technologischen Brüchen zwischen Quell- und Zielsystem. Unterschiede in Typisierung, Laufzeitmodell, Fehlerbehandlung oder Nebenläufigkeit erschweren eine rein syntaktische Übertragung und machen eine semantische Rekonstruktion der Fachlogik erforderlich.
 
-\subsubsection{Beherrschung von Nicht-Determinismus und Halluzinationen in LLMs}
+\subsubsection{Nicht-Determinismus und Halluzinationen in großen Sprachmodellen}
 
-Werden LLMs in Migrationsprozessen eingesetzt, entsteht zusätzlich die Herausforderung nicht-deterministischer Ausgaben. Halluzinationen und inkonsistente Ableitungen gefährden insbesondere bei umfangreichen Codebasen die Korrektheit der Ergebnisse. Deshalb müssen generierte Artefakte gegen belastbare Quellinformationen überprüft werden.
+Werden große Sprachmodelle (Large Language Models, LLMs) in Migrationsprozessen eingesetzt, entsteht zusätzlich die Herausforderung nicht-deterministischer Ausgaben. Halluzinationen und inkonsistente Ableitungen gefährden insbesondere bei umfangreichen Codebasen die Korrektheit der Ergebnisse. Deshalb müssen generierte Artefakte gegen belastbare Quellinformationen überprüft werden.
 
-\subsection{Methodik: Spec-Driven Development (SDD)}
+\subsection{Spec-Driven Development}
 
 Spec-Driven Development verlagert den Schwerpunkt der Migration von der unmittelbaren Code-Erzeugung auf eine vorgelagerte Beschreibung der fachlichen und technischen Anforderungen. Die Spezifikation fungiert dabei als Zwischenartefakt, das sowohl der Analyse als auch der späteren Generierung als Referenz dient.
 
@@ -27,11 +27,11 @@ Im Software-Reengineering bedeutet ``Specification First'', dass vorhandene Syst
 
 Die Abstraktion über Spezifikationen bietet Vorteile gegenüber direkter Transpilierung, weil sie architektonische Intentionen, Fachlogik und Randbedingungen explizit macht. Damit sinkt das Risiko, dass ein Zielsystem zwar syntaktisch korrekt, aber konzeptionell fehlerhaft oder schwer wartbar entsteht.
 
-\subsection{Multi-Agent Systems (MAS) \& Knowledge Engineering}
+\subsection{Multi-Agenten-Systeme und Wissensrepräsentation}
 
-Multi-Agent Systems ermöglichen die Zerlegung komplexer Migrationsaufgaben in klar spezialisierte Rollen. Entscheidend ist dabei, dass die beteiligten Agenten nicht nur generieren, sondern auf strukturierte Repräsentationen des Quellkontexts zugreifen können. Die theoretische Basis dafür liefert die Multi-Agenten-Forschung seit Langem \parencite{wooldridge2009multiagent}.
+Multi-Agenten-Systeme (MAS) ermöglichen die Zerlegung komplexer Migrationsaufgaben in klar spezialisierte Rollen. Entscheidend ist dabei, dass die beteiligten Agenten nicht nur generieren, sondern auf strukturierte Repräsentationen des Quellkontexts zugreifen können. Die theoretische Basis dafür liefert die Multi-Agenten-Forschung seit Langem \parencite{wooldridge2009multiagent}.
 
-\subsubsection{Spezialisierung durch Rollendekomposition: Analyse, Spezifikation, Verifikation}
+\subsubsection{Rollendekomposition in Analyse, Spezifikation und Verifikation}
 
 Die Rollendekomposition in Analyse, Spezifikation, Verifikation und Implementierung schafft eine nachvollziehbare Prozessstruktur. Jeder Agent bearbeitet nur einen begrenzten Aufgabenbereich, wodurch Ergebnisse gezielter geprüft werden können.
 
@@ -39,23 +39,23 @@ Die Rollendekomposition in Analyse, Spezifikation, Verifikation und Implementier
 
 Ein Code Knowledge Graph dient als strukturierte Repräsentation von Symbolen, Abhängigkeiten und Beziehungen innerhalb der Codebasis. Als deterministisches Kontext-Gedächtnis kann er Agenten gezielt mit belastbaren Informationen versorgen und damit die Abhängigkeit von unstrukturiertem Prompt-Kontext verringern.
 
-\subsection{Model Context Protocol (MCP) als Integrationsstandard}
+\subsection{Model Context Protocol als Integrationsstandard}
 
-Das Model Context Protocol bildet in der vorliegenden Arbeit den Integrationsstandard zwischen Agenten und externen Werkzeugen. Es ermöglicht, Analysefunktionen, Datenquellen und Hilfsdienste standardisiert bereitzustellen \parencite{mcpdocs}.
+Das Model Context Protocol (MCP) bildet in der vorliegenden Arbeit den Integrationsstandard zwischen Agenten und externen Werkzeugen. Es ermöglicht, Analysefunktionen, Datenquellen und Hilfsdienste standardisiert bereitzustellen \parencite{mcpdocs}.
 
-\subsubsection{Architektur und Fähigkeiten: Resources, Prompts und Tools}
+\subsubsection{Architektur, Ressourcen, Prompts und Werkzeuge}
 
 MCP unterscheidet funktional zwischen Resources, Prompts und Tools. Dadurch können sowohl statische Informationen als auch aktive Analyseoperationen kontrolliert in agentische Workflows eingebunden werden.
 
-\subsubsection{Effizientes Kontext-Management durch Entkopplung von Agenten und Tooling}
+\subsubsection{Kontext-Management durch Entkopplung von Agenten und Werkzeugen}
 
 Die Entkopplung von Agenten und Tooling erleichtert ein effizientes Kontext-Management. Statt große Quelltextmengen dauerhaft im Kontextfenster eines Modells zu halten, können Informationen bedarfsorientiert abgefragt werden. Dies ist eine zentrale Voraussetzung für die Analyse umfangreicher Codebasen innerhalb begrenzter Token-Limits.
 
-\subsection{Context Engineering als Steuerung des Wissenszugriffs}
+\subsection{Context Engineering und Wissenszugriff}
 
 Context Engineering beschreibt in der vorliegenden Arbeit die gezielte Auswahl, Aufbereitung und Bereitstellung von Kontext für einzelne Agentenrollen. Ziel ist es, jedem Arbeitsschritt genau die Informationen bereitzustellen, die für Analyse, Spezifikation, Verifikation oder Generierung benötigt werden.
 
-\subsubsection{Bedarfsorientierte Kontextbereitstellung für spezialisierte Agenten}
+\subsubsection{Bedarfsorientierte Kontextbereitstellung}
 
 Die bedarfsorientierte Kontextbereitstellung reduziert unnötige Informationslast und unterstützt die Spezialisierung einzelner Agenten. Statt vollständige Codebasen in Prompts zu überführen, werden nur relevante Ausschnitte, Strukturen und Analyseergebnisse zugänglich gemacht.
 
@@ -63,10 +63,10 @@ Die bedarfsorientierte Kontextbereitstellung reduziert unnötige Informationslas
 
 Gezielte Abrufstrategien dienen dazu, die verfügbare Kontextgröße effizient zu nutzen. Dadurch wird das Risiko reduziert, dass wesentliche Informationen im überladenen Kontext untergehen oder Modellantworten durch irrelevante Inhalte verwässert werden.
 
-\subsection{Das Horseshoe-Modell als konzeptioneller Rahmen des Reverse Engineering}
+\subsection{Horseshoe-Modell des Reverse Engineering}
 
 Das konzeptionelle Grundmodell der Arbeit orientiert sich am Horseshoe-Modell des Reverse Engineering. Damit wird der Weg von bestehendem Code über eine abstrahierte Beschreibung hin zu einer erneuten Implementierung als grundlegendes Denkmuster für die Migration genutzt. Modellgetriebene Reverse-Engineering-Ansätze liefern dafür einen etablierten konzeptionellen Referenzrahmen \parencite{raibulet2017mdre}.
 
-\subsubsection{Die SDD-Spezifikation als Spitze der Abstraktion}
+\subsubsection{Die Spezifikation als Spitze der Abstraktion}
 
-In der vorliegenden Arbeit übernimmt die textuelle SDD-Spezifikation die Rolle dieser zentralen Abstraktionsebene. Sie bildet die Brücke zwischen Wissensextraktion und Code-Synthese und soll fachliche Anforderungen und strukturelle Randbedingungen so präzise erfassen, dass der anschließende Abstieg in die Zielsprache nachvollziehbar bleibt.
+In der vorliegenden Arbeit übernimmt die textuelle Spezifikation im Sinne des Spec-Driven Development (SDD) die Rolle dieser zentralen Abstraktionsebene. Sie bildet die Brücke zwischen Wissensextraktion und Code-Synthese und soll fachliche Anforderungen und strukturelle Randbedingungen so präzise erfassen, dass der anschließende Abstieg in die Zielsprache nachvollziehbar bleibt.

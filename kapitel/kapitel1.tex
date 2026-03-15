@@ -2,25 +2,25 @@
 
 Dieses Kapitel führt in die Motivation, den Lösungsansatz, die Zielsetzung und die Abgrenzung der Projektarbeit ein.
 
-\subsection{Motivation: Herausforderungen von Reverse Engineering und Re-Implementierung}
+\subsection{Herausforderungen von Reverse Engineering und Re-Implementierung}
 
 Das Reverse Engineering und die Re-Implementierung bestehender Codebasen zählen zu den zentralen Herausforderungen der zeitgenössischen Softwareentwicklung. Im Lebenszyklus gewachsener Systeme entstehen technologisch bedingte Grenzen hinsichtlich Performance, Wartbarkeit und Skalierbarkeit, sodass ein Wechsel auf moderne Sprachen und Architekturen erhebliche Vorteile verspricht. Dazu zählen insbesondere verbesserte Typsicherheit, höhere Ressourceneffizienz und nativer Concurrency-Support.
 
 In der Praxis scheitert eine solche Migration jedoch häufig an der hohen kognitiven Last für Entwickler, einer lückenhaften Dokumentation des Bestands sowie an grundlegenden Paradigmenwechseln zwischen Quell- und Zieltechnologie.
 
-\subsection{Lösungsansatz: Spec-Driven Development (SDD) mittels Agentic Workflow Orchestration}
+\subsection{Spec-Driven Development durch Agentenorchestrierung}
 
-Als Lösungsansatz wird eine Migrationsstrategie verfolgt, die nicht auf direkter Transpilierung basiert, sondern auf einer vorgelagerten Spezifikationsebene. Im Sinne von Spec-Driven Development wird der bestehende Quellcode zunächst in technische Anforderungen und Verhaltensbeschreibungen überführt, bevor die Implementierung in der Zielsprache erfolgt.
+Als Lösungsansatz wird eine Migrationsstrategie verfolgt, die nicht auf direkter Transpilierung basiert, sondern auf einer vorgelagerten Spezifikationsebene. Im Sinne von Spec-Driven Development (SDD) wird der bestehende Quellcode zunächst in technische Anforderungen und Verhaltensbeschreibungen überführt, bevor die Implementierung in der Zielsprache erfolgt.
 
 Die Erstellung, Prüfung und Nutzung dieser Spezifikationen soll durch einen orchestrierten Verbund spezialisierter Agenten erfolgen. Dadurch werden Analyse, Spezifikation, Verifikation und Generierung in klar abgegrenzte Rollen zerlegt.
 
-\subsection{Zielsetzung: Entwicklung einer MAS-basierten Migrations-Pipeline}
+\subsection{Zielsetzung der Migrations-Pipeline}
 
-Ziel der Projektarbeit ist die Konzeption und prototypische Implementierung einer automatisierten Migrations-Pipeline auf Basis eines Multi-Agenten-Systems. Der Prototyp soll zeigen, dass sich aus bestehendem Quellcode präzise technische Spezifikationen in Markdown gewinnen lassen, die anschließend als belastbare Grundlage für die Code-Generierung dienen.
+Ziel der Projektarbeit ist die Konzeption und prototypische Implementierung einer automatisierten Migrations-Pipeline auf Basis eines Multi-Agenten-Systems (MAS). Der Prototyp soll zeigen, dass sich aus bestehendem Quellcode präzise technische Spezifikationen in Markdown gewinnen lassen, die anschließend als belastbare Grundlage für die Code-Generierung dienen.
 
 Der angestrebte Proof of Concept konzentriert sich auf ein repräsentatives Quell-Modul. Damit soll ein vollständiger Durchstich durch Analyse, Spezifikation, Verifikation und Generierung demonstriert werden, ohne den Rahmen der Projektarbeit zu überschreiten.
 
-\subsection{Abgrenzung der Projektarbeit: Fokus auf textbasierte technische Spezifikationen}
+\subsection{Abgrenzung auf textbasierte Spezifikationen}
 
 Die Projektarbeit fokussiert auf textbasierte technische Spezifikationen als zentrales Zwischenartefakt. Visuelle Modelle stehen noch nicht im Zentrum des prototypischen Umsetzungsumfangs.
 

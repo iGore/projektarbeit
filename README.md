@@ -1,5 +1,5 @@
 # Entwicklung eines Multi-Agenten-Systems zur KI-gestützten Code-Migration
-## Ein spec-getriebener Ansatz für Reverse Engineering, Re-Implementierung und Agentic Workflow Orchestration
+## Ein spec-getriebener Ansatz für Reverse Engineering, Re-Implementierung und Agentenorchestrierung
 
 ### 1. Ausgangslage und Motivation
 Das Reverse Engineering und die Re-Implementierung bestehender Codebasen stellen eine der zentralen Herausforderungen der zeitgenössischen Softwareentwicklung dar. Im Lebenszyklus gewachsener Systeme entstehen technologisch bedingte Grenzen hinsichtlich Performance, Wartbarkeit und Skalierbarkeit, sodass ein Wechsel auf moderne Sprachen und Architekturen erhebliche Vorteile verspricht. Dazu zählen insbesondere verbesserte Typsicherheit, höhere Ressourceneffizienz und nativer Concurrency-Support. In der Praxis scheitert eine solche Migration jedoch häufig an der hohen kognitiven Last für Entwickler, einer lückenhaften Dokumentation des Bestands sowie an fundamentalen Paradigmenwechseln zwischen Quell- und Zieltechnologie.
@@ -29,4 +29,4 @@ Durch die Entkopplung von Tooling und Agenten via MCP wird sichergestellt, dass 
 ### 5. Evaluation und Ausblick auf die Bachelorarbeit
 Die Validierung erfolgt am Beispiel eines repräsentativen Quell-Moduls. Im Mittelpunkt stehen Vollständigkeit im Sinne von Feature Parity, Qualität und Wartbarkeit der erzeugten Artefakte sowie die Nachvollziehbarkeit der Migrationsentscheidungen.
 
-Ausblick auf die Bachelorarbeit: Eine Erweiterung zum hybriden Ansatz (SDD + MDD) soll das Framework wissenschaftlich vertiefen. Textuelle Specs werden dabei um visuelle Modelle ergänzt, um strukturelle Abhängigkeiten noch präziser zu erfassen. Zudem sollen Forschungsfragen zur Skalierung des Wissenszugriffs mittels MCP in Großprojekten sowie zur automatisierten Bewertung der idiomatischen Code-Qualität ("Idiomatic Score") adressiert werden.
+Ausblick auf die Bachelorarbeit: Eine Erweiterung zum hybriden Ansatz aus Spec-Driven Development (SDD) und Model-Driven Development (MDD) soll das Framework wissenschaftlich vertiefen. Textuelle Spezifikationen werden dabei um visuelle Modelle ergänzt, um strukturelle Abhängigkeiten noch präziser zu erfassen. Zudem sollen Forschungsfragen zur Skalierung des Wissenszugriffs mittels MCP in Großprojekten sowie zur automatisierten Bewertung der idiomatischen Code-Qualität ("Idiomatic Score") adressiert werden.
