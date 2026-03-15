@@ -1,0 +1,62 @@
+name: Tag and Release on Main
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  tag-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate release tag
+        id: tag
+        run: |
+          short_sha="${GITHUB_SHA::7}"
+          tag_name="v-main-${GITHUB_RUN_NUMBER}-${short_sha}"
+          echo "tag_name=${tag_name}" >> "$GITHUB_OUTPUT"
+
+      - name: Create git tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag "${{ steps.tag.outputs.tag_name }}"
+          git push origin "${{ steps.tag.outputs.tag_name }}"
+
+      - name: Build PDF
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          work_in_root_file_dir: true
+          latexmk_use_xelatex: false
+          args: -pdf -file-line-error -halt-on-error -interaction=nonstopmode
+
+      - name: Create release notes
+        run: |
+          cat > release-notes.md <<EOF
+          ## Zusammenfassung
+          - Automatisch erzeugtes Release fuer Push auf main
+          - Erzeugter Tag: ${{ steps.tag.outputs.tag_name }}
+          - Enthaltenes Artefakt: main.pdf
+          - Basis-Commit: ${GITHUB_SHA}
+
+          ## Download
+          - Lade die gebaute PDF direkt aus den Release-Assets herunter.
+          EOF
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag_name }}
+          body_path: release-notes.md
+          files: main.pdf
+          generate_release_notes: true
