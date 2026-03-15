@@ -1,4 +1,4 @@
-\section{Technologische Grundlagen} \label{grundlagen}
+\section{Grundlagen} \label{grundlagen}
 
 Dieses Kapitel ordnet die technischen und methodischen Grundlagen der Arbeit ein.
 
@@ -49,3 +49,23 @@ MCP unterscheidet funktional zwischen Resources, Prompts und Tools. Dadurch kön
 \subsubsection{Effizientes Kontext-Management durch Entkopplung von Agenten und Tooling}
 
 Die Entkopplung von Agenten und Tooling erleichtert ein effizientes Kontext-Management. Statt große Quelltextmengen dauerhaft im Kontextfenster eines Modells zu halten, können Informationen bedarfsorientiert abgefragt werden. Dies ist eine zentrale Voraussetzung für die Analyse umfangreicher Codebasen innerhalb begrenzter Token-Limits.
+
+\subsection{Context Engineering als Steuerung des Wissenszugriffs}
+
+Context Engineering beschreibt in der vorliegenden Arbeit die gezielte Auswahl, Aufbereitung und Bereitstellung von Kontext für einzelne Agentenrollen. Ziel ist es, jedem Arbeitsschritt genau die Informationen bereitzustellen, die für Analyse, Spezifikation, Verifikation oder Generierung benötigt werden.
+
+\subsubsection{Bedarfsorientierte Kontextbereitstellung für spezialisierte Agenten}
+
+Die bedarfsorientierte Kontextbereitstellung reduziert unnötige Informationslast und unterstützt die Spezialisierung einzelner Agenten. Statt vollständige Codebasen in Prompts zu überführen, werden nur relevante Ausschnitte, Strukturen und Analyseergebnisse zugänglich gemacht.
+
+\subsubsection{Reduktion von Kontextlast durch gezielte Abrufstrategien}
+
+Gezielte Abrufstrategien dienen dazu, die verfügbare Kontextgröße effizient zu nutzen. Dadurch wird das Risiko reduziert, dass wesentliche Informationen im überladenen Kontext untergehen oder Modellantworten durch irrelevante Inhalte verwässert werden.
+
+\subsection{Das Horseshoe-Modell als konzeptioneller Rahmen des Reverse Engineering}
+
+Das konzeptionelle Grundmodell der Arbeit orientiert sich am Horseshoe-Modell des Reverse Engineering. Damit wird der Weg von bestehendem Code über eine abstrahierte Beschreibung hin zu einer erneuten Implementierung als grundlegendes Denkmuster für die Migration genutzt.
+
+\subsubsection{Die SDD-Spezifikation als Spitze der Abstraktion}
+
+In der vorliegenden Arbeit übernimmt die textuelle SDD-Spezifikation die Rolle dieser zentralen Abstraktionsebene. Sie bildet die Brücke zwischen Wissensextraktion und Code-Synthese und soll fachliche Anforderungen und strukturelle Randbedingungen so präzise erfassen, dass der anschließende Abstieg in die Zielsprache nachvollziehbar bleibt.

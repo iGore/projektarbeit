@@ -1,5 +1,5 @@
-# Entwicklung eines Multi-Agenten-Systems zum KI-gestützten Software-Re-Engineering
-## Ein Ansatz zur automatisierten Code-Migration mittels Spec-Driven Development und Agentic Workflow Orchestration
+# Entwicklung eines Multi-Agenten-Systems zur KI-gestützten Code-Migration
+## Ein Ansatz mittels Spec-Driven Reverse Engineering, Context Engineering und Agentic Workflow Orchestration
 
 ### 1. Ausgangslage und Motivation
 Die Modernisierung von Legacy-Codebasen stellt eine der zentralen Herausforderungen der zeitgenössischen Softwareentwicklung dar. Im Lebenszyklus gewachsener Systeme entstehen technologisch bedingte Grenzen hinsichtlich Performance, Wartbarkeit und Skalierbarkeit, sodass ein Wechsel auf moderne Sprachen und Architekturen erhebliche Vorteile verspricht. Dazu zählen insbesondere verbesserte Typsicherheit, höhere Ressourceneffizienz und nativer Concurrency-Support. In der Praxis scheitert eine solche Migration jedoch häufig an der hohen kognitiven Last für Entwickler, einer lückenhaften Dokumentation des Bestands sowie an fundamentalen Paradigmenwechseln zwischen Quell- und Zieltechnologie.
@@ -12,12 +12,12 @@ Bestehende Migrationsansätze, die primär auf direkter Transpilierung basieren,
 Es fehlt somit an einer orchestrierten Toolchain, die semantisches Code-Verständnis, skalierbaren Zugriff auf Code-Kontext und eine kontrollierte Überführung in technische Spezifikationen in einem konsistenten Migrationsprozess vereint.
 
 ### 3. Zielsetzung der Projektarbeit
-Das Ziel dieser Projektarbeit ist die Konzeption und prototypische Implementierung einer automatisierten Migrations-Pipeline auf Basis eines orchestrierten Multi-Agenten-Systems (MAS). Der Fokus liegt auf der methodischen Umsetzung des SDD-Ansatzes sowie auf einer klaren Scope-Abgrenzung, damit aus der Projektarbeit kein unkontrolliert wachsender Gesamtansatz entsteht. Daher wird ein prototypischer Proof of Concept für ein repräsentatives Quell-Modul angestrebt, an dem der grundlegende Durchstich durch Analyse, Spezifikation, Verifikation und Generierung nachvollziehbar demonstriert werden kann.
+Das Ziel dieser Projektarbeit ist die Konzeption und prototypische Implementierung einer automatisierten Migrations-Pipeline auf Basis eines orchestrierten Multi-Agenten-Systems (MAS). Der Fokus liegt auf der methodischen Umsetzung eines Spec-Driven-Reverse-Engineering-Ansatzes sowie auf einer klaren Scope-Abgrenzung. Daher wird ein prototypischer Proof of Concept für ein repräsentatives Quell-Modul angestrebt, an dem der grundlegende Durchstich durch Analyse, Spezifikation, Verifikation und Generierung nachvollziehbar demonstriert werden kann.
 
 Das System soll aus bestehendem Quellcode präzise technische Spezifikationen in Markdown extrahieren und diese als verifizierte Grundlage für die Code-Generierung in der Zielsprache nutzen. Technisch wird hierfür das Model Context Protocol (MCP) eingesetzt, um den Agenten einen gezielten, bedarfsorientierten Zugriff auf Analyse-Tools und Code-Repräsentationen zu ermöglichen und so das Kontext-Management effizient zu gestalten.
 
 ### 4. Methodik
-Die methodische Umsetzung adaptiert das Horseshoe-Modell für die KI-gestützte Migration, wobei die textuelle SDD-Spezifikation die zentrale Abstraktionsebene bildet. Der Prozess wird durch einen orchestrierten Schwarm spezialisierter Agenten realisiert, die über MCP auf einen Code Knowledge Graph zugreifen.
+Die methodische Umsetzung adaptiert das Horseshoe-Modell für die KI-gestützte Migration, wobei die textuelle SDD-Spezifikation die zentrale Abstraktionsebene bildet. Der Prozess wird durch einen orchestrierten Schwarm spezialisierter Agenten realisiert, die über MCP auf einen Code Knowledge Graph zugreifen. Ergänzend wird Context Engineering genutzt, um den Wissenszugriff für die einzelnen Rollen gezielt zu steuern und relevante Informationen nur bedarfsorientiert bereitzustellen.
 
 - Analyse-Rollen: Extraktion der Geschäftslogik und Struktur mittels statischer Analyse-Tools (z. B. Tree-sitter).
 - Spec-Writer-Rollen: Generierung detaillierter technischer Spezifikationen (SDD).
@@ -27,6 +27,6 @@ Die methodische Umsetzung adaptiert das Horseshoe-Modell für die KI-gestützte 
 Durch die Entkopplung von Tooling und Agenten via MCP wird sichergestellt, dass Informationen just-in-time abgefragt werden, was die Analyse umfangreicher Codebasen innerhalb begrenzter Kontext-Fenster ermöglicht.
 
 ### 5. Evaluation und Ausblick auf die Bachelorarbeit
-Die Validierung erfolgt am Beispiel eines repräsentativen Quell-Moduls. Im Mittelpunkt stehen funktionale Vollständigkeit im Sinne von Feature Parity, die Qualität der erzeugten Artefakte, die Nachvollziehbarkeit der Migrationsentscheidungen sowie die Kosteneffizienz des gewählten Vorgehens.
+Die Validierung erfolgt am Beispiel eines repräsentativen Quell-Moduls. Im Mittelpunkt stehen Vollständigkeit im Sinne von Feature Parity, Qualität und Wartbarkeit der erzeugten Artefakte sowie die Nachvollziehbarkeit der Migrationsentscheidungen.
 
 Ausblick auf die Bachelorarbeit: Darauf aufbauend soll das Framework wissenschaftlich erweitert werden. Ein zentraler Aspekt wird die Transformation zum hybriden Ansatz sein, bei dem textuelle Specs um visuelle Modelle (MDD) ergänzt werden, um strukturelle Abhängigkeiten noch präziser zu erfassen. Zudem sollen Forschungsfragen zur Skalierung des Wissenszugriffs mittels MCP in Großprojekten sowie zur automatisierten Bewertung der idiomatischen Code-Qualität ("Idiomatic Score") adressiert werden.
