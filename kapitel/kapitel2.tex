@@ -4,7 +4,8 @@ Dieses Kapitel ordnet die technischen und methodischen Grundlagen der Arbeit ein
 
 \subsection{Agentenbasierte Code-Migration}
 
-Agentenbasierte Code-Migration beschreibt Migrationsprozesse, bei denen spezialisierte Software-Agenten einzelne Aufgaben des Reverse Engineering, der Wissensextraktion, der Spezifikation und der Code-Erzeugung übernehmen. Gegenüber monolithischen Ansätzen verspricht diese Form der Aufgabenteilung eine bessere Nachvollziehbarkeit und klarere Verantwortlichkeiten.
+Agentenbasierte Code-Migration beschreibt Migrationsprozesse, bei denen spezialisierte Software-Agenten einzelne Aufgaben des Reverse Engineering, der Wissensextraktion, der Spezifikation und der Code-Erzeugung übernehmen. Gegenüber monolithischen Ansätzen verspricht diese Form der Aufgabenteilung eine bessere Nachvollziehbarkeit und klarere Verantwortlichkeiten. Einen aktuellen Überblick über LLM-gestützte Reverse-Engineering-Ansätze geben 
+\textcite{hu2025sokreverseengineering}.
 
 \subsubsection{Herausforderungen bei Paradigmenwechseln und technologischen Brüchen}
 
@@ -20,7 +21,7 @@ Spec-Driven Development verlagert den Schwerpunkt der Migration von der unmittel
 
 \subsubsection{Das Konzept „Specification First“ im Software-Reengineering}
 
-Im Software-Reengineering bedeutet ``Specification First'', dass vorhandene Systemlogik zunächst rekonstruiert und in eine explizite technische Beschreibung überführt wird. Dadurch wird Wissen aus schwer zugänglichem Legacy-Code in eine Form gebracht, die überprüfbar und transformierbar ist.
+Im Software-Reengineering bedeutet ``Specification First'', dass vorhandene Systemlogik zunächst rekonstruiert und in eine explizite technische Beschreibung überführt wird. Dadurch wird Wissen aus schwer zugänglichem Legacy-Code in eine Form gebracht, die überprüfbar und transformierbar ist. Für die Überführung von Legacy-Bestand in Anforderungen ist dabei die Brücke zwischen Reverse Engineering und Requirements Engineering zentral \parencite{fahmi2007reverse}.
 
 \subsubsection{Vorteile der Abstraktion gegenüber direkter Code-Transpilierung}
 
@@ -28,7 +29,7 @@ Die Abstraktion über Spezifikationen bietet Vorteile gegenüber direkter Transp
 
 \subsection{Multi-Agent Systems (MAS) \& Knowledge Engineering}
 
-Multi-Agent Systems ermöglichen die Zerlegung komplexer Migrationsaufgaben in klar spezialisierte Rollen. Entscheidend ist dabei, dass die beteiligten Agenten nicht nur generieren, sondern auf strukturierte Repräsentationen des Quellkontexts zugreifen können.
+Multi-Agent Systems ermöglichen die Zerlegung komplexer Migrationsaufgaben in klar spezialisierte Rollen. Entscheidend ist dabei, dass die beteiligten Agenten nicht nur generieren, sondern auf strukturierte Repräsentationen des Quellkontexts zugreifen können. Die theoretische Basis dafür liefert die Multi-Agenten-Forschung seit Langem \parencite{wooldridge2009multiagent}.
 
 \subsubsection{Spezialisierung durch Rollendekomposition: Analyse, Spezifikation, Verifikation}
 
@@ -40,7 +41,7 @@ Ein Code Knowledge Graph dient als strukturierte Repräsentation von Symbolen, A
 
 \subsection{Model Context Protocol (MCP) als Integrationsstandard}
 
-Das Model Context Protocol bildet in der vorliegenden Arbeit den Integrationsstandard zwischen Agenten und externen Werkzeugen. Es ermöglicht, Analysefunktionen, Datenquellen und Hilfsdienste standardisiert bereitzustellen.
+Das Model Context Protocol bildet in der vorliegenden Arbeit den Integrationsstandard zwischen Agenten und externen Werkzeugen. Es ermöglicht, Analysefunktionen, Datenquellen und Hilfsdienste standardisiert bereitzustellen \parencite{mcpdocs}.
 
 \subsubsection{Architektur und Fähigkeiten: Resources, Prompts und Tools}
 
@@ -64,7 +65,7 @@ Gezielte Abrufstrategien dienen dazu, die verfügbare Kontextgröße effizient z
 
 \subsection{Das Horseshoe-Modell als konzeptioneller Rahmen des Reverse Engineering}
 
-Das konzeptionelle Grundmodell der Arbeit orientiert sich am Horseshoe-Modell des Reverse Engineering. Damit wird der Weg von bestehendem Code über eine abstrahierte Beschreibung hin zu einer erneuten Implementierung als grundlegendes Denkmuster für die Migration genutzt.
+Das konzeptionelle Grundmodell der Arbeit orientiert sich am Horseshoe-Modell des Reverse Engineering. Damit wird der Weg von bestehendem Code über eine abstrahierte Beschreibung hin zu einer erneuten Implementierung als grundlegendes Denkmuster für die Migration genutzt. Modellgetriebene Reverse-Engineering-Ansätze liefern dafür einen etablierten konzeptionellen Referenzrahmen \parencite{raibulet2017mdre}.
 
 \subsubsection{Die SDD-Spezifikation als Spitze der Abstraktion}
 
