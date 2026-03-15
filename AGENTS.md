@@ -46,3 +46,8 @@ Notes:
 - The active logo in `main.tex` is `abbildungen/FH_Dortmund-logo.png`.
 - `README.md` is the canonical expose text; `Exposé.md` has been removed to avoid duplicate maintenance.
 - The LaTeX section hierarchy should stay aligned with the intended report outline in the chapter files.
+
+## Research sources
+
+- NotebookLM source for literature and source mapping: `https://notebooklm.google.com/notebook/d8eb3353-0d7e-43e8-8649-6bc42c2a9c9f`
+- Use the NotebookLM source to identify which references support sections such as Reverse Engineering, Spec-Driven Development, MCP, Context Engineering, evaluation criteria, and the Bachelorarbeit outlook.
