@@ -1,0 +1,46 @@
+name: Release PDF
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release-pdf:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build PDF
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          work_in_root_file_dir: true
+          latexmk_use_xelatex: false
+          args: -pdf -file-line-error -halt-on-error -interaction=nonstopmode
+
+      - name: Create release notes
+        run: |
+          cat > release-notes.md <<EOF
+          ## Zusammenfassung
+          - Automatisch erzeugtes Release fuer Tag ${GITHUB_REF_NAME}
+          - Enthaltenes Artefakt: main.pdf
+          - Basis-Commit: ${GITHUB_SHA}
+
+          ## Download
+          - Lade die gebaute PDF direkt aus den Release-Assets herunter.
+          EOF
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: release-notes.md
+          files: main.pdf
+          generate_release_notes: true
