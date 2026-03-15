@@ -57,7 +57,7 @@
 \newcommand{\UDOTitle}[9]{
 
   \thispagestyle{empty}
-  \includegraphics[width=0.45\textwidth]{abbildungen/FH_Dortmund-logo.png}
+  \includegraphics[width=3in,height=1.09in]{abbildungen/FH_Dortmund-logo.png}
   \vspace*{\stretch{1}}
   \\
   {\parindent0cm
@@ -124,9 +124,13 @@
 \markboth{Zusammenfassung}{Zusammenfassung}
 \section*{Zusammenfassung}
 
-Die Zusammenfassung dient dem Leser dazu, einen groben Überblick über die Inhalte zu gewinnen (kurze Problemstellung, Herangehensweise, Lösungsansätze und evtl. der Schlüsselerkenntnisse). Der Umfang sollte ca. eine halbe Seite betragen. Auf der nächsten Seite soll eine Übersetzung der Zusammenfassung als Abstract in englischer Sprache erfolgen.
+Die vorliegende Projektarbeit untersucht, wie ein Multi-Agenten-System zur KI-gestützten Code-Migration gestaltet werden kann. Ausgangspunkt ist die Beobachtung, dass die Modernisierung gewachsener Softwaresysteme in der Praxis häufig an hoher kognitiver Last, fehlender Dokumentation und technologischen Paradigmenwechseln scheitert. Direkte Transpilierungsansätze reichen dabei oft nicht aus, um fachliche und architektonische Intentionen zuverlässig in ein Zielsystem zu überführen.
 
-Allgemeiner Hinweis: Die ``neue'' Rechtschreibung bietet viele alternative Möglichkeiten der Rechtschreib. Es ist demnach egal, ob Sie z.B. Potenzial mit ``z'' oder Potential mit ``t'' schreiben. Auch das Komma kann vor einem erweiterten Infinitiv wahlweise gesetzt oder weggelassen werden. Alternative Schreibweisen bedeuten zugleich aber nicht Beliebigkeit. Sie sollten sich also immer konsequent während der gesamten Arbeit für eine Schreibweise entscheiden. Dieses gilt auch für Fachbegriffe.
+Als methodischer Rahmen wird daher ein Ansatz des Spec-Driven Reverse Engineering verfolgt. Bestehender Quellcode soll zunächst analysiert und in textuelle technische Spezifikationen überführt werden, bevor auf dieser Grundlage Zielcode erzeugt wird. Die Spezifikation fungiert dabei als zentrales Zwischenartefakt zwischen Wissensextraktion und Code-Synthese. Zur Umsetzung wird eine orchestrierte Pipeline spezialisierter Agenten konzipiert, die Rollen für Analyse, Spezifikation, Verifikation und Generierung übernehmen.
+
+Technisch stützt sich der Ansatz auf das Model Context Protocol, um Analysewerkzeuge, Code-Repräsentationen und weitere Hilfsdienste standardisiert einzubinden. Ergänzend wird Context Engineering genutzt, um den Wissenszugriff für einzelne Agenten gezielt zu steuern und relevante Informationen bedarfsorientiert bereitzustellen. Dadurch soll der Umgang mit Kontext-Limits großer Sprachmodelle verbessert und das Risiko von Halluzinationen reduziert werden.
+
+Ziel der Arbeit ist ein prototypischer Proof of Concept an einem repräsentativen Quell-Modul. Die Evaluation orientiert sich an den Kriterien Vollständigkeit im Sinne von Feature Parity, Qualität und Wartbarkeit der erzeugten Artefakte sowie an der Nachvollziehbarkeit der Migrationsentscheidungen. Die Arbeit schafft damit eine konzeptionelle Grundlage für eine spätere wissenschaftliche Vertiefung im Rahmen der Bachelorarbeit, insbesondere im Hinblick auf hybride Ansätze aus textuellen Spezifikationen und visuellen Modellen.
 
 \clearpage
 
