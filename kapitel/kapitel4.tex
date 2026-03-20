@@ -4,19 +4,19 @@ Dieses Kapitel beschreibt die prototypische Umsetzung der konzipierten Pipeline 
 
 \subsection{Architektur des Agenten-Workflows}
 
-Die prototypische Implementierung folgt der in Kapitel \ref{konzeption} beschriebenen Rollentrennung. Auf der Orchestrierungsebene werden Aufrufe, Zwischenergebnisse und Prüfschritte so koordiniert, dass einzelne Agenten nur den für ihren Arbeitsschritt notwendigen Kontext erhalten. Die Grenzen solcher Autonomie sind auch in aktuellen industrie- und praxisnahen Beiträgen zur KI-gestützten Codegenerierung ein zentrales Thema \parencite{boeckeler2025autonomy}.
+Die prototypische Implementierung folgt der in Kapitel \ref{konzeption} beschriebenen Rollentrennung. Auf der Orchestrierungsebene werden Aufrufe, Zwischenergebnisse und Prüfschritte so koordiniert, dass einzelne Agenten nur den für ihren Arbeitsschritt notwendigen Kontext erhalten. Ein solches kontrolliertes Zusammenspiel aus Tool-Nutzung, Planung und Ausführung entspricht auch aktuellen agentischen Software-Engineering-Ansätzen \parencite{yang2024sweagent,huang2024planningagents}. Die Grenzen solcher Autonomie sind zugleich in aktuellen industrie- und praxisnahen Beiträgen zur KI-gestützten Codegenerierung ein zentrales Thema \parencite{boeckeler2025autonomy}.
 
 \subsection{Integration des Model Context Protocols}
 
-Die Anbindung der Analysefunktionen erfolgt über das Model Context Protocol. Dadurch können statische Analysewerkzeuge, Code-Repräsentationen und Hilfsdienste standardisiert angesprochen werden.
+Die Anbindung der Analysefunktionen erfolgt über das Model Context Protocol. Dadurch können statische Analysewerkzeuge, Code-Repräsentationen und Hilfsdienste standardisiert angesprochen und bedarfsorientiert in den Workflow eingebunden werden \parencite{mcpdocs}.
 
 \subsection{Context-Scaling durch gezielten Wissensabruf}
 
-Ein zentrales Implementierungsziel besteht darin, umfangreiche Codebasen innerhalb begrenzter Kontextfenster verarbeitbar zu machen. Deshalb setzt der Prototyp auf gezielten Wissensabruf statt auf vollständige Prompt-Inklusion. Relevante Informationen werden selektiv nachgeladen, sobald sie für einen konkreten Arbeitsschritt benötigt werden. Verwandte Arbeiten wie CodeGRAG untersuchen hierfür graphgestützte Retrieval-Ansätze als Brücke zwischen natürlicher Sprache und Programmiersprache \parencite{du2024codegrag}.
+Ein zentrales Implementierungsziel besteht darin, umfangreiche Codebasen innerhalb begrenzter Kontextfenster verarbeitbar zu machen. Deshalb setzt der Prototyp auf gezielten Wissensabruf statt auf vollständige Prompt-Inklusion. Relevante Informationen werden selektiv nachgeladen, sobald sie für einen konkreten Arbeitsschritt benötigt werden. Diese Entscheidung ist auch vor dem Hintergrund aktueller Benchmarkdiskussionen plausibel, die den Mangel an softwareengineeringreichem Kontext in vielen Evaluationsumgebungen hervorheben \parencite{rodriguezcardenas2026behelm}. Verwandte Arbeiten wie CodeGRAG untersuchen hierfür graphgestützte Retrieval-Ansätze als Brücke zwischen natürlicher Sprache und Programmiersprache \parencite{du2024codegrag}.
 
 \subsection{Herausforderungen bei der Workflow-Steuerung}
 
-Die Steuerung eines agentischen Workflows bringt eigene Herausforderungen mit sich. Dazu gehören robuste Übergaben zwischen den Rollen, eine konsistente Behandlung von Fehlerfällen und die Sicherstellung, dass Verifikationsschritte nicht umgangen werden.
+Die Steuerung eines agentischen Workflows bringt eigene Herausforderungen mit sich. Dazu gehören robuste Übergaben zwischen den Rollen, eine konsistente Behandlung von Fehlerfällen und die Sicherstellung, dass Verifikationsschritte nicht umgangen werden. Diese Punkte sind nicht nur technisch, sondern auch methodisch relevant, weil Prompt- und Workflow-Entscheidungen in LLM-basierter Software-Engineering-Forschung bislang oft unzureichend dokumentiert werden \parencite{korn2026reportingprompting}.
 
 \subsubsection{Mapping von Bibliotheks-Abhängigkeiten}
 
@@ -24,4 +24,4 @@ Ein praktisches Problem der Migration liegt im Mapping von Bibliotheks-Abhängig
 
 \subsubsection{Laufzeit-Monitoring und Fehlerbehandlung in Agenten-Dialogen}
 
-Die Prototypumsetzung erfordert außerdem ein Laufzeit-Monitoring der Agenten-Dialoge. Fehlerbehandlung, Abbruchkriterien und Wiederholungslogiken sind notwendig, damit der Workflow kontrolliert und reproduzierbar ausgeführt werden kann.
+Die Prototypumsetzung erfordert außerdem ein Laufzeit-Monitoring der Agenten-Dialoge. Fehlerbehandlung, Abbruchkriterien und Wiederholungslogiken sind notwendig, damit der Workflow kontrolliert und reproduzierbar ausgeführt werden kann. Gerade für agentische SE-Workflows ist eine solche Beobachtbarkeit wesentlich, weil nur so Ausführungsfehler, Schleifenbildungen und instabile Prompt-Konfigurationen systematisch nachvollzogen werden können \parencite{yang2024sweagent,korn2026reportingprompting}.

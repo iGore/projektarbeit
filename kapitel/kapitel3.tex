@@ -4,7 +4,7 @@ Dieses Kapitel beschreibt das konzeptionelle Design der orchestrierten Migration
 
 \subsection{Rollen im orchestrierten Workflow}
 
-Der Workflow wird in spezialisierte Rollen zerlegt, um nicht-deterministische Modellantworten durch klare Zuständigkeiten und Zwischenschritte zu kontrollieren. Dadurch entsteht eine Pipeline, in der Ergebnisse schrittweise weiterverarbeitet und überprüft werden. Vergleichbare agentische Rollenkonzepte wurden etwa in ChatDev für Softwareentwicklungsprozesse untersucht \parencite{qian2024chatdev}.
+Der Workflow wird in spezialisierte Rollen zerlegt, um nicht-deterministische Modellantworten durch klare Zuständigkeiten und Zwischenschritte zu kontrollieren. Dadurch entsteht eine Pipeline, in der Ergebnisse schrittweise weiterverarbeitet und überprüft werden. Vergleichbare arbeitsteilige Rollenkonzepte und Planungsmuster wurden sowohl in ChatDev als auch in neueren agentischen Software-Engineering-Ansätzen beschrieben \parencite{qian2024chatdev,yang2024sweagent,huang2024planningagents}.
 
 \subsubsection{Analyzer}
 
@@ -12,11 +12,11 @@ Der Analyzer erschließt die bestehende Codebasis mithilfe statischer Analyse un
 
 \subsubsection{Spec-Writer}
 
-Der Spec-Writer überführt die Analyseergebnisse in textuelle Spezifikationen. Diese Markdown-Artefakte sollen sowohl für menschliche Prüfung als auch für nachgelagerte Generierungsschritte nutzbar sein.
+Der Spec-Writer überführt die Analyseergebnisse in textuelle Spezifikationen. Diese Markdown-Artefakte sollen sowohl für menschliche Prüfung als auch für nachgelagerte Generierungsschritte nutzbar sein. Die Entscheidung für ein explizites Zwischenartefakt ist auch deshalb plausibel, weil strukturierte Anforderungen mit klaren I/O-Angaben, Randfällen und Bedingungen die Zuverlässigkeit nachgelagerter Codegenerierung erhöhen \parencite{midolo2026promptguidelines}.
 
 \subsubsection{Verifier}
 
-Der Verifier prüft, ob die Spezifikation mit dem rekonstruierbaren Quellkontext übereinstimmt. Dadurch wird verhindert, dass implizite Annahmen oder halluzinierte Details unbemerkt in die Implementierung einfließen.
+Der Verifier prüft, ob die Spezifikation mit dem rekonstruierbaren Quellkontext übereinstimmt. Dadurch wird verhindert, dass implizite Annahmen oder halluzinierte Details unbemerkt in die Implementierung einfließen. Eine solche Absicherung ist insbesondere vor dem Hintergrund dokumentierter Halluzinations- und Unsicherheitsprobleme großer Sprachmodelle erforderlich \parencite{feng2024abstain,liu2024hallucode}.
 
 \subsubsection{Builder}
 
@@ -24,7 +24,7 @@ Der Builder erzeugt aus der validierten Spezifikation den Zielcode. Die Erzeugun
 
 \subsection{Feedback und iterative Validierung}
 
-Die Pipeline ist als iterativer Prozess mit Rückkopplungsschleifen zu verstehen. Analyseergebnisse, Spezifikationen und Verifikationsergebnisse beeinflussen sich wechselseitig, sodass unklare oder fehlerhafte Ableitungen frühzeitig korrigiert werden können.
+Die Pipeline ist als iterativer Prozess mit Rückkopplungsschleifen zu verstehen. Analyseergebnisse, Spezifikationen und Verifikationsergebnisse beeinflussen sich wechselseitig, sodass unklare oder fehlerhafte Ableitungen frühzeitig korrigiert werden können. Iterative Verfeinerungsschritte entsprechen damit sowohl agentischen Workflow-Mustern als auch empirisch beobachteten Verbesserungsstrategien bei LLM-gestützter Codeerzeugung \parencite{yang2024sweagent,midolo2026promptguidelines}.
 
 \subsubsection{Feedback-Schleifen zwischen Spezifikation und Quell-Kontext}
 
@@ -32,8 +32,8 @@ Feedback-Schleifen zwischen Spezifikation und Quell-Kontext ermöglichen eine sc
 
 \subsubsection{Abgleich mit dem Code Knowledge Graph}
 
-Der automatische Abgleich gegen den Code Knowledge Graph liefert dafür eine deterministische Referenz. Er ermöglicht den Vergleich modellgenerierter Aussagen mit Symbolen, Abhängigkeiten und Strukturen der Ausgangsbasis.
+Der automatische Abgleich gegen den Code Knowledge Graph liefert dafür eine deterministische Referenz. Er ermöglicht den Vergleich modellgenerierter Aussagen mit Symbolen, Abhängigkeiten und Strukturen der Ausgangsbasis. Graphgestützte Repräsentationen und Retrieval-Ansätze gelten dabei als vielversprechend, um Beziehungen zwischen natürlicher Sprache und Code strukturiert nutzbar zu machen \parencite{du2024codegrag}.
 
 \subsection{Phasenmodell der Pipeline}
 
-Das Phasenmodell der Pipeline gliedert sich in Ingestion, Spec-Generation und Code-Synthese. In der Ingestion wird die Codebasis strukturiert erschlossen, in der Spec-Generation in ein überprüfbares Zwischenartefakt überführt und in der Code-Synthese in eine Zielimplementierung transformiert.
+Das Phasenmodell der Pipeline gliedert sich in Ingestion, Spec-Generation und Code-Synthese. In der Ingestion wird die Codebasis strukturiert erschlossen, in der Spec-Generation in ein überprüfbares Zwischenartefakt überführt und in der Code-Synthese in eine Zielimplementierung transformiert. Die Dreiteilung folgt damit einem kontrollierten Übergang von Analyse über Planungsartefakte hin zur Ausführung, wie er auch in agentischen Planungsmodellen beschrieben wird \parencite{huang2024planningagents}.
