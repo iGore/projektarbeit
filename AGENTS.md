@@ -22,6 +22,7 @@ This repository contains a German-language LaTeX project report about a multi-ag
 - Do not edit ignored working files such as `Inhaltsverzeichnis.md`, `Links.md`, `.opencode/`, `Notizen/`, or `Lektüre/` unless the user explicitly asks.
 - Use ASCII when practical in code/config files, but keep proper German spelling in user-facing Markdown and LaTeX content.
 - In LaTeX report content, use proper German umlauts and special characters (ä, ö, ü, Ä, Ö, Ü, ß) instead of ASCII substitutions like `ae`, `oe`, `ue`, or `ss`, unless a technical identifier requires ASCII.
+- For LaTeX figures, define both `width` and `height` together with `keepaspectratio` in `\includegraphics` to preserve proportions while constraining layout.
 - Write commit messages in German and describe the concrete content changes in the project report briefly (e.g., which chapter/section was expanded, revised, or corrected, and in what way).
 
 ## Build and verification
