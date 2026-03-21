@@ -16,10 +16,13 @@ This repository contains a German-language LaTeX project report about a multi-ag
 ## Working rules
 
 - Preserve the existing LaTeX chapter structure unless the user explicitly asks for a reorganization.
+- Treat this as a German academic paper throughout; default language for report prose is German.
 - Keep German prose in German; keep technical identifiers and code terms in English where appropriate.
 - Prefer small, targeted edits over broad rewrites.
 - Do not edit ignored working files such as `Inhaltsverzeichnis.md`, `Links.md`, `.opencode/`, `Notizen/`, or `Lektüre/` unless the user explicitly asks.
 - Use ASCII when practical in code/config files, but keep proper German spelling in user-facing Markdown and LaTeX content.
+- In LaTeX report content, use proper German umlauts and special characters (ä, ö, ü, Ä, Ö, Ü, ß) instead of ASCII substitutions like `ae`, `oe`, `ue`, or `ss`, unless a technical identifier requires ASCII.
+- Write commit messages in German and describe the concrete content changes in the project report briefly (e.g., which chapter/section was expanded, revised, or corrected, and in what way).
 
 ## Build and verification
 
