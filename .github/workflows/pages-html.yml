@@ -25,6 +25,10 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Prepare bibliography for HTML citations
+        run: |
+          latexmk -pdf -interaction=nonstopmode -file-line-error main.tex
+
       - name: Build HTML from LaTeX
         run: |
           mkdir -p site

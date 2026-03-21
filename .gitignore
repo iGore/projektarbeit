@@ -24,3 +24,15 @@
 /*.toc
 /*.synctex.gz
 /kapitel/*.aux
+
+# make4ht / HTML build artifacts
+/main.html
+/main.css
+/main.4ct
+/main.4tc
+/main.dvi
+/main.idv
+/main.lg
+/main.tmp
+/main.xref
+/site/
