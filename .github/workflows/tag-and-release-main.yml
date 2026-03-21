@@ -40,17 +40,19 @@ jobs:
           latexmk_use_xelatex: false
           args: -pdf -file-line-error -halt-on-error -interaction=nonstopmode
 
+      - name: Capture commit message
+        id: commit
+        run: |
+          {
+            echo "message<<EOF"
+            git log -1 --pretty=%B "${GITHUB_SHA}"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Create release notes
         run: |
           cat > release-notes.md <<EOF
-          ## Zusammenfassung
-          - Automatisch erzeugtes Release fuer Push auf main
-          - Erzeugter Tag: ${{ steps.tag.outputs.tag_name }}
-          - Enthaltenes Artefakt: main.pdf
-          - Basis-Commit: ${GITHUB_SHA}
-
-          ## Download
-          - Lade die gebaute PDF direkt aus den Release-Assets herunter.
+          ${{ steps.commit.outputs.message }}
           EOF
 
       - name: Create GitHub release
@@ -59,4 +61,3 @@ jobs:
           tag_name: ${{ steps.tag.outputs.tag_name }}
           body_path: release-notes.md
           files: main.pdf
-          generate_release_notes: true
