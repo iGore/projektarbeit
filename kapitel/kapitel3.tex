@@ -22,7 +22,7 @@ Der Verifier prüft, ob die Spezifikation mit dem rekonstruierbaren Quellkontext
 
 Der Builder erzeugt aus der validierten Spezifikation den Zielcode. Die Erzeugung basiert damit nicht direkt auf dem Ausgangscode, sondern auf einem geprüften Zwischenartefakt.
 
-\subsection{Geplante MCPs und agentische Skills}
+\subsection{MCPs und agentische Skills}
 
 Für den hier beschriebenen Workflow wird vorausgesetzt, dass die beteiligten Agenten nicht nur über Prompt-Kontext, sondern auch über standardisierte Tool- und Kontextzugriffe verfügen. Das Model Context Protocol (MCP) dient dabei als Integrationsschicht, über die externe Werkzeuge und strukturierte Informationsquellen einheitlich ansprechbar werden. Relevant ist dabei nicht die vollständige Breite möglicher Toolchains, sondern ein kleines Set von MCP-gebundenen Fähigkeiten, das die Kernschritte Analyse, Spezifikation, Verifikation und Build gezielt unterstützt. Ergänzend dazu fungiert \texttt{AGENTS.md} als persistente Instruktionsschicht, die für alle Rollen denselben Rahmen aus Arbeitsregeln, Build-Kommandos und projektbezogenen Konventionen bereitstellt.
 
@@ -49,7 +49,7 @@ Builder &  & X \\
 Orchestrator &  & X \\
 \hline
 \end{tabular}
-\caption{Geplante Zuordnung der MCPs zu den Agenten der Pipeline}
+\caption{Zuordnung der MCPs zu den Agenten der Pipeline}
 \label{tab:agent-mcp-matrix}
 \end{table}
 
@@ -97,7 +97,7 @@ Test Scaffolding &  &  &  & X &  \\
 Build Verification &  &  &  & X &  \\
 \hline
 \end{tabular}
-\caption{Geplante Zuordnung der Skills zu den Agenten der Pipeline}
+\caption{Zuordnung der Skills zu den Agenten der Pipeline}
 \label{tab:agent-skill-matrix}
 \end{table}
 
@@ -128,7 +128,7 @@ Feedback-Schleifen zwischen Spezifikation und Quell-Kontext ermöglichen eine sc
 
 \subsubsection{Abgleich mit dem Code Knowledge Graph}
 
-Der automatische Abgleich gegen den Code Knowledge Graph liefert dafür eine deterministische Referenz. Er ermöglicht den Vergleich modellgenerierter Aussagen mit Symbolen, Abhängigkeiten und Strukturen der Ausgangsbasis. Graphgestützte Repräsentationen und Retrieval-Ansätze gelten dabei als vielversprechend, um Beziehungen zwischen natürlicher Sprache und Code strukturiert nutzbar zu machen \parencite{du2024codegrag}.
+Der automatische Abgleich gegen den CKG liefert dafür eine deterministische Referenz. Er ermöglicht den Vergleich modellgenerierter Aussagen mit Symbolen, Abhängigkeiten und Strukturen der Ausgangsbasis. Graphgestützte Repräsentationen und Retrieval-Ansätze gelten dabei als vielversprechend, um Beziehungen zwischen natürlicher Sprache und Code strukturiert nutzbar zu machen \parencite{du2024codegrag}.
 
 \subsection{Phasenmodell der Pipeline}
 

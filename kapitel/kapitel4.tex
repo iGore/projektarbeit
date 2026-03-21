@@ -1,10 +1,10 @@
-\section{Prototypische Implementierung des Proof of Concept} \label{implementierung}
+\section{Prototypische Implementierung des PoC} \label{implementierung}
 
-Dieses Kapitel beschreibt die prototypische Umsetzung der konzipierten Pipeline innerhalb des bewusst abgegrenzten Proof of Concept.
+Dieses Kapitel beschreibt die prototypische Umsetzung der konzipierten Pipeline innerhalb des bewusst abgegrenzten PoC.
 
 \subsection{Architektur des Agenten-Workflows}
 
-Die prototypische Implementierung folgt der in Kapitel \ref{konzeption} beschriebenen Rollentrennung, reduziert sie für die Projektarbeit jedoch bewusst auf ein kleines, beherrschbares Set von Rollen. Konkret umfasst der Proof of Concept einen Orchestrator zur Ablaufsteuerung sowie die vier fachlichen Rollen Analyzer, Spec-Writer, Verifier und Builder. Auf der Orchestrierungsebene werden Aufrufe, Zwischenergebnisse und Prüfschritte so koordiniert, dass einzelne Agenten nur den für ihren Arbeitsschritt notwendigen Kontext erhalten. Ein solches kontrolliertes Zusammenspiel aus Tool-Nutzung, Planung und Ausführung entspricht auch aktuellen agentischen Software-Engineering-Ansätzen \parencite{yang2024sweagent,huang2024planningagents}. Die Grenzen solcher Autonomie sind zugleich in aktuellen industrie- und praxisnahen Beiträgen zur KI-gestützten Codegenerierung ein zentrales Thema \parencite{boeckeler2025autonomy}.
+Die prototypische Implementierung folgt der in Kapitel \ref{konzeption} beschriebenen Rollentrennung, reduziert sie für die Projektarbeit jedoch bewusst auf ein kleines, beherrschbares Set von Rollen. Konkret umfasst der PoC einen Orchestrator zur Ablaufsteuerung sowie die vier fachlichen Rollen Analyzer, Spec-Writer, Verifier und Builder. Auf der Orchestrierungsebene werden Aufrufe, Zwischenergebnisse und Prüfschritte so koordiniert, dass einzelne Agenten nur den für ihren Arbeitsschritt notwendigen Kontext erhalten. Ein solches kontrolliertes Zusammenspiel aus Tool-Nutzung, Planung und Ausführung entspricht auch aktuellen agentischen Software-Engineering-Ansätzen \parencite{yang2024sweagent,huang2024planningagents}. Die Grenzen solcher Autonomie sind zugleich in aktuellen industrie- und praxisnahen Beiträgen zur KI-gestützten Codegenerierung ein zentrales Thema \parencite{boeckeler2025autonomy}.
 
 \subsection{Integration des Model Context Protocols}
 

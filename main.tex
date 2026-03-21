@@ -104,7 +104,7 @@
 \sloppy
 
   \UDOTitle
-      {Entwicklung eines Multi-Agenten-Systems zur KI-gestützten Code-Migration} % Titel der Arbeit
+      {Entwicklung einer subagent-basierten Pipeline zur KI-gestützten Code-Migration} % Titel der Arbeit
       {Besel, Igor}                           % Vor- und Nachname des Autors
       {1234567}                                     % Matrikelnummer des Autors
       {Bachelor (Angewandte) Informatik}     % Studiengang
@@ -125,13 +125,13 @@
 \markboth{Zusammenfassung}{Zusammenfassung}
 \section*{Zusammenfassung}
 
-Die vorliegende Projektarbeit untersucht, wie ein Multi-Agenten-System zur KI-gestützten Code-Migration gestaltet werden kann. Ausgangspunkt ist die Beobachtung, dass Reverse Engineering und Re-Implementierung gewachsener Softwaresysteme in der Praxis häufig an hoher kognitiver Last, fehlender Dokumentation und technologischen Paradigmenwechseln scheitern. Direkte Transpilierungsansätze reichen dabei oft nicht aus, um fachliche und architektonische Intentionen zuverlässig in ein Zielsystem zu überführen.
+Die vorliegende Projektarbeit untersucht, wie eine subagent-basierte Pipeline zur KI-gestützten Code-Migration gestaltet werden kann. Ausgangspunkt ist die Beobachtung, dass Reverse Engineering (RE) und Re-Implementierung gewachsener Softwaresysteme in der Praxis häufig an hoher kognitiver Last, fehlender Dokumentation und technologischen Paradigmenwechseln scheitern. Direkte Transpilierungsansätze reichen dabei oft nicht aus, um fachliche und architektonische Intentionen zuverlässig in ein Zielsystem zu überführen.
 
-Als methodischer Rahmen wird daher ein Ansatz verfolgt, der Spec-Driven Reverse Engineering mit einer anschließenden Re-Implementierung verbindet. Bestehender Quellcode soll zunächst analysiert und in textuelle technische Spezifikationen überführt werden, bevor auf dieser Grundlage Zielcode erzeugt wird. Die Spezifikation fungiert dabei als zentrales Zwischenartefakt zwischen Wissensextraktion und Code-Synthese. Zur Umsetzung wird eine orchestrierte Pipeline spezialisierter Agenten konzipiert, die Rollen für Analyse, Spezifikation, Verifikation und Generierung übernehmen.
+Als methodischer Rahmen wird daher ein Ansatz verfolgt, der spec-getriebenes RE mit einer anschließenden Re-Implementierung verbindet. Bestehender Quellcode soll zunächst analysiert und in textuelle technische Spezifikationen überführt werden, bevor auf dieser Grundlage Zielcode erzeugt wird. Die Spezifikation fungiert dabei als zentrales Zwischenartefakt zwischen Wissensextraktion und Code-Synthese. Zur Umsetzung wird eine orchestrierte Pipeline spezialisierter Agenten konzipiert, die Rollen für Analyse, Spezifikation, Verifikation und Generierung übernehmen.
 
-Technisch stützt sich der Ansatz auf das Model Context Protocol, um Analysewerkzeuge, Code-Repräsentationen und weitere Hilfsdienste standardisiert einzubinden. Ergänzend wird Context Engineering genutzt, um den Wissenszugriff für einzelne Agenten gezielt zu steuern und relevante Informationen bedarfsorientiert bereitzustellen. Dadurch soll der Umgang mit Kontext-Limits großer Sprachmodelle verbessert und das Risiko von Halluzinationen reduziert werden.
+Technisch stützt sich der Ansatz auf das Model Context Protocol (MCP), um Analysewerkzeuge, Code-Repräsentationen und weitere Hilfsdienste standardisiert einzubinden. Ergänzend wird Context Engineering genutzt, um den Wissenszugriff für einzelne Agenten gezielt zu steuern und relevante Informationen bedarfsorientiert bereitzustellen. Dadurch soll der Umgang mit Kontext-Limits großer Sprachmodelle (LLMs) verbessert und das Risiko von Halluzinationen reduziert werden.
 
-Ziel der Arbeit ist ein prototypischer Proof of Concept an einem repräsentativen Quell-Modul. Die Evaluation orientiert sich an den Kriterien Vollständigkeit im Sinne von Feature Parity, Qualität und Wartbarkeit der erzeugten Artefakte sowie an der Nachvollziehbarkeit der Migrationsentscheidungen. Die Arbeit schafft damit eine konzeptionelle Grundlage für eine spätere wissenschaftliche Vertiefung im Rahmen der Bachelorarbeit, insbesondere im Hinblick auf hybride Ansätze aus textuellen Spezifikationen und visuellen Modellen.
+Ziel der Arbeit ist ein prototypischer Proof of Concept (PoC) an einem repräsentativen Quell-Modul. Die Evaluation orientiert sich an den Kriterien Vollständigkeit im Sinne von Feature Parity, Qualität und Wartbarkeit der erzeugten Artefakte sowie an der Nachvollziehbarkeit der Migrationsentscheidungen. Die Arbeit schafft damit eine konzeptionelle Grundlage für eine spätere wissenschaftliche Vertiefung im Rahmen der Bachelorarbeit, insbesondere im Hinblick auf hybride Ansätze aus textuellen Spezifikationen und visuellen Modellen.
 
 \clearpage
 

@@ -4,9 +4,9 @@ Dieses Kapitel führt in die Motivation, den Lösungsansatz, die Zielsetzung und
 
 \subsection{Herausforderungen von Reverse Engineering und Re-Implementierung}
 
-Das Reverse Engineering und die Re-Implementierung bestehender Codebasen zählen zu den zentralen Herausforderungen der zeitgenössischen Softwareentwicklung. Im Lebenszyklus gewachsener Systeme entstehen technologisch bedingte Grenzen hinsichtlich Performance, Wartbarkeit und Skalierbarkeit, sodass ein Wechsel auf moderne Sprachen und Architekturen erhebliche Vorteile verspricht. Dazu zählen insbesondere verbesserte Typsicherheit, höhere Ressourceneffizienz und nativer Concurrency-Support. Sowohl klassische modellgetriebene Arbeiten als auch aktuelle Übersichten zu LLM-gestütztem Reverse Engineering ordnen diese Transformationsaufgabe als besonders anspruchsvoll ein \parencite{raibulet2017mdre,hu2025sokreverseengineering}.
+Das Reverse Engineering (RE) und die Re-Implementierung bestehender Codebasen zählen zu den zentralen Herausforderungen der zeitgenössischen Softwareentwicklung. Im Lebenszyklus gewachsener Systeme entstehen technologisch bedingte Grenzen hinsichtlich Performance, Wartbarkeit und Skalierbarkeit, sodass ein Wechsel auf moderne Sprachen und Architekturen erhebliche Vorteile verspricht. Dazu zählen insbesondere verbesserte Typsicherheit, höhere Ressourceneffizienz und nativer Concurrency-Support. Sowohl klassische modellgetriebene Arbeiten als auch aktuelle Übersichten zu LLM-gestütztem RE ordnen diese Transformationsaufgabe als besonders anspruchsvoll ein \parencite{raibulet2017mdre,hu2025sokreverseengineering}.
 
-In der Praxis scheitert eine solche Migration jedoch häufig an der hohen kognitiven Last für Entwickler, einer lückenhaften Dokumentation des Bestands sowie an grundlegenden Paradigmenwechseln zwischen Quell- und Zieltechnologie. Gerade die Überführung bestehender Systeme in explizite, rekonstruierbare Anforderungen bildet daher eine zentrale Brücke zwischen Reverse Engineering und späterer Neuimplementierung \parencite{fahmi2007reverse}.
+In der Praxis scheitert eine solche Migration jedoch häufig an der hohen kognitiven Last für Entwickler, einer lückenhaften Dokumentation des Bestands sowie an grundlegenden Paradigmenwechseln zwischen Quell- und Zieltechnologie. Gerade die Überführung bestehender Systeme in explizite, rekonstruierbare Anforderungen bildet daher eine zentrale Brücke zwischen RE und späterer Neuimplementierung \parencite{fahmi2007reverse}.
 
 \subsection{Spec-Driven Development durch Agentenorchestrierung}
 
@@ -16,9 +16,9 @@ Die Erstellung, Prüfung und Nutzung dieser Spezifikationen soll durch einen orc
 
 \subsection{Zielsetzung der Migrations-Pipeline}
 
-Ziel der Projektarbeit ist die Konzeption und prototypische Implementierung einer automatisierten Migrations-Pipeline auf Basis eines Multi-Agenten-Systems (MAS). Der Prototyp soll zeigen, dass sich aus bestehendem Quellcode präzise technische Spezifikationen in Markdown gewinnen lassen, die anschließend als belastbare Grundlage für die Code-Generierung dienen. Die technische Kopplung zwischen Agenten und Analysewerkzeugen wird dabei bewusst über standardisierte Schnittstellen gedacht \parencite{mcpdocs}.
+Ziel der Projektarbeit ist die Konzeption und prototypische Implementierung einer automatisierten Migrations-Pipeline auf Basis orchestrierter Subagents. Der Prototyp soll zeigen, dass sich aus bestehendem Quellcode präzise technische Spezifikationen in Markdown gewinnen lassen, die anschließend als belastbare Grundlage für die Code-Generierung dienen. Die technische Kopplung zwischen Agenten und Analysewerkzeugen wird dabei bewusst über standardisierte Schnittstellen gedacht \parencite{mcpdocs}.
 
-Der angestrebte Proof of Concept konzentriert sich auf ein repräsentatives Quell-Modul. Damit soll ein vollständiger Durchstich durch Analyse, Spezifikation, Verifikation und Generierung demonstriert werden, ohne den Rahmen der Projektarbeit zu überschreiten.
+Der angestrebte Proof of Concept (PoC) konzentriert sich auf ein repräsentatives Quell-Modul. Damit soll ein vollständiger Durchstich durch Analyse, Spezifikation, Verifikation und Generierung demonstriert werden, ohne den Rahmen der Projektarbeit zu überschreiten.
 
 \subsection{Abgrenzung auf textbasierte Spezifikationen}
 
@@ -28,6 +28,6 @@ Nicht Ziel ist die vollständige Automatisierung beliebiger Migrationsszenarien,
 
 \subsection{Aufbau der Arbeit}
 
-Nach der Einleitung werden in Kapitel \ref{grundlagen} die begrifflichen und technischen Grundlagen zu Reverse Engineering, Re-Engineering, Spec-Driven Development, Multi-Agenten-Systemen, MCP und Context Engineering eingeordnet. Kapitel \ref{konzeption} beschreibt darauf aufbauend die konzeptionelle Struktur der Migrations-Pipeline mit ihren Rollen, Feedback-Schleifen und Phasen.
+Nach der Einleitung werden in Kapitel \ref{grundlagen} die begrifflichen und technischen Grundlagen zu RE, Re-Engineering, SDD, Subagents, MCP und Context Engineering eingeordnet. Kapitel \ref{konzeption} beschreibt darauf aufbauend die konzeptionelle Struktur der Migrations-Pipeline mit ihren Rollen, Feedback-Schleifen und Phasen.
 
-Anschließend erläutert Kapitel \ref{implementierung} die prototypische Umsetzung des Proof of Concept. Kapitel \ref{evaluation} definiert die Kriterien der Evaluation am Fallbeispiel, bevor Kapitel \ref{fazit} die Ergebnisse zusammenfasst und einen Ausblick auf die Bachelorarbeit formuliert.
+Anschließend erläutert Kapitel \ref{implementierung} die prototypische Umsetzung des PoC. Kapitel \ref{evaluation} definiert die Kriterien der Evaluation am Fallbeispiel, bevor Kapitel \ref{fazit} die Ergebnisse zusammenfasst und einen Ausblick auf die Bachelorarbeit formuliert.
