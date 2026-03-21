@@ -22,34 +22,57 @@ Der Verifier prüft, ob die Spezifikation mit dem rekonstruierbaren Quellkontext
 
 Der Builder erzeugt aus der validierten Spezifikation den Zielcode. Die Erzeugung basiert damit nicht direkt auf dem Ausgangscode, sondern auf einem geprüften Zwischenartefakt.
 
-\subsection{Geplante MCPs und agentische Skills im PoC}
+\subsection{Geplante MCPs und agentische Skills}
 
-Für den Proof of Concept wird vorausgesetzt, dass die beteiligten Agenten nicht nur über Prompt-Kontext, sondern auch über standardisierte Tool- und Kontextzugriffe verfügen. Das Model Context Protocol (MCP) dient dabei als Integrationsschicht, über die externe Werkzeuge und strukturierte Informationsquellen einheitlich ansprechbar werden. Im PoC ist nicht die vollständige Breite möglicher Toolchains relevant, sondern ein kleines Set von MCP-gebundenen Fähigkeiten, das die Kernschritte Analyse, Spezifikation, Verifikation und Build gezielt unterstützt.
+Für den hier beschriebenen Workflow wird vorausgesetzt, dass die beteiligten Agenten nicht nur über Prompt-Kontext, sondern auch über standardisierte Tool- und Kontextzugriffe verfügen. Das Model Context Protocol (MCP) dient dabei als Integrationsschicht, über die externe Werkzeuge und strukturierte Informationsquellen einheitlich ansprechbar werden. Relevant ist dabei nicht die vollständige Breite möglicher Toolchains, sondern ein kleines Set von MCP-gebundenen Fähigkeiten, das die Kernschritte Analyse, Spezifikation, Verifikation und Build gezielt unterstützt.
 
-MCPs und Skills übernehmen im PoC komplementäre Funktionen. MCPs stellen den standardisierten Zugriff auf Werkzeuge, Ressourcen und Referenzquellen bereit. Skills definieren demgegenüber wiederverwendbare Arbeitsmuster, die festlegen, wie ein Agent mit diesem Zugriff umgeht, etwa beim Reverse Engineering, beim Schreiben von Contracts oder bei der Verifikation von Akzeptanzkriterien. Ein MCP ersetzt daher keinen Skill; vielmehr liefert der MCP den externen Kontextzugriff, während der Skill die rollenbezogene Verarbeitung dieses Kontexts strukturiert.
+MCPs und Skills übernehmen in diesem Kontext komplementäre Funktionen. MCPs stellen den standardisierten Zugriff auf Werkzeuge, Ressourcen und Referenzquellen bereit. Skills definieren demgegenüber wiederverwendbare Arbeitsmuster, die festlegen, wie ein Agent mit diesem Zugriff umgeht, etwa beim Reverse Engineering, beim Schreiben von Contracts oder bei der Verifikation von Akzeptanzkriterien. Ein MCP ersetzt daher keinen Skill; vielmehr liefert der MCP den externen Kontextzugriff, während der Skill die rollenbezogene Verarbeitung dieses Kontexts strukturiert.
 
 \begin{table}[H]
 \centering
-\caption{Geplante Zuordnung von MCPs und Skills zu den Agenten der Pipeline im PoC}
-\label{tab:agent-mcp-skill-matrix}
-\begin{tabular}{|p{2.6cm}|p{3.1cm}|p{8.2cm}|}
+\caption{Geplante MCPs der Agenten und ihre jeweilige Motivation}
+\label{tab:agent-mcp-matrix}
+\begin{tabular}{|p{2.4cm}|p{3.2cm}|p{8.3cm}|}
 \hline
-\textbf{Agent} & \textbf{Vorgesehene MCPs} & \textbf{Vorgesehene Skills} \\
+\textbf{Agent} & \textbf{Vorgesehene MCPs} & \textbf{Motivation} \\
 \hline
-Analyzer / Modeler & Sourcebot, MCP Context Strategy & Reverse Engineering; Code Mapping; Dependency Inspection \\
+Analyzer / Modeler & Sourcebot & Sourcebot liefert die benötigte Code-Intelligence für Symbolauflösung, Referenzsuche und Repository-Strukturen. \\
 \hline
-Spec-Writer / Author & Context7, MCP Context Strategy & Spec-Driven Design; Specification Drafting; Contract Writing; Edge-Case Structuring \\
+Spec-Writer / Author & Context7 & Context7 ergänzt die Spezifikationserstellung um Dokumentations- und Bibliothekswissen, wenn Ziel-Frameworks oder APIs präzise eingeordnet werden müssen. \\
 \hline
-Verifier & Sourcebot, MCP Context Strategy & Traceability Check; Consistency Review; Acceptance Validation; Evaluation Rubric \\
+Verifier & Sourcebot & Der Verifier benötigt mit Sourcebot einen belastbaren Zugriff auf Quellkontext und Symbolbeziehungen, um Spezifikation und Bestand systematisch gegenzuprüfen. \\
 \hline
-Builder & Context7, MCP Context Strategy & Spec-to-Code Translation; Test Scaffolding; Build Verification \\
+Builder & Context7 & Context7 liefert zielstackspezifische Dokumentation für Bibliotheken, Frameworks und Schnittstellen. \\
 \hline
-Orchestrator & Context7, MCP Context Strategy & Evaluation Rubric \\
+Orchestrator & Context7 & Der Orchestrator benötigt vor allem kontrollierten Referenzzugriff, um Artefaktflüsse, Rückfragen und kontextbezogene Entscheidungen konsistent zu koordinieren. \\
 \hline
 \end{tabular}
 \end{table}
 
-Die Matrix ist bewusst als vorläufige PoC-Konfiguration zu verstehen. Sie bündelt nicht sämtliche denkbaren Werkzeuge, sondern die für die Projektarbeit zentralen Kombinationen aus Kontextzugriff und rollenbezogener Arbeitslogik in einer reproduzierbaren Form.
+Die erste Matrix macht deutlich, dass verschiedene MCPs nicht beliebig ausgetauscht werden, sondern jeweils eine eigene Motivation im Workflow besitzen: Sourcebot dient primär als Code-Intelligence für den Bestand, Context7 als Dokumentationszugriff für Zieltechnologien.
+
+\begin{table}[H]
+\centering
+\caption{Geplante Skills der Agenten und ihre jeweilige Motivation}
+\label{tab:agent-skill-matrix}
+\begin{tabular}{|p{2.4cm}|p{4.7cm}|p{6.8cm}|}
+\hline
+\textbf{Agent} & \textbf{Vorgesehene Skills} & \textbf{Motivation} \\
+\hline
+Analyzer / Modeler & Reverse Engineering;\ Code Mapping;\ Dependency Inspection;\ MCP Context Strategy & Diese Skills strukturieren die Rekonstruktion des Bestands. Reverse Engineering dient der fachlich-technischen Erschließung, Code Mapping der Überführung von Quellartefakten in Zielkonzepte, Dependency Inspection der Identifikation migrationsrelevanter Abhängigkeiten und die MCP Context Strategy der Begrenzung des geladenen Quellkontexts auf den jeweils relevanten Ausschnitt. \\
+\hline
+Spec-Writer / Author & Spec-Driven Design;\ Specification Drafting;\ Contract Writing;\ Edge-Case Structuring;\ MCP Context Strategy & Diese Skills unterstützen die Überführung der Analyse in ein belastbares Zwischenartefakt. Sie erzwingen eine explizite Beschreibung von Schnittstellen, Randfällen, Vor- und Nachbedingungen sowie Akzeptanzkriterien; die MCP Context Strategy verhindert dabei, dass unnötiger Fremdkontext die Spezifikation aufbläht. \\
+\hline
+Verifier & Traceability Check;\ Consistency Review;\ Acceptance Validation;\ Evaluation Rubric;\ MCP Context Strategy & Die Verifier-Skills dienen dazu, Halluzinationen und implizite Annahmen sichtbar zu machen. Sie prüfen die Rückverfolgbarkeit von Spezifikationsaussagen, die innere Konsistenz der Artefakte und die Erfüllung definierter Kriterien; die MCP Context Strategy beschränkt den Prüfumfang auf die jeweils relevanten Artefakte. \\
+\hline
+Builder & Spec-to-Code Translation;\ Test Scaffolding;\ Build Verification;\ MCP Context Strategy & Diese Skills strukturieren die Neuimplementierung aus der freigegebenen Spezifikation. Sie koppeln Umsetzung, Testgerüst und Build-Absicherung so, dass der Zielcode nicht nur erzeugt, sondern auch überprüfbar gemacht wird; die MCP Context Strategy hält den Implementierungskontext auf freigegebene Spezifikationsartefakte und nötige Referenzen begrenzt. \\
+\hline
+Orchestrator & Evaluation Rubric;\ MCP Context Strategy & Der Orchestrator benötigt nur ein kleines Skill-Set, weil seine Aufgabe weniger in fachlicher Detailarbeit als in der Koordination von Übergaben, Qualitätsgrenzen und Freigaben liegt; die MCP Context Strategy unterstützt ihn bei der kontrollierten Weitergabe relevanter Artefakte und Referenzkontexte. \\
+\hline
+\end{tabular}
+\end{table}
+
+Die zweite Matrix verdeutlicht, dass Skills nicht primär zusätzlichen Kontext liefern, sondern die Verarbeitung dieses Kontexts in wiederverwendbare Arbeitsmuster überführen. Sie sind damit der operative Gegenpart zu den MCPs.
 
 \subsection{Feedback und iterative Validierung}
 
