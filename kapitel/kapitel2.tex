@@ -2,18 +2,30 @@
 
 Dieses Kapitel ordnet die technischen und methodischen Grundlagen der Arbeit ein.
 
-\subsection{Agentenbasierte Code-Migration}
+\subsection{Reverse Engineering, Re-Engineering und Forward Engineering}
 
-Agentenbasierte Code-Migration beschreibt Migrationsprozesse, bei denen spezialisierte Software-Agenten einzelne Aufgaben des Reverse Engineering, der Wissensextraktion, der Spezifikation und der Code-Erzeugung übernehmen. Gegenüber monolithischen Ansätzen verspricht diese Form der Aufgabenteilung eine bessere Nachvollziehbarkeit und klarere Verantwortlichkeiten. Einen aktuellen Überblick über Ansätze mit großen Sprachmodellen im Reverse Engineering geben 
-\textcite{hu2025sokreverseengineering}.
+Reverse Engineering, Re-Engineering und Forward Engineering bilden den klassischen begrifflichen Rahmen, in dem auch die vorliegende Arbeit verortet ist. Nach der Taxonomie von \textcite{chikofsky1990taxonomy} dient Reverse Engineering dazu, ein bestehendes System zu analysieren, seine Komponenten und Beziehungen zu identifizieren und daraus höherwertige Repräsentationen abzuleiten. Forward Engineering beschreibt dagegen den Weg von solchen Abstraktionen zurück in eine Implementierung. Re-Engineering verbindet beide Richtungen zu einem Erneuerungsprozess, bei dem ein bestehendes System verstanden, restrukturiert und in veränderter technischer Form neu umgesetzt wird \parencite{chikofsky1990taxonomy,raibulet2017mdre}.
 
-\subsubsection{Paradigmenwechsel und technologische Brüche}
+Für gewachsene Softwaresysteme ist diese Unterscheidung besonders relevant, weil Migrationen in der Regel nicht als direkte Code-zu-Code-Übersetzung gelingen. Vielmehr muss der Bestandscode zunächst semantisch erschlossen werden, bevor fachliche Logik, Architekturentscheidungen und Randbedingungen in einer neuen technologischen Umgebung wieder implementiert werden können. Klassische Arbeiten zum Reverse Engineering objektorientierter Systeme betonen daher die Notwendigkeit, Codewissen schrittweise auf höhere Abstraktionsebenen zu heben \parencite{tonella2005reverseoo}.
 
-Ein wesentlicher Schwierigkeitsfaktor der Migration liegt in technologischen Brüchen zwischen Quell- und Zielsystem. Unterschiede in Typisierung, Laufzeitmodell, Fehlerbehandlung oder Nebenläufigkeit erschweren eine rein syntaktische Übertragung und machen eine semantische Rekonstruktion der Fachlogik erforderlich.
+\subsubsection{Horseshoe-Modell als Referenzrahmen}
 
-\subsubsection{Nicht-Determinismus und Halluzinationen in großen Sprachmodellen}
+Ein verbreitetes Denkmuster für diesen Ablauf ist das Horseshoe-Modell des Re-Engineering. Es veranschaulicht, dass der Weg von einem Quellsystem nicht direkt in eine Zielimplementierung führt, sondern über eine abstrahierte Zwischenebene verläuft, auf der Modelle, Architektursichten oder Spezifikationen explizit gemacht werden. Modellgetriebene Reverse-Engineering-Ansätze nutzen genau diese Zwischenebene als Brücke zwischen Analyse und Neuimplementierung \parencite{raibulet2017mdre}.
 
-Werden große Sprachmodelle (Large Language Models, LLMs) in Migrationsprozessen eingesetzt, entsteht zusätzlich die Herausforderung nicht-deterministischer Ausgaben. Halluzinationen und inkonsistente Ableitungen gefährden insbesondere bei umfangreichen Codebasen die Korrektheit der Ergebnisse. Deshalb müssen generierte Artefakte gegen belastbare Quellinformationen überprüft werden.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{abbildungen/horseshoe-modell.png}
+\caption{Schematische Darstellung des Horseshoe-Modells fuer das Re-Engineering in Anlehnung an \textcite{raibulet2017mdre}.}
+\label{fig:horseshoe-model}
+\end{figure}
+
+In der vorliegenden Arbeit wird diese Abstraktionsebene nicht primär durch formale Modelle, sondern durch textuelle technische Spezifikationen realisiert. Damit bleibt das Grundmuster des Re-Engineering erhalten, wird jedoch um einen spec-getriebenen und agentisch orchestrierten Verarbeitungsschritt erweitert.
+
+\subsubsection{Agentenbasierte Code-Migration als Sonderfall des Re-Engineering}
+
+Agentenbasierte Code-Migration beschreibt Migrationsprozesse, bei denen spezialisierte Software-Agenten einzelne Aufgaben des Reverse Engineering, der Wissensextraktion, der Spezifikation und der Code-Erzeugung übernehmen. In der vorliegenden Arbeit wird sie damit nicht als eigenständige Disziplin neben dem Re-Engineering verstanden, sondern als ein KI-gestützter Sonderfall dieses übergeordneten Erneuerungsprozesses. Gegenüber monolithischen Ansätzen verspricht diese Form der Aufgabenteilung eine bessere Nachvollziehbarkeit und klarere Verantwortlichkeiten. Einen aktuellen Überblick über Ansätze mit großen Sprachmodellen im Reverse Engineering geben \textcite{hu2025sokreverseengineering}. Erste Arbeiten behandeln dabei unter anderem generative KI für Re-Engineering-Szenarien in Software-Produktlinien, LLM-gestützte Werkzeugunterstützung im model-driven Reverse Engineering sowie die Ableitung von Sequenzdiagrammen aus Quellartefakten \parencite{acher2023splreengineering,boronat2025mdrellm,greiner2025sequencediagrams}.
+
+Ein wesentlicher Schwierigkeitsfaktor der Migration liegt in technologischen Brüchen zwischen Quell- und Zielsystem. Unterschiede in Typisierung, Laufzeitmodell, Fehlerbehandlung oder Nebenläufigkeit erschweren eine rein syntaktische Übertragung und machen eine semantische Rekonstruktion der Fachlogik erforderlich. Werden große Sprachmodelle (Large Language Models, LLMs) in solchen Migrationsprozessen eingesetzt, entsteht zusätzlich die Herausforderung nicht-deterministischer Ausgaben. Halluzinationen und inkonsistente Ableitungen gefährden insbesondere bei umfangreichen Codebasen die Korrektheit der Ergebnisse. Deshalb müssen generierte Artefakte gegen belastbare Quellinformationen überprüft werden.
 
 \subsection{Spec-Driven Development}
 
@@ -62,11 +74,3 @@ Die bedarfsorientierte Kontextbereitstellung reduziert unnötige Informationslas
 \subsubsection{Reduktion von Kontextlast durch gezielte Abrufstrategien}
 
 Gezielte Abrufstrategien dienen dazu, die verfügbare Kontextgröße effizient zu nutzen. Dadurch wird das Risiko reduziert, dass wesentliche Informationen im überladenen Kontext untergehen oder Modellantworten durch irrelevante Inhalte verwässert werden.
-
-\subsection{Horseshoe-Modell des Reverse Engineering}
-
-Das konzeptionelle Grundmodell der Arbeit orientiert sich am Horseshoe-Modell des Reverse Engineering. Damit wird der Weg von bestehendem Code über eine abstrahierte Beschreibung hin zu einer erneuten Implementierung als grundlegendes Denkmuster für die Migration genutzt. Modellgetriebene Reverse-Engineering-Ansätze liefern dafür einen etablierten konzeptionellen Referenzrahmen \parencite{raibulet2017mdre}.
-
-\subsubsection{Die Spezifikation als Spitze der Abstraktion}
-
-In der vorliegenden Arbeit übernimmt die textuelle Spezifikation im Sinne des Spec-Driven Development (SDD) die Rolle dieser zentralen Abstraktionsebene. Sie bildet die Brücke zwischen Wissensextraktion und Code-Synthese und soll fachliche Anforderungen und strukturelle Randbedingungen so präzise erfassen, dass der anschließende Abstieg in die Zielsprache nachvollziehbar bleibt.
