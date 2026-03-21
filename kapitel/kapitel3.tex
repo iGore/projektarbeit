@@ -8,15 +8,19 @@ Der Workflow wird in spezialisierte Rollen zerlegt, um nicht-deterministische Mo
 
 \subsubsection{Analyzer}
 
-Der Analyzer erschließt die bestehende Codebasis mithilfe statischer Analyse und strukturierter Code-Intelligence. Ziel ist die Gewinnung fachlicher und technischer Informationen auf Basis von Symbol- und Abhängigkeitsbeziehungen.
+Der Analyzer erschließt die bestehende Codebasis mithilfe statischer Analyse und strukturierter Code-Intelligence. Ziel ist die Gewinnung fachlicher und technischer Informationen auf Basis von Symbol- und Abhängigkeitsbeziehungen. Dazu gehören ausdrücklich auch die Auswertung von \texttt{README.md}, Build- und Projektmetadaten sowie die Dokumentation relevanter Abhängigkeiten des Quellsystems.
 
 \subsubsection{Spec-Writer}
 
-Der Spec-Writer überführt die Analyseergebnisse in textuelle Spezifikationen. Diese Markdown-Artefakte sollen sowohl für menschliche Prüfung als auch für nachgelagerte Generierungsschritte nutzbar sein. Die Entscheidung für ein explizites Zwischenartefakt ist auch deshalb plausibel, weil strukturierte Anforderungen mit klaren I/O-Angaben, Randfällen und Bedingungen die Zuverlässigkeit nachgelagerter Codegenerierung erhöhen \parencite{midolo2026promptguidelines}.
+Der Spec-Writer überführt die Analyse- und Architekturentscheidungen in textuelle Spezifikationen. Diese Markdown-Artefakte sollen sowohl für menschliche Prüfung als auch für nachgelagerte Generierungsschritte nutzbar sein. Die Entscheidung für ein explizites Zwischenartefakt ist auch deshalb plausibel, weil strukturierte Anforderungen mit klaren I/O-Angaben, Randfällen und Bedingungen die Zuverlässigkeit nachgelagerter Codegenerierung erhöhen \parencite{midolo2026promptguidelines}.
 
 \subsubsection{Verifier}
 
 Der Verifier prüft, ob die Spezifikation mit dem rekonstruierbaren Quellkontext übereinstimmt. Dadurch wird verhindert, dass implizite Annahmen oder halluzinierte Details unbemerkt in die Implementierung einfließen. Eine solche Absicherung ist insbesondere vor dem Hintergrund dokumentierter Halluzinations- und Unsicherheitsprobleme großer Sprachmodelle erforderlich \parencite{feng2024abstain,liu2024hallucode}.
+
+\subsubsection{Architect}
+
+Der Architect setzt nach der Verifikation auf und plant die Zielarchitektur für den Builder. Dazu gehören das Mapping auf geeignete Frameworks, Bibliotheken und Architekturmuster des Zielstacks. Für diesen Schritt ist insbesondere Context7 relevant, weil dort Best Practices, API-Konventionen und paketbezogene Dokumentation herangezogen werden können, um tragfähige Architektur- und Paketentscheidungen abzuleiten.
 
 \subsubsection{Builder}
 
@@ -44,6 +48,8 @@ Spec-Writer &  & X \\
 \hline
 Verifier & X &  \\
 \hline
+Architect &  & X \\
+\hline
 Builder &  & X \\
 \hline
 Orchestrator &  & X \\
@@ -55,7 +61,7 @@ Orchestrator &  & X \\
 
 \begin{description}
     \item[Sourcebot] Dient als Code-Intelligence für den Bestand und ermöglicht strukturierte Zugriffe auf Repository-Strukturen, Symbolauflösung und Referenzbeziehungen. Der MCP ist daher vor allem für Analyse und Verifikation relevant.
-    \item[Context7] Liefert externen Dokumentations- und Bibliothekskontext für Zieltechnologien. Der MCP unterstützt damit insbesondere Spezifikation, Orchestrierung und Implementierung, wenn Framework- oder API-Wissen benötigt wird.
+    \item[Context7] Liefert externen Dokumentations- und Bibliothekskontext für Zieltechnologien. Der MCP unterstützt damit insbesondere Architektur, Spezifikation, Orchestrierung und Implementierung, wenn Framework-, API- oder Paketwissen benötigt wird.
 \end{description}
 
 \subsubsection{Skills}
@@ -64,37 +70,41 @@ Skills bündeln wiederverwendbare Arbeitsschritte, die sich aus der Rollenlogik 
 
 \begin{table}[H]
 \centering
-\begin{tabular}{|p{4.1cm}|c|c|c|c|c|}
+\begin{tabular}{|p{3.6cm}|c|c|c|c|c|c|}
 \hline
-\textbf{Skill} & \textbf{Analyzer} & \textbf{Spec-Writer} & \textbf{Verifier} & \textbf{Builder} & \textbf{Orchestrator} \\
+\textbf{Skill} & \textbf{Analyzer} & \textbf{Spec-Writer} & \textbf{Verifier} & \textbf{Architect} & \textbf{Builder} & \textbf{Orchestrator} \\
 \hline
-Reverse Engineering & X &  &  &  &  \\
+Reverse Engineering & X &  &  &  &  &  \\
 \hline
-Code Mapping & X &  &  &  &  \\
+Code Mapping & X &  &  &  &  &  \\
 \hline
-Dependency Inspection & X &  &  &  &  \\
+Dependency Inspection & X &  &  &  &  &  \\
 \hline
-Spec-Driven Design &  & X &  &  &  \\
+Spec-Driven Design &  & X &  &  &  &  \\
 \hline
-Specification Drafting &  & X &  &  &  \\
+Specification Drafting &  & X &  &  &  &  \\
 \hline
-Contract Writing &  & X &  &  &  \\
+Contract Writing &  & X &  &  &  &  \\
 \hline
-Edge-Case Structuring &  & X &  &  &  \\
+Edge-Case Structuring &  & X &  &  &  &  \\
 \hline
-Traceability Check &  &  & X &  &  \\
+Traceability Check &  &  & X &  &  &  \\
 \hline
-Consistency Review &  &  & X &  &  \\
+Consistency Review &  &  & X &  &  &  \\
 \hline
-Acceptance Validation &  &  & X &  &  \\
+Acceptance Validation &  &  & X &  &  &  \\
 \hline
-Evaluation Rubric &  &  & X &  & X \\
+Ecosystem Mapping &  &  &  & X &  &  \\
 \hline
-Spec-to-Code Translation &  &  &  & X &  \\
+Package Selection &  &  &  & X &  &  \\
 \hline
-Test Scaffolding &  &  &  & X &  \\
+Evaluation Rubric &  &  & X &  &  & X \\
 \hline
-Build Verification &  &  &  & X &  \\
+Spec-to-Code Translation &  &  &  &  & X &  \\
+\hline
+Test Scaffolding &  &  &  &  & X &  \\
+\hline
+Build Verification &  &  &  &  & X &  \\
 \hline
 \end{tabular}
 \caption{Zuordnung der Skills zu den Agenten der Pipeline}
@@ -105,6 +115,8 @@ Build Verification &  &  &  & X &  \\
     \item[Reverse Engineering] Motiviert die systematische Erschließung fachlicher und technischer Eigenschaften des Bestandsmoduls.
     \item[Code Mapping] Dient der Überführung von Quellartefakten in abstrahierte Zielkonzepte und Migrationsbausteine.
     \item[Dependency Inspection] Macht migrationsrelevante Abhängigkeiten und Seiteneffekte sichtbar.
+    \item[Ecosystem Mapping] Überführt Analyseergebnisse in eine Ziel-Ökosystem-Sicht und ordnet passende Architektur- und Framework-Optionen zu.
+    \item[Package Selection] Unterstützt die Auswahl geeigneter Bibliotheken und Pakete auf Basis von Dokumentation, Konventionen und Best Practices.
     \item[Spec-Driven Design] Sichert die Ausrichtung auf ein explizites Spezifikationsartefakt als zentrales Zwischenprodukt.
     \item[Specification Drafting] Unterstützt die strukturierte Ausformulierung erster Spezifikationsversionen.
     \item[Contract Writing] Erzwingt klare Beschreibungen von Schnittstellen, Vorbedingungen, Nachbedingungen und Fehlerfällen.
@@ -124,7 +136,7 @@ Die Pipeline ist als iterativer Prozess mit Rückkopplungsschleifen zu verstehen
 
 \subsubsection{Feedback-Schleifen zwischen Spezifikation und Quell-Kontext}
 
-Feedback-Schleifen zwischen Spezifikation und Quell-Kontext ermöglichen eine schrittweise Schärfung der Anforderungen. Erkennt der Verifier Unstimmigkeiten, müssen Analyzer und Spec-Writer ihre Artefakte gezielt nacharbeiten, bevor eine Implementierung zulässig ist.
+Feedback-Schleifen zwischen Spezifikation und Quell-Kontext ermöglichen eine schrittweise Schärfung der Anforderungen. Erkennt der Verifier Unstimmigkeiten, müssen Analyzer und Spec-Writer ihre Artefakte gezielt nacharbeiten, bevor Architekturplanung und Implementierung zulässig sind.
 
 \subsubsection{Abgleich mit dem Code Knowledge Graph}
 
