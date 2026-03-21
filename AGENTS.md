@@ -44,6 +44,13 @@ Notes:
 - `.github/workflows/release-pdf.yml`: builds and releases `main.pdf` on `v*` tag pushes.
 - `.github/workflows/tag-and-release-main.yml`: creates an automatic tag and release for pushes to `main`.
 
+## Tag versioning
+
+- Tags use semantic versioning in the format `vMAJOR.MINOR.PATCH`.
+- Default for small changes is a bugfix tag (`PATCH` bump).
+- For larger changes use a `MINOR` bump by marking the commit message with `feat:`, `minor:`, or `[minor]`.
+- `MAJOR` bumps are not automated and should be created manually when needed.
+
 ## Content conventions
 
 - The active logo in `main.tex` is `abbildungen/FH_Dortmund-logo.png`.
