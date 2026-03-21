@@ -60,11 +60,11 @@ Die Rollendekomposition in Analyse, Spezifikation, Verifikation und Implementier
 
 \subsubsection{Der Code Knowledge Graph als deterministisches Kontext-Gedächtnis}
 
-Ein Code Knowledge Graph dient als strukturierte Repräsentation von Symbolen, Abhängigkeiten und Beziehungen innerhalb der Codebasis. Als deterministisches Kontext-Gedächtnis kann er Agenten gezielt mit belastbaren Informationen versorgen und damit die Abhängigkeit von unstrukturiertem Prompt-Kontext verringern.
+Ein Code Knowledge Graph dient als strukturierte Repräsentation von Symbolen, Abhängigkeiten und Beziehungen innerhalb der Codebasis. Als deterministisches Kontext-Gedächtnis kann er Agenten gezielt mit belastbaren Informationen versorgen und damit die Abhängigkeit von unstrukturiertem Prompt-Kontext verringern. Für den Proof of Concept wird diese Funktion konkret über Sourcebot gedacht, das als Code-Intelligence-Schicht sowie als MCP-anbindbares Werkzeug einen praktischen Zugriff auf Repository-Strukturen, Symbole, Referenzen und dateibasierte Codekontexte ermöglicht \parencite{sourcebotdocs}.
 
 \subsection{Model Context Protocol als Integrationsstandard}
 
-Das Model Context Protocol (MCP) bildet in der vorliegenden Arbeit den Integrationsstandard zwischen Agenten und externen Werkzeugen. Es ermöglicht, Analysefunktionen, Datenquellen und Hilfsdienste standardisiert bereitzustellen \parencite{mcpdocs}.
+Das Model Context Protocol (MCP) bildet in der vorliegenden Arbeit den Integrationsstandard zwischen Agenten und externen Werkzeugen. Es ermöglicht, Analysefunktionen, Datenquellen und Hilfsdienste standardisiert bereitzustellen \parencite{mcpdocs}. Im geplanten Werkzeugzuschnitt übernimmt Sourcebot dabei die Rolle der Code-Intelligence für Repository-Strukturen, Symbolauflösung und Referenzsuche, während Context7 als ergänzender MCP-Zugriff für bibliotheks- und dokumentationsbezogenen Referenzkontext vorgesehen ist \parencite{sourcebotdocs,context7docs}.
 
 \subsubsection{Architektur, Ressourcen, Prompts und Werkzeuge}
 
@@ -72,7 +72,7 @@ MCP unterscheidet funktional zwischen Resources, Prompts und Tools. Dadurch kön
 
 \subsubsection{Kontext-Management durch Entkopplung von Agenten und Werkzeugen}
 
-Die Entkopplung von Agenten und Tooling erleichtert ein effizientes Kontext-Management. Statt große Quelltextmengen dauerhaft im Kontextfenster eines Modells zu halten, können Informationen bedarfsorientiert abgefragt werden. Dies ist eine zentrale Voraussetzung für die Analyse umfangreicher Codebasen innerhalb begrenzter Token-Limits.
+Die Entkopplung von Agenten und Tooling erleichtert ein effizientes Kontext-Management. Statt große Quelltextmengen dauerhaft im Kontextfenster eines Modells zu halten, können Informationen bedarfsorientiert abgefragt werden. Dies ist eine zentrale Voraussetzung für die Analyse umfangreicher Codebasen innerhalb begrenzter Token-Limits. Im geplanten PoC übernimmt Sourcebot dabei die Rolle einer MCP-gebundenen Code-Intelligence und unterstützt so insbesondere den Analyzer beziehungsweise Modeler bei der kontextarmen, aber zielgerichteten Erschließung des Bestands.
 
 \subsection{Context Engineering und Wissenszugriff}
 
@@ -85,3 +85,9 @@ Die bedarfsorientierte Kontextbereitstellung reduziert unnötige Informationslas
 \subsubsection{Reduktion von Kontextlast durch gezielte Abrufstrategien}
 
 Gezielte Abrufstrategien dienen dazu, die verfügbare Kontextgröße effizient zu nutzen. Dadurch wird das Risiko reduziert, dass wesentliche Informationen im überladenen Kontext untergehen oder Modellantworten durch irrelevante Inhalte verwässert werden.
+
+\subsubsection{Spezifikationen als kuratierte Kontextpakete}
+
+Für die vorliegende Arbeit ist Context Engineering nicht nur eine Frage des Tool-Zugriffs, sondern auch der Form, in der Wissen zwischen Agenten weitergegeben wird. Technische Spezifikationen übernehmen dabei die Rolle kuratierter Kontextpakete: Sie verdichten Analyseergebnisse, Annahmen, Schnittstellen, Randfälle und Akzeptanzkriterien in einer Form, die für nachgelagerte Rollen gezielt nutzbar ist. Praxisnahe Leitfäden zu agentischen Spezifikationen betonen entsprechend, dass Spezifikationen klar strukturiert, rollenübergreifend anschlussfähig und auf konkrete Umsetzungsentscheidungen ausgerichtet sein sollten \parencite{agentskillsspecification}.
+
+Gerade im Zusammenspiel mit MCP wird dieser Gedanke relevant. Während MCP den standardisierten Zugriff auf Werkzeuge, Ressourcen und Prompts ermöglicht, liefert das Spezifikationsartefakt den inhaltlich vorstrukturierten Kontext für die eigentliche Arbeitsphase eines Agenten. Context Engineering bedeutet im PoC damit, nicht den gesamten Bestandscode in einen Prompt zu verlagern, sondern die jeweils benötigte Sicht gezielt aus Quellkontext, MCP-gestützten Abrufen und einem belastbaren Spec-Artefakt zusammenzusetzen. Praktisch kann dies etwa eine Kombination aus Sourcebot als Code-Intelligence für Repository-Wissen und Context7 für externe Framework- und Bibliotheksdokumentation umfassen.

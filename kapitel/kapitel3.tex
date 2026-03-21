@@ -26,16 +26,30 @@ Der Builder erzeugt aus der validierten Spezifikation den Zielcode. Die Erzeugun
 
 Für den Proof of Concept wird vorausgesetzt, dass die beteiligten Agenten nicht nur über Prompt-Kontext, sondern auch über standardisierte Tool- und Kontextzugriffe verfügen. Das Model Context Protocol (MCP) dient dabei als Integrationsschicht, über die externe Werkzeuge und strukturierte Informationsquellen einheitlich ansprechbar werden. Im PoC ist nicht die vollständige Breite möglicher Toolchains relevant, sondern ein kleines Set von MCP-gebundenen Fähigkeiten, das die Kernschritte Analyse, Spezifikation, Verifikation und Build gezielt unterstützt.
 
-Die geplante Zuordnung der wichtigsten MCP-Zugriffe und Skills lässt sich für den PoC wie folgt zusammenfassen:
+MCPs und Skills übernehmen im PoC komplementäre Funktionen. MCPs stellen den standardisierten Zugriff auf Werkzeuge, Ressourcen und Referenzquellen bereit. Skills definieren demgegenüber wiederverwendbare Arbeitsmuster, die festlegen, wie ein Agent mit diesem Zugriff umgeht, etwa beim Reverse Engineering, beim Schreiben von Contracts oder bei der Verifikation von Akzeptanzkriterien. Ein MCP ersetzt daher keinen Skill; vielmehr liefert der MCP den externen Kontextzugriff, während der Skill die rollenbezogene Verarbeitung dieses Kontexts strukturiert.
 
-\begin{itemize}
-    \item \textbf{Analyzer:} Zugriff auf Code-Intelligence, Dateisystem sowie Symbol- und Referenzsuche; relevante Skills sind insbesondere Reverse Engineering, Code Mapping und Dependency Inspection. Der Zweck dieser Kombination liegt in der Erschließung von Entry Points, Datenflüssen, Abhängigkeiten und Seiteneffekten.
-    \item \textbf{Spec-Writer:} Zugriff auf Markdown-Artefakte, strukturierte Kontextpakete und Quellenverweise; zentrale Skills sind Specification Drafting, Contract Writing und Edge-Case Structuring. Damit werden die Analyseergebnisse in ein explizites und prüfbares Spezifikationsartefakt überführt.
-    \item \textbf{Verifier:} Read-only-Zugriff auf Spezifikation, Quellkontext und strukturierte Referenzen; dafür sind vor allem Traceability Check, Consistency Review und Acceptance Validation relevant. Ziel ist der Abgleich zwischen rekonstruiertem Quellkontext und erzeugter Spezifikation sowie die Identifikation von Blockern.
-    \item \textbf{Builder:} Zugriff auf Build-, Test- und Dateisystemfunktionen sowie auf die freigegebenen Spezifikationsartefakte; einschlägige Skills sind Spec-to-Code Translation, Test Scaffolding und Build Verification. Auf dieser Grundlage erfolgt die Re-Implementierung des Zielcodes aus der validierten Spezifikation.
-\end{itemize}
+\begin{table}[H]
+\centering
+\caption{Geplante Zuordnung von MCPs und Skills zu den Agenten der Pipeline im PoC}
+\label{tab:agent-mcp-skill-matrix}
+\begin{tabular}{|p{2.6cm}|p{3.1cm}|p{8.2cm}|}
+\hline
+\textbf{Agent} & \textbf{Vorgesehene MCPs} & \textbf{Vorgesehene Skills} \\
+\hline
+Analyzer / Modeler & Sourcebot, MCP Context Strategy & Reverse Engineering; Code Mapping; Dependency Inspection \\
+\hline
+Spec-Writer / Author & Context7, MCP Context Strategy & Spec-Driven Design; Specification Drafting; Contract Writing; Edge-Case Structuring \\
+\hline
+Verifier & Sourcebot, MCP Context Strategy & Traceability Check; Consistency Review; Acceptance Validation; Evaluation Rubric \\
+\hline
+Builder & Context7, MCP Context Strategy & Spec-to-Code Translation; Test Scaffolding; Build Verification \\
+\hline
+Orchestrator & Context7, MCP Context Strategy & Evaluation Rubric \\
+\hline
+\end{tabular}
+\end{table}
 
-Als potenzielle Skills sind dabei keine autonomen Agenten im engeren Sinne gemeint, sondern wiederverwendbare Fähigkeitsbausteine, die in bestimmten Rollen aktiviert werden können. Die Kombination aus rollenbezogener Arbeitsteilung und explizit aktivierbaren Skills soll verhindern, dass jeder Agent mit einem unspezifischen Universal-Prompt arbeitet. Stattdessen werden Fähigkeiten gezielt an den jeweiligen Arbeitsschritt gebunden und über MCP-gekoppelte Werkzeuge mit deterministischem Kontext unterlegt.
+Die Matrix ist bewusst als vorläufige PoC-Konfiguration zu verstehen. Sie bündelt nicht sämtliche denkbaren Werkzeuge, sondern die für die Projektarbeit zentralen Kombinationen aus Kontextzugriff und rollenbezogener Arbeitslogik in einer reproduzierbaren Form.
 
 \subsection{Feedback und iterative Validierung}
 
