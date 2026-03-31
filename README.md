@@ -17,7 +17,7 @@ Das Ziel dieser Projektarbeit ist die Konzeption und prototypische Implementieru
 Das System soll aus bestehendem Quellcode präzise technische Spezifikationen in Markdown extrahieren und diese als verifizierte Grundlage für die Code-Generierung in der Zielsprache nutzen. Technisch wird hierfür das Model Context Protocol (MCP) eingesetzt, um den Agenten einen gezielten, bedarfsorientierten Zugriff auf Analyse-Tools und Code-Repräsentationen zu ermöglichen und so das Kontext-Management effizient zu gestalten.
 
 ### 4. Methodik
-Die methodische Umsetzung adaptiert das Horseshoe-Modell für die KI-gestützte Migration, wobei die textuelle SDD-Spezifikation die zentrale Abstraktionsebene bildet. Der Prozess wird durch einen orchestrierten Schwarm spezialisierter Agenten realisiert, die über MCP auf einen Code Knowledge Graph zugreifen. Ergänzend wird Context Engineering genutzt, um den Wissenszugriff für die einzelnen Rollen gezielt zu steuern und relevante Informationen nur bedarfsorientiert bereitzustellen.
+Die methodische Umsetzung adaptiert das Horseshoe-Modell für die KI-gestützte Migration, wobei die textuelle SDD-Spezifikation die zentrale Abstraktionsebene bildet. Der Prozess wird durch einen orchestrierten Schwarm spezialisierter Agenten realisiert, die über MCP auf eine strukturierte Repository-Kontextbasis und Code-Intelligence-Werkzeuge zugreifen. Ergänzend wird Context Engineering genutzt, um den Wissenszugriff für die einzelnen Rollen gezielt zu steuern und relevante Informationen nur bedarfsorientiert bereitzustellen.
 
 - Analyse-Rollen: Extraktion der Geschäftslogik und Struktur mittels statischer Analyse-Tools (z. B. Tree-sitter).
 - Spec-Writer-Rollen: Generierung detaillierter technischer Spezifikationen (SDD).
