@@ -46,7 +46,7 @@ Neben den MCPs wird für die vorliegende Arbeit keine eigenständige Skill-Schic
 
 \subsubsection{MCPs}
 
-Für die geplante Pipeline sind nur wenige, aber funktional klar abgegrenzte MCPs vorgesehen. Sourcebot dient als Code-Intelligence für Repository-Strukturen, Symbolauflösung und Referenzsuche. Context7 ergänzt dies um Dokumentations- und Bibliothekskontext für Zieltechnologien. Die folgende Matrix zeigt ausschließlich, welcher Agent in welcher Phase auf welchen MCP zugreifen soll. Dabei ist bewusst nicht jede Rolle an einen direkten MCP-Zugriff gebunden, weil einzelne Agenten nur auf übergebene Artefakte arbeiten.
+Für die geplante Pipeline sind nur wenige, aber funktional klar abgegrenzte MCPs vorgesehen. Sourcebot dient als Code-Intelligence für Repository-Strukturen, Symbolauflösung und Referenzsuche. Context7 ergänzt dies um Dokumentations- und Bibliothekskontext für Zieltechnologien. Die folgende Matrix zeigt ausschließlich, welcher Agent in welcher Phase auf welchen MCP zugreifen soll. Dabei ist bewusst nicht jede Rolle an einen direkten MCP-Zugriff gebunden, weil einzelne Agenten nur auf übergebene Artefakte arbeiten, während planungs- und umsetzungsnahe Rollen bei Bedarf gezielt externes Zielstack-Wissen nachladen.
 
 \begin{table}[H]
 \centering
@@ -64,7 +64,7 @@ Architect &  & X \\
 \hline
 Planner &  & X \\
 \hline
-Task Decomposer &  &  \\
+Task Decomposer &  & X \\
 \hline
 Builder &  & X \\
 \hline
@@ -76,7 +76,7 @@ Orchestrator &  & X \\
 
 \begin{description}
     \item[Sourcebot] Dient als Code-Intelligence für den Bestand und ermöglicht strukturierte Zugriffe auf Repository-Strukturen, Symbolauflösung und Referenzbeziehungen. Der MCP ist daher vor allem für Analyse, Spezifikation und Verifikation in Phase 1 relevant.
-    \item[Context7] Liefert externen Dokumentations- und Bibliothekskontext für Zieltechnologien. Der MCP unterstützt damit insbesondere Planung, Architektur, Orchestrierung und Implementierung, wenn Framework-, API- oder Paketwissen benötigt wird.
+    \item[Context7] Liefert externen Dokumentations- und Bibliothekskontext für Zieltechnologien. Der MCP unterstützt damit insbesondere Architektur, Planung, Aufgabenzerlegung, Orchestrierung und Implementierung, wenn Framework-, API- oder Paketwissen benötigt wird.
 \end{description}
 
 \subsection{Feedback und iterative Validierung}

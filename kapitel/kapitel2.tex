@@ -99,13 +99,9 @@ Neben diesen Prompt-Bausteinen hebt \textcite{boeckeler2026contextengineering} s
 
 Einen weiteren wichtigen Baustein bilden Subagents. In der Abbildung erscheinen sie als eigenständige, spezialisierte Agenteninstanzen mit eigener Kontextkonfiguration. Nach \textcite{boeckeler2026contextengineering} laufen solche Subagents in separaten Kontextfenstern, können parallelisiert werden und besitzen jeweils eine eigene Kombination aus Instruktionen, Modellen und verfügbaren Tools. Diese Idee ist für die vorliegende Agentenpipeline besonders anschlussfähig: Analyzer, Spec-Writer, Verifier, Architect, Planner, Task Decomposer und Builder lassen sich als spezialisierte Teilagenten mit getrennten Kontextfenstern verstehen, die jeweils nur die für ihre Aufgabe relevanten MCPs und Artefakte erhalten, während ihre internen Arbeitsmuster direkt über die Rollenbeschreibung festgelegt werden.
 
-\subsubsection{Bedarfsorientierte Kontextbereitstellung}
+\subsubsection{Bedarfsorientierte Kontextbereitstellung durch gezielte Abrufstrategien}
 
-Die bedarfsorientierte Kontextbereitstellung reduziert unnötige Informationslast und unterstützt die Spezialisierung einzelner Agenten. Statt vollständige Codebasen in Prompts zu überführen, werden nur relevante Ausschnitte, Strukturen und Analyseergebnisse zugänglich gemacht. Dies entspricht auch Böckelers Hinweis, dass Agenten bei überladenen Kontextfenstern dazu neigen, weniger präzise zu antworten und damit anfälliger für Fehlfokussierung zu werden \parencite{boeckeler2026contextengineering}.
-
-\subsubsection{Reduktion von Kontextlast durch gezielte Abrufstrategien}
-
-Gezielte Abrufstrategien dienen dazu, die verfügbare Kontextgröße effizient zu nutzen. Dadurch wird das Risiko reduziert, dass wesentliche Informationen im überladenen Kontext untergehen oder Modellantworten durch irrelevante Inhalte verwässert werden.
+Die bedarfsorientierte Kontextbereitstellung reduziert unnötige Informationslast und unterstützt die Spezialisierung einzelner Agenten. Statt vollständige Codebasen in Prompts zu überführen, werden nur relevante Ausschnitte, Strukturen und Analyseergebnisse zugänglich gemacht. Praktisch geschieht dies über gezielte Abrufstrategien: Benötigte Informationen werden situativ über Werkzeuge, Repository-Strukturen oder MCP-Zugriffe nachgeladen, anstatt sie pauschal vollständig im Kontextfenster vorzuhalten. Dadurch lässt sich die verfügbare Kontextgröße effizienter nutzen, und das Risiko sinkt, dass wesentliche Informationen im überladenen Kontext untergehen oder Modellantworten durch irrelevante Inhalte verwässert werden. Dies entspricht auch Böckelers Hinweis, dass Agenten bei überladenen Kontextfenstern dazu neigen, weniger präzise zu antworten und damit anfälliger für Fehlfokussierung zu werden \parencite{boeckeler2026contextengineering}.
 
 \subsubsection{Spezifikationen als kuratierte Kontextpakete}
 
