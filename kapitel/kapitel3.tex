@@ -44,37 +44,13 @@ Die Migrations-Pipeline stützt sich auf drei ergänzende Konfigurationsebenen: 
 
 \subsubsection{MCPs}
 
-Für die geplante Pipeline sind zwei funktional klar abgegrenzte MCPs vorgesehen. Sourcebot dient als Code-Intelligence für Repository-Strukturen, Symbolauflösung und Referenzsuche. Context7 ergänzt dies um Dokumentations- und Bibliothekskontext für Zieltechnologien. Die folgende Matrix zeigt, welcher Agent in welcher Phase auf welchen MCP zugreift. Nicht jede Rolle ist an einen direkten MCP-Zugriff gebunden, weil einzelne Agenten ausschließlich auf übergebene Artefakte arbeiten.
+Für die geplante Pipeline sind zwei MCPs vorgesehen, deren Zuständigkeiten bewusst phasengebunden sind: Sourcebot für die Rekonstruktionsphase, Context7 für Transformationsplanung und Neuimplementierung. Diese Trennung ist keine technische Einschränkung, sondern eine konzeptionelle Entscheidung: Jede Phase greift auf genau das externe Wissen zu, das sie für ihre Aufgabe braucht, ohne unnötig andere Kontextquellen zu öffnen.
 
-\begin{table}[H]
-\centering
-\begin{tabular}{|p{5.8cm}|c|c|}
-\hline
-\textbf{Agent} & \textbf{Sourcebot} & \textbf{Context7} \\
-\hline
-Analyzer & X &  \\
-\hline
-Spec-Writer & X &  \\
-\hline
-Architect &  & X \\
-\hline
-Planner &  & X \\
-\hline
-Task Decomposer &  & X \\
-\hline
-Builder &  & X \\
-\hline
-Orchestrator &  &  \\
-\hline
-\end{tabular}
-\caption{Zuordnung der MCPs zu den Agenten der Pipeline}
-\end{table}
+In \textbf{Phase~1 (Rekonstruktion)} ist Sourcebot der zentrale MCP. Analyzer und Spec-Writer arbeiten ausschließlich am Bestandssystem: Sie erschließen Repository-Strukturen, lösen Symbole auf, verfolgen Referenzen und sammeln Evidenz für die Spezifikation. Ihr Wissensgegenstand ist der vorhandene Quellcode, nicht der Zielstack. Context7 hätte hier keine sinnvolle Rolle, weil in Phase~1 noch keine Zielarchitektur existiert, die Bibliotheks- oder Framework-Dokumentation rechtfertigen würde.
 
-\begin{description}
-    \item[Sourcebot] Dient als Code-Intelligence für den Bestand und ermöglicht strukturierte Zugriffe auf Repository-Strukturen, Symbolauflösung und Referenzbeziehungen. Relevant für Analyse, Funktionszerlegung und Spezifikation in Phase~1.
-    \item[Context7] Liefert externen Dokumentations- und Bibliothekskontext für Zieltechnologien. Unterstützt Architektur, Planung, Aufgabenzerlegung und Implementierung in Phase~2 und~3.
-    \item[Orchestrator] Erhält keinen direkten MCP-Zugriff, da seine Aufgabe ausschließlich in der Koordination von Übergaben, Artefaktgates und Retry-Entscheidungen besteht.
-\end{description}
+In \textbf{Phase~2 (Transformationsplanung) und Phase~3 (Neuimplementierung)} dreht sich das Verhältnis um. Architect, Planner, Task Decomposer und Builder arbeiten nicht mehr am Quellcode, sondern an Spezifikationen, Architekturentscheidungen und der Zielimplementierung. Ihr Wissensgegenstand wechselt auf den Zielstack. Context7 liefert dafür aktuell dokumentierte Pakete, APIs und idiomatische Implementierungsmuster für Go. Sourcebot ist hier nicht mehr nötig, weil der Bestandscode durch die Spezifikation bereits vollständig abstrahiert wurde.
+
+Der Orchestrator erhält keinen direkten MCP-Zugriff, da seine Aufgabe ausschließlich in der Koordination von Übergaben, Artefaktgates und Retry-Entscheidungen besteht. Benötigter externer Kontext wird durch die jeweils zuständigen Fachagenten abgerufen.
 
 \subsubsection{Skills}
 
