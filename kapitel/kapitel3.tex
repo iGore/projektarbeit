@@ -34,9 +34,11 @@ Die zweite Phase wird durch Architect und Planner getragen. Der Architect leitet
 
 Die Neuimplementierungsphase wird durch Task Decomposer und Builder getragen. Der Task Decomposer zerlegt Spezifikation, Zielarchitektur und Migrationsplan in kleine, umsetzbare Arbeitspakete und hält sie in einer strukturierten TODO-Liste fest: \texttt{TASKS.md}. Diese Datei ist keine freie Aufgabenbeschreibung, sondern ein phasengeordnetes Checkbox-Inventar, in dem jede Aufgabe eine eindeutige ID, einen Dateipfad, eine Abhängigkeitsangabe und einen Verweis auf das zugehörige Akzeptanzszenario aus \texttt{SPEC.md} trägt. Aufgaben, die parallel ausgeführt werden können, sind explizit markiert. Der Builder arbeitet \texttt{TASKS.md} als Checkliste ab und hakt jede Aufgabe erst ab, wenn der zugehörige Code und ein Verifikationsnachweis in \texttt{BUILD.md} vorliegen. Dieses Prinzip, vor der eigentlichen Implementierung einen vollständigen Plan als abarbeitbare TODO-Liste zu erzeugen, stellt sicher, dass kein Funktionalitätselement versehentlich übersprungen wird und der Fortschritt jederzeit nachvollziehbar bleibt. Der Builder erzeugt aus diesen Arbeitspaketen den Zielcode und setzt die geplante Struktur in eine lauffähige Implementierung um. Zusammen bilden beide Rollen die operative Umsetzung der rechten Horseshoe-Seite.
 
-\subsubsection{Phasenübergreifend: Orchestrator}
+\subsubsection{Phasenübergreifend: Orchestrator und Verifier}
 
-Ergänzend kann ein Orchestrator eingesetzt werden, der Übergaben zwischen den Phasen koordiniert, Artefakte versioniert und Freigaberegeln überwacht. Er ist keinem einzelnen Horseshoe-Abschnitt zugeordnet, sondern stabilisiert die Gesamtpipeline organisatorisch. Seine zentrale Zusatzaufgabe in der Rekonstruktionsphase besteht darin, das Analyseinventar des Analyzers in einzelne Arbeitspunkte zu zerlegen und daraus gezielt parallele Spec-Writer-Läufe pro Funktionalität oder Use Case zu starten.
+Der Orchestrator koordiniert Übergaben zwischen den Phasen, versioniert Artefakte und überwacht Freigaberegeln. Er ist keinem einzelnen Horseshoe-Abschnitt zugeordnet, sondern stabilisiert die Gesamtpipeline organisatorisch. Seine zentrale Zusatzaufgabe in der Rekonstruktionsphase besteht darin, das Analyseinventar des Analyzers in einzelne Arbeitspunkte zu zerlegen und daraus gezielt parallele Spec-Writer-Läufe pro Funktionalität oder Use Case zu starten.
+
+Der \emph{Verifier} ergänzt den Orchestrator als unabhängige Prüfinstanz an jedem Phasengate. Während der Orchestrator koordiniert, hat der Verifier einen einzigen Auftrag: prüfen, ob alle geforderten Artefakte auf Disk existieren und vollständig sind, und ein strukturiertes Pass/Fail-Ergebnis zurückgeben. Die Trennung ist bewusst: Ein Orchestrator, der seine eigene Arbeit verifiziert, läuft Gefahr, das Ergebnis unbewusst zu bestätigen. Ein unabhängiger Verifier mit frischem Kontext und dem expliziten Auftrag, Probleme zu finden, ist robuster. Der Verifier hat keinen MCP-Zugriff, liest ausschließlich Artefakte und modifiziert nichts — er berichtet nur. Auf Basis des Verifier-Ergebnisses entscheidet der Orchestrator, ob er zur nächsten Phase übergeht oder Arbeit zurück an die verantwortliche Rolle leitet.
 
 \subsection{MCPs, Agentenprofile und Skills}
 
@@ -50,13 +52,13 @@ In \textbf{Phase~1 (Rekonstruktion)} ist Sourcebot der zentrale MCP. Analyzer un
 
 In \textbf{Phase~2 (Transformationsplanung) und Phase~3 (Neuimplementierung)} dreht sich das Verhältnis um. Architect, Planner, Task Decomposer und Builder arbeiten nicht mehr am Quellcode, sondern an Spezifikationen, Architekturentscheidungen und der Zielimplementierung. Ihr Wissensgegenstand wechselt auf den Zielstack. Context7 liefert dafür aktuell dokumentierte Pakete, APIs und idiomatische Implementierungsmuster für Go. Sourcebot ist hier nicht mehr nötig, weil der Bestandscode durch die Spezifikation bereits vollständig abstrahiert wurde.
 
-Der Orchestrator erhält keinen direkten MCP-Zugriff, da seine Aufgabe ausschließlich in der Koordination von Übergaben, Artefaktgates und Retry-Entscheidungen besteht. Benötigter externer Kontext wird durch die jeweils zuständigen Fachagenten abgerufen.
+Der Orchestrator und der Verifier erhalten keinen direkten MCP-Zugriff. Der Orchestrator koordiniert ausschließlich Übergaben, Gates und Retry-Entscheidungen; benötigter externer Kontext wird durch die Fachagenten abgerufen. Der Verifier liest nur Artefakte auf Disk — er koordiniert und generiert nichts.
 
 \subsubsection{Skills}
 
 Skills ergänzen die MCPs und Agentenprofile als dritte Konfigurationsebene. Ein Agentenprofil beschreibt, \emph{was} eine Rolle tut; ein Skill beschreibt, \emph{wie gut} ein Ergebnis sein muss oder \emph{wie} ein Werkzeug genutzt werden soll. Diese Trennung hält die Agentenprofile schlank und konzentriert das spezifische Detailwissen in wiederverwendbaren Leitfäden \parencite{agentskillsspecification}.
 
-Für die Pipeline sind vier Skills vorgesehen, die in der folgenden Tabelle den jeweiligen Agenten zugeordnet sind.
+Für die Pipeline sind sieben Skills vorgesehen, die in der folgenden Tabelle den jeweiligen Agenten zugeordnet sind.
 
 \begin{table}[H]
 \centering
@@ -76,7 +78,7 @@ Go-Architect-Skill & Architect & Best Practices: Paketlayout, Interface-Design, 
 \hline
 Go-Craftsman-Skill & Builder & Implementierungsqualität: Idiomatisches Go, Namenskonventionen, Abschluss-Checkliste pro Task \\
 \hline
-Orchestrator-Completion-Skill & Orchestrator & Abschluss-Checkliste: Artefaktbasierte Exit-Kriterien für jeden Phasenübergang \\
+Orchestrator-Completion-Skill & Orchestrator, Verifier & Completion-Promise/Oracle-Protokoll: Exit-Kriterien und Pass/Fail-Checklisten für alle Phasengates \\
 \hline
 \end{tabular}
 \caption{Zuordnung der Skills zu den Agenten der Pipeline}
