@@ -10,117 +10,76 @@ Als Demonstrationsszenario dient die Migration eines Node.js-basierten Lizenz-Ch
 
 Im Fallbeispiel wird der vollständige Ablauf des für die Projektarbeit gewählten Minimal-Setups exemplarisch nachvollzogen. Der Orchestrator steuert die Übergaben zwischen Analyzer, mehreren funktionsbezogenen Spec-Writer-Läufen, Architect und Builder, sodass Analyse, Spezifikation, Planung und Code-Synthese in einem bewusst schlanken Rollenmodell durchgeführt werden.
 
-In Phase~1 erschließt der Analyzer die Quellbasis: Er identifiziert Einstiegspunkte, Abhängigkeiten, Datenstrukturen und das Verarbeitungsmodell des Lizenz-Checkers und erzeugt daraus \texttt{ANALYSIS.md}, \texttt{OVERVIEW.md} und \texttt{FUNCTIONALITY-INDEX.md}. Die Funktionalitätsliste umfasst unter anderem das Einlesen und Parsen von \texttt{package.json}-Dateien, das rekursive Traversieren von Abhängigkeitsbäumen, die Klassifikation von Lizenzen nach Zulässigkeit sowie die Ausgabe als JSON- oder CSV-Bericht. Der Orchestrator löst für jede dieser Funktionalitäten einen eigenen Spec-Writer-Lauf aus, der eine dedizierte \texttt{SPEC.md} in einem separaten Unterordner erzeugt.
+In Phase~1 erschließt der Analyzer die Quellbasis und erzeugt \texttt{ANALYSIS.md}, \texttt{OVERVIEW.md} und \texttt{FUNCTIONALITY-INDEX.md}. Die ausgeführte Pipeline identifizierte acht Funktionalitätselemente: F-001 (CLI-Optionsmodell und Normalisierung), F-002 (Abhängigkeitsgraph-Laden und Traversierungssteuerung), F-003 (Abflachen des Graphen zu einem Modulinventar), F-004 (Lizenzerkennungs- und Normalisierungspipeline), F-005 (Filterung, Paketeinschränkung und Policy-Exits), F-006 (Ausgabe-Rendering und Persistenz), F-007 (Custom-Format und JSON-Konfigurationsladung) sowie F-008 (Stack-Hilfsklassen-Lifecycle). Alle acht wurden vom Analyzer als \emph{ready} klassifiziert. Der Orchestrator löste daraufhin acht parallele Spec-Writer-Läufe aus, einer pro Funktionalitätselement, und sammelte die Ergebnisse in \texttt{SPEC-INDEX.md}.
 
 In Phase~2 leitet der Architect aus der konsolidierten Spezifikationsbasis eine Go-Zielarchitektur ab: Paketstruktur, Fehlerbehandlungskonventionen, geeignete Standardbibliotheksfunktionen und externe Go-Bibliotheken werden mit Context7-Unterstützung festgelegt. Der Planner überführt diese Entscheidungen anschließend in einen geordneten Migrationsplan. In Phase~3 zerlegt der Task Decomposer den Plan in umsetzbare Arbeitseinheiten und der Builder erzeugt Go-Zielcode, der in \texttt{BUILD.md} mit Verifikationsnachweis dokumentiert wird.
 
-\subsection{Beispiel: Quellcode, Spezifikation und Zielcode im Vergleich}
+\subsection{Beispiel: Spezifikation und Zielcode im Vergleich}
 
-Um den spec-getriebenen Ansatz konkret zu illustrieren, zeigen die folgenden Listings einen repräsentativen Ausschnitt des Migrationspfads für die Kernfunktionalität \emph{Lizenz-Scan}. Listing~\ref{lst:source} zeigt den vereinfachten Node.js-Quellcode, Listing~\ref{lst:spec} einen Auszug aus der zugehörigen \texttt{SPEC.md} und Listing~\ref{lst:target} den daraus generierten Go-Zielcode.
+Die folgenden Listings zeigen den tatsächlichen Output der Pipeline für die Funktionalität \textbf{F-004 — License detection and normalization pipeline}. Listing~\ref{lst:spec} gibt einen Auszug aus der vom Spec-Writer erzeugten \texttt{SPEC.md}, Listing~\ref{lst:target} den daraus vom Builder generierten Go-Zielcode.
 
-\begin{lstlisting}[style=codestyle, language=JavaScript, caption={Vereinfachter Node.js-Quellcode: Lizenz-Scan (repräsentativ)}, label=lst:source]
-// scanner.js
-const fs = require('fs');
-const path = require('path');
-
-function scanLicenses(projectPath) {
-  const pkgPath = path.join(projectPath, 'package.json');
-  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
-  const results = {};
-
-  for (const [name, version] of
-       Object.entries(pkg.dependencies || {})) {
-    const depPkg = require(
-      path.join(projectPath, 'node_modules', name, 'package.json')
-    );
-    results[name] = {
-      version: version,
-      license: depPkg.license || 'UNKNOWN',
-    };
-  }
-  return results;
-}
-
-module.exports = { scanLicenses };
-\end{lstlisting}
-
-\begin{lstlisting}[style=codestyle, caption={Auszug aus SPEC.md fuer F-001: Lizenz-Scan}, label=lst:spec]
-# Feature Specification: License Scan (F-001)
-
+\begin{lstlisting}[style=codestyle, caption={Auszug aus der erzeugten SPEC.md fuer F-004 (License detection and normalization pipeline)}, label=lst:spec]
 ## Requirements
 
-- FR-001: Module MUST read package.json at the given projectPath
-- FR-002: Module MUST traverse all entries in dependencies{}
-- FR-003: For each dependency, module MUST read its package.json
-           and extract the license field
-- FR-004: If license field is absent, result MUST use "UNKNOWN"
-- FR-005: Module MUST return a map of
-           packageName -> {version, license}
+- FR-001: System MUST resolve license from metadata fields
+          (`license`, `licenses`) before fallback mechanisms.
+- FR-002: System MUST apply fallback precedence:
+          metadata -> README-derived -> license-file-derived.
+- FR-004: System MUST mark heuristically inferred values
+          with trailing `*` to distinguish inferred vs direct.
+- FR-005: System MUST normalize URL/file-style references
+          to `Custom: <value>`.
+- FR-006: File fallback MUST follow deterministic order:
+          LICENSE*, LICENCE*, COPYING, README.
 
-## Input / Output
+## Acceptance Scenario (P1)
 
-- Input:  projectPath (string) -- absolute path to Node.js project
-- Output: map[string]PackageInfo{Version string; License string}
-- Precondition: package.json exists at projectPath
+Given a module with a valid SPDX `license` string,
+When the pipeline resolves license data,
+Then that SPDX value is returned without file-based fallback.
 
-## Acceptance Scenario
+## Open Decisions
 
-Given a project with two dependencies (MIT, Apache-2.0),
-When scanLicenses is called with the project path,
-Then the result contains both packages with correct license values.
+- OD-001: When `license` and `licenses` conflict, confirm
+  exact legacy tie-break order from source code/tests.
+- OD-002: Confirm exact fallback value when no license
+  signal is found across metadata, README, and files.
 \end{lstlisting}
 
-\begin{lstlisting}[style=codestyle, language=Go, caption={Generierter Go-Zielcode: Lizenz-Scan (repräsentativ)}, label=lst:target]
-// scanner/scan.go
-package scanner
+\begin{lstlisting}[style=codestyle, language=Go, caption={Vom Builder erzeugter Go-Zielcode: license/detect.go}, label=lst:target]
+package license
 
-import (
-  "encoding/json"
-  "os"
-  "path/filepath"
-)
+import "theseus/target/internal/core"
 
-type PackageInfo struct {
-  Version string `json:"version"`
-  License string `json:"license"`
-}
+type Detector struct{}
 
-type PackageJSON struct {
-  License      string            `json:"license"`
-  Dependencies map[string]string `json:"dependencies"`
-}
+func (Detector) Resolve(
+    input core.ModuleLicenseInput,
+) (core.NormalizedLicenseValue, string) {
 
-func ScanLicenses(projectPath string) (map[string]PackageInfo, error) {
-  data, err := os.ReadFile(filepath.Join(projectPath, "package.json"))
-  if err != nil {
-    return nil, err
-  }
-  var pkg PackageJSON
-  if err := json.Unmarshal(data, &pkg); err != nil {
-    return nil, err
-  }
-
-  results := make(map[string]PackageInfo)
-  for name, version := range pkg.Dependencies {
-    depPath := filepath.Join(
-      projectPath, "node_modules", name, "package.json",
-    )
-    depData, err := os.ReadFile(depPath)
-    license := "UNKNOWN"
-    if err == nil {
-      var depPkg PackageJSON
-      if json.Unmarshal(depData, &depPkg) == nil &&
-         depPkg.License != "" {
-        license = depPkg.License
-      }
+    // FR-001/FR-002: metadata first
+    if v := resolveFromMetadata(input); v != "" {
+        return core.NormalizedLicenseValue(v), ""
     }
-    results[name] = PackageInfo{Version: version, License: license}
-  }
-  return results, nil
+    // FR-002: README fallback
+    if v, _ := normalize(input.ReadmeText); v != "" {
+        return core.NormalizedLicenseValue(v), "README"
+    }
+    // FR-002/FR-006: deterministic file fallback
+    for _, candidate := range orderedCandidates(
+        input.CandidateFiles,
+    ) {
+        if v, _ := normalize(candidate.Content); v != "" {
+            return core.NormalizedLicenseValue(v),
+                   candidate.Name
+        }
+    }
+    // OD-002: sentinel until legacy parity confirmed
+    return core.NormalizedLicenseValue("UNKNOWN"), ""
 }
 \end{lstlisting}
 
-Die Listings verdeutlichen, wie die Spezifikation als Brücke zwischen Quell- und Zielcode fungiert: Die Anforderungen FR-001 bis FR-005 in \texttt{SPEC.md} sind direkt auf konkrete Implementierungsschritte in Go abbildbar, ohne dass der Builder Annahmen über die Quellimplementierung treffen muss. Offene Punkte wie Fehlerbehandlung bei fehlenden Abhängigkeiten sind in der Spezifikation explizit als Akzeptanzszenarien festgehalten und müssen vom Spec-Quality-Skill als erfüllt markiert sein, bevor der Architect die Architekturphase beginnt.
+Die Listings zeigen den tatsächlichen Output der ausgeführten Pipeline. Die Anforderungen FR-001 bis FR-006 aus \texttt{SPEC.md} sind direkt auf Implementierungsschritte im Go-Zielcode abbildbar: Die Fallback-Reihenfolge (Metadata $\to$ README $\to$ Dateien) entspricht den in der Spezifikation nummerierten Teilschritten, und die beiden offenen Entscheidungen OD-001 und OD-002 sind als Kommentare im generierten Code explizit markiert. Das zeigt, wie der spec-getriebene Ansatz Unsicherheiten aus der Analyse nicht wegabstrahiert, sondern als \emph{NEEDS CLARIFICATION}-Marker durch die gesamte Pipeline trägt, bis sie manuell oder durch weitere Analyse aufgelöst werden können.
 
 \subsection{Funktionale Validierung und Feature Parity}
 
@@ -128,18 +87,28 @@ Die funktionale Validierung erfolgt durch einen manuellen Vergleich von Eingaben
 
 \begin{table}[H]
 \centering
-\begin{tabular}{|p{3.2cm}|p{4.0cm}|p{3.5cm}|p{2.5cm}|}
+\begin{tabular}{|p{0.5cm}|p{4.2cm}|p{4.0cm}|p{2.5cm}|}
 \hline
-\textbf{Funktionalität} & \textbf{Eingabe} & \textbf{Erwartete Ausgabe} & \textbf{Ergebnis} \\
+\textbf{F} & \textbf{Funktionalität} & \textbf{Kernverhalten (Spec-Grundlage)} & \textbf{Ergebnis} \\
 \hline
-Lizenz-Scan & Projektpfad mit \texttt{package.json} & Map: Paketname $\to$ \{Version, Lizenz\} & zu prüfen \\
+001 & CLI-Optionsmodell & Flags parsen, normalisieren, \texttt{-{}-help}/\texttt{-{}-version} behandeln & zu prüfen \\
 \hline
-Lizenz-Klassifikation & Lizenz-String (z.\,B. \texttt{MIT}) & Zulässigkeitsstatus (\texttt{allowed}/\texttt{forbidden}/\texttt{unknown}) & zu prüfen \\
+002 & Abhängigkeitsgraph laden & \texttt{npm ls}-Output traversieren, Dev-/Depth-Filter anwenden & zu prüfen \\
 \hline
-Berichtsausgabe & Scan-Ergebnis, Format-Flag & JSON- oder CSV-Datei & zu prüfen \\
+003 & Graph abflachen & Rekursives Inventar, Deduplizierung, Zirkel-Guard & zu prüfen \\
+\hline
+004 & Lizenzerkennung & Precedence Metadata $\to$ README $\to$ Datei; \texttt{*}-Marker; \texttt{Custom:} & zu prüfen \\
+\hline
+005 & Filter und Policy & SPDX-Ausschlüsse, \texttt{failOn}/\texttt{onlyAllow}-Exits, Private-Filter & zu prüfen \\
+\hline
+006 & Ausgabe-Rendering & JSON, CSV, Markdown, Tree, Summary; Dateiexport & zu prüfen \\
+\hline
+007 & Custom-Format & \texttt{customPath} laden, JSON-Konfiguration, Feld-Defaults & zu prüfen \\
+\hline
+008 & Stack-Utility & Lifecycle-Operationen der Hilfsklasse & zu prüfen \\
 \hline
 \end{tabular}
-\caption{Strukturierter I/O-Vergleich für die Kernfunktionalitäten des Lizenz-Checkers}
+\caption{I/O-Vergleichsstruktur für alle acht identifizierten Funktionalitäten des Lizenz-Checkers}
 \label{tab:io-vergleich}
 \end{table}
 
