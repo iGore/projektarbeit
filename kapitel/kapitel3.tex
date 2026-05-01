@@ -8,27 +8,27 @@ Die Pipeline wird entlang von drei klar getrennten Schritten strukturiert: Rekon
 
 \subsubsection{Phase 1: Rekonstruktion und Abstraktion des Bestandssystems}
 
-Die erste Phase entspricht dem Reverse Engineering auf der linken Seite des Horseshoe-Modells. Ziel ist es, die bestehende Codebasis strukturiert zu erschließen, fachlich wie technisch greifbar zu machen und in ein migrationsfähiges Rekonstruktionsartefakt zu überführen. Dazu gehören Symbol- und Abhängigkeitsbeziehungen, Build- und Projektmetadaten, zentrale Datenflüsse sowie die Auswertung begleitender Artefakte wie \texttt{README.md}. Die resultierende Spezifikation ist damit nicht von der Rekonstruktion getrennt, sondern deren verdichtetes Abstraktionsergebnis.
+Die erste Phase entspricht dem Reverse Engineering auf der linken Seite des Horseshoe-Modells. Ziel ist es, die bestehende Codebasis strukturiert zu erschließen, fachlich wie technisch greifbar zu machen und in ein migrationsfähiges Rekonstruktionsartefakt zu überführen. Dazu gehören Symbol- und Abhängigkeitsbeziehungen, Build- und Projektmetadaten, zentrale Datenflüsse sowie die Auswertung begleitender Artefakte wie \texttt{README.md}. Neu gegenüber einer groben Einmalanalyse ist dabei die explizite Zerlegung in einzelne Funktionalitäten, Use Cases und Arbeitspunkte, damit nachgelagerte Agenten nicht auf einem monolithischen Gesamtartefakt, sondern auf einem gegliederten Analyseinventar arbeiten können.
 
 \subsubsection{Phase 2: Transformationsplanung für den Zielstack}
 
-Die zweite Phase nutzt die validierte Spezifikation als Eingabe für die eigentliche Migrationsplanung. Auf dieser Grundlage werden Zielarchitektur, Modulzuschnitte, Paketentscheidungen und Umsetzungsreihenfolge des Zielsystems entworfen. Diese Phase arbeitet damit nicht mehr primär am Bestandscode, sondern an der planvollen Überführung des Rekonstruktionsartefakts in ein umsetzbares Zielbild des neuen Stacks.
+Die zweite Phase nutzt die erzeugte Spezifikationsbasis als Eingabe für die eigentliche Migrationsplanung. Auf dieser Grundlage werden Zielarchitektur, Modulzuschnitte, Paketentscheidungen und Umsetzungsreihenfolge des Zielsystems entworfen. Diese Phase arbeitet damit nicht mehr primär am Bestandscode, sondern an der planvollen Überführung des Rekonstruktionsartefakts in ein umsetzbares Zielbild des neuen Stacks.
 
 \subsubsection{Phase 3: Neuimplementierung im Zielstack}
 
-Die dritte Phase entspricht der rechten Seite des Horseshoe-Modells. Ausgehend von der geplanten Zielarchitektur und der validierten Spezifikation wird der Zielcode erzeugt und technisch abgesichert. Die Neuimplementierung basiert damit nicht direkt auf dem Ausgangscode, sondern auf einer zuvor geprüften und geplanten Abstraktionsebene.
+Die dritte Phase entspricht der rechten Seite des Horseshoe-Modells. Ausgehend von der geplanten Zielarchitektur und den erzeugten Spezifikationen wird der Zielcode erzeugt und technisch abgesichert. Die Neuimplementierung basiert damit nicht direkt auf dem Ausgangscode, sondern auf einer zuvor analysierten und geplanten Abstraktionsebene.
 
 \subsection{Agenten je Phase}
 
 Die drei Phasen werden jeweils durch spezialisierte Agenten bearbeitet. Dadurch bleibt die Pipeline anschlussfähig an das Horseshoe-Modell, ohne auf feiner granulierte Rollenlogik zu verzichten. Einzelne Agenten verantworten also nicht die gesamte Migration, sondern jeweils einen klar abgegrenzten Beitrag innerhalb einer Phase.
 
-\subsubsection{Phase 1: Analyzer, Spec-Writer und Verifier}
+\subsubsection{Phase 1: Analyzer und Spec-Writer}
 
-Die erste Phase wird durch drei eng gekoppelte Agenten getragen. Der Analyzer erschließt die bestehende Codebasis mithilfe statischer Analyse und strukturierter Code-Intelligence. Der Spec-Writer verdichtet diese Erkenntnisse in eine textuelle Spezifikation als Rekonstruktionsartefakt. Der Verifier prüft anschließend, ob diese Spezifikation auf rekonstruierbaren Quellkontext zurückgeführt werden kann und damit als belastbare Grundlage für die Folgephasen taugt \parencite{midolo2026promptguidelines,feng2024abstain,liu2024hallucode}.
+Die erste Phase wird durch zwei eng gekoppelte Agententypen getragen. Der Analyzer erschließt die bestehende Codebasis mithilfe statischer Analyse und strukturierter Code-Intelligence. Dabei erzeugt er nicht nur ein Gesamtbild des Moduls, sondern ein Analyseinventar aus einzelnen Funktionalitäten, Evidenzstellen, Ein- und Ausgängen, Randfällen und offenen Fragen. Auf dieser Grundlage kann der Orchestrator mehrere Spec-Writer-Aufrufe parallel auslösen, wobei jeder Spec-Writer genau eine identifizierte Funktionalität oder einen Use Case in eine textuelle Spezifikation überführt. Die Rekonstruktionsphase liefert damit bewusst keine monolithische Spezifikation, sondern eine Menge kleiner, nachverfolgbarer Spezifikationsartefakte als Grundlage für die Folgephasen \parencite{midolo2026promptguidelines,feng2024abstain,liu2024hallucode}.
 
 \subsubsection{Phase 2: Architect und Planner}
 
-Die zweite Phase wird durch Architect und Planner getragen. Der Architect leitet aus der validierten Spezifikation die Zielarchitektur sowie geeignete Frameworks, Bibliotheken und Architekturmuster des Zielstacks ab. Der Planner übersetzt Zielarchitektur und Spezifikation anschließend in einen umsetzbaren Migrationsplan mit Arbeitspaketen, Transformationsschritten und einer sinnvollen Reihenfolge der Umsetzung. Beide Rollen arbeiten dabei primär auf Basis der Spezifikation und der Architekturentscheidungen, nicht mehr direkt auf dem Bestandscode.
+Die zweite Phase wird durch Architect und Planner getragen. Der Architect leitet aus der konsolidierten Spezifikationsbasis die Zielarchitektur sowie geeignete Frameworks, Bibliotheken und Architekturmuster des Zielstacks ab. Der Planner übersetzt Zielarchitektur und Spezifikation anschließend in einen umsetzbaren Migrationsplan mit Arbeitspaketen, Transformationsschritten und einer sinnvollen Reihenfolge der Umsetzung. Beide Rollen arbeiten dabei primär auf Basis der Spezifikation und der Architekturentscheidungen, nicht mehr direkt auf dem Bestandscode.
 
 \subsubsection{Phase 3: Task Decomposer und Builder}
 
@@ -36,13 +36,13 @@ Die Neuimplementierungsphase wird durch Task Decomposer und Builder getragen. De
 
 \subsubsection{Phasenübergreifend: Orchestrator}
 
-Ergänzend kann ein Orchestrator eingesetzt werden, der Übergaben zwischen den Phasen koordiniert, Artefakte versioniert und Freigaberegeln überwacht. Er ist keinem einzelnen Horseshoe-Abschnitt zugeordnet, sondern stabilisiert die Gesamtpipeline organisatorisch.
+Ergänzend kann ein Orchestrator eingesetzt werden, der Übergaben zwischen den Phasen koordiniert, Artefakte versioniert und Freigaberegeln überwacht. Er ist keinem einzelnen Horseshoe-Abschnitt zugeordnet, sondern stabilisiert die Gesamtpipeline organisatorisch. Seine zentrale Zusatzaufgabe in der Rekonstruktionsphase besteht darin, das Analyseinventar des Analyzers in einzelne Arbeitspunkte zu zerlegen und daraus gezielt parallele Spec-Writer-Läufe pro Funktionalität oder Use Case zu starten.
 
 \subsection{MCPs und Agentenprofile}
 
 Für den hier beschriebenen Workflow wird vorausgesetzt, dass die beteiligten Agenten nicht nur über Prompt-Kontext, sondern auch über standardisierte Tool- und Kontextzugriffe verfügen. Das Model Context Protocol (MCP) dient dabei als Integrationsschicht, über die externe Werkzeuge und strukturierte Informationsquellen einheitlich ansprechbar werden. Relevant ist dabei nicht die vollständige Breite möglicher Toolchains, sondern ein kleines Set von MCP-gebundenen Fähigkeiten, das die drei Phasen Rekonstruktion, Transformationsplanung und Neuimplementierung gezielt unterstützt. Ergänzend dazu fungiert \texttt{AGENTS.md} als persistente Instruktionsschicht, die für alle Rollen denselben Rahmen aus Arbeitsregeln, Build-Kommandos und projektbezogenen Konventionen bereitstellt. Mit \textcite{agentsmd} liegt dafür zudem ein offenes, agentübergreifend lesbares Format vor.
 
-Neben den MCPs wird für die vorliegende Arbeit keine eigenständige Skill-Schicht modelliert. Wiederverwendbare Arbeitsmuster wie Rekonstruktion, Spezifikationsverdichtung, Verifikation oder Build-Prüfung werden direkt in den Beschreibungen der jeweiligen Agenten verankert. Dadurch bleibt die Pipeline konzeptionell auf die drei zentralen Ebenen Phasen, Agenten und MCP-Zugriffe konzentriert.
+Neben den MCPs wird für die vorliegende Arbeit keine eigenständige Skill-Schicht modelliert. Wiederverwendbare Arbeitsmuster wie Rekonstruktion, Funktionszerlegung, Spezifikationsverdichtung oder Build-Prüfung werden direkt in den Beschreibungen der jeweiligen Agenten verankert. Dadurch bleibt die Pipeline konzeptionell auf die drei zentralen Ebenen Phasen, Agenten und MCP-Zugriffe konzentriert.
 
 \subsubsection{MCPs}
 
@@ -58,8 +58,6 @@ Analyzer & X &  \\
 \hline
 Spec-Writer & X &  \\
 \hline
-Verifier & X &  \\
-\hline
 Architect &  & X \\
 \hline
 Planner &  & X \\
@@ -68,29 +66,24 @@ Task Decomposer &  & X \\
 \hline
 Builder &  & X \\
 \hline
-Orchestrator &  & X \\
+Orchestrator &  &  \\
 \hline
 \end{tabular}
 \caption{Zuordnung der MCPs zu den Agenten der Pipeline}
 \end{table}
 
 \begin{description}
-    \item[Sourcebot] Dient als Code-Intelligence für den Bestand und ermöglicht strukturierte Zugriffe auf Repository-Strukturen, Symbolauflösung und Referenzbeziehungen. Der MCP ist daher vor allem für Analyse, Spezifikation und Verifikation in Phase 1 relevant.
-    \item[Context7] Liefert externen Dokumentations- und Bibliothekskontext für Zieltechnologien. Der MCP unterstützt damit insbesondere Architektur, Planung, Aufgabenzerlegung, Orchestrierung und Implementierung, wenn Framework-, API- oder Paketwissen benötigt wird.
+    \item[Sourcebot] Dient als Code-Intelligence für den Bestand und ermöglicht strukturierte Zugriffe auf Repository-Strukturen, Symbolauflösung und Referenzbeziehungen. Der MCP ist daher vor allem für Analyse, Funktionszerlegung und Spezifikation in Phase 1 relevant.
+    \item[Context7] Liefert externen Dokumentations- und Bibliothekskontext für Zieltechnologien. Der MCP unterstützt damit insbesondere Architektur, Planung, Aufgabenzerlegung und Implementierung, wenn Framework-, API- oder Paketwissen benötigt wird.
+    \item[Orchestrator] Erhält keinen direkten MCP-Zugriff, da seine Aufgabe ausschließlich in der Koordination von Übergaben, Artefaktgates und Retry-Entscheidungen besteht. Benötigter externer Kontext wird durch die jeweils zuständigen Fachagenten abgerufen, nicht durch den Orchestrator selbst.
 \end{description}
 
 \subsection{Feedback und iterative Validierung}
 
-Die Pipeline ist als iterativer Prozess mit Rückkopplungsschleifen zu verstehen. Analyseergebnisse, Spezifikationen und Verifikationsergebnisse beeinflussen sich wechselseitig, sodass unklare oder fehlerhafte Ableitungen frühzeitig korrigiert werden können. Iterative Verfeinerungsschritte entsprechen damit sowohl agentischen Workflow-Mustern als auch empirisch beobachteten Verbesserungsstrategien bei LLM-gestützter Codeerzeugung \parencite{yang2024sweagent,midolo2026promptguidelines}.
+Die Pipeline ist als iterativer Prozess mit Rückkopplungsschleifen zu verstehen. Analyseergebnisse, Spezifikationen und Planungsergebnisse beeinflussen sich wechselseitig, sodass unklare oder fehlerhafte Ableitungen frühzeitig korrigiert werden können. Iterative Verfeinerungsschritte entsprechen damit sowohl agentischen Workflow-Mustern als auch empirisch beobachteten Verbesserungsstrategien bei LLM-gestützter Codeerzeugung \parencite{yang2024sweagent,midolo2026promptguidelines}.
 
-\subsubsection{Feedback-Schleifen zwischen Spezifikation und Quell-Kontext}
-
-Feedback-Schleifen zwischen Spezifikation und Quell-Kontext ermöglichen eine schrittweise Schärfung der Anforderungen. Erkennt der Verifier Unstimmigkeiten, müssen Analyzer und Spec-Writer ihre Artefakte gezielt nacharbeiten, bevor Planungs- und Implementierungsphase zulässig sind.
-
-\subsubsection{Abgleich mit strukturierter Repository-Kontextbasis}
-
-Der automatische Abgleich gegen eine strukturierte Repository-Kontextbasis liefert dafür eine belastbare Referenz. Er ermöglicht den Vergleich modellgenerierter Aussagen mit Symbolen, Abhängigkeiten und Strukturen der Ausgangsbasis. Graphgestützte Repräsentationen und Retrieval-Ansätze gelten dabei als vielversprechend, um Beziehungen zwischen natürlicher Sprache und Code systematisch nutzbar zu machen \parencite{du2024codegrag}.
+Feedback-Schleifen zwischen Spezifikation und Quell-Kontext ermöglichen eine schrittweise Schärfung der Anforderungen. Ergeben sich beim Schreiben oder Konsolidieren einzelner Spezifikationen Unstimmigkeiten, müssen Analyzer und Spec-Writer ihre Artefakte gezielt nacharbeiten, bevor Planungs- und Implementierungsphase zulässig sind. Als Referenz dient dabei der Abgleich gegen die strukturierte Repository-Kontextbasis: Er ermöglicht den Vergleich modellgenerierter Aussagen mit konkreten Symbolen, Abhängigkeiten und Strukturen der Ausgangsbasis und stellt sicher, dass die Spezifikation nicht auf Annahmen, sondern auf nachvollziehbaren Evidenzpunkten beruht. Graphgestützte Repräsentationen und Retrieval-Ansätze gelten dabei als vielversprechend, um Beziehungen zwischen natürlicher Sprache und Code systematisch nutzbar zu machen \parencite{du2024codegrag}.
 
 \subsection{Phasenmodell der Pipeline}
 
-Das Phasenmodell der Pipeline folgt direkt dem Horseshoe-Modell und gliedert sich deshalb in Rekonstruktion, Transformationsplanung und Neuimplementierung. In der Rekonstruktion wird die Codebasis strukturiert erschlossen und in eine validierte Spezifikation überführt, in der Transformationsplanung in Zielarchitektur und Umsetzungsschritte übersetzt und in der Neuimplementierung schließlich in Zielcode transformiert. Die Dreiteilung folgt damit einem kontrollierten Übergang von Reverse Engineering über eine explizite Planungsebene hin zur Umsetzung im Zielstack, wie er auch in agentischen Planungsmodellen beschrieben wird \parencite{huang2024planningagents}.
+Das Phasenmodell der Pipeline folgt direkt dem Horseshoe-Modell und gliedert sich deshalb in Rekonstruktion, Transformationsplanung und Neuimplementierung. In der Rekonstruktion wird die Codebasis strukturiert erschlossen, in einzelne Funktionalitäten zerlegt und in mehrere Spezifikationsartefakte überführt, in der Transformationsplanung in Zielarchitektur und Umsetzungsschritte übersetzt und in der Neuimplementierung schließlich in Zielcode transformiert. Die Dreiteilung folgt damit einem kontrollierten Übergang von Reverse Engineering über eine explizite Planungsebene hin zur Umsetzung im Zielstack, wie er auch in agentischen Planungsmodellen beschrieben wird \parencite{huang2024planningagents}.
