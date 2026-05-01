@@ -1,21 +1,164 @@
 \section{Evaluation am Fallbeispiel} \label{evaluation}
 
-Dieses Kapitel demonstriert die Pipeline an einem ausgewählten Migrationsszenario.
+Dieses Kapitel demonstriert die Pipeline am konkreten Migrationsszenario und beschreibt, wie die Vollständigkeit der erzeugten Artefakte sichergestellt wird.
 
 \subsection{Auswahl des Szenarios und Quell-Moduls}
 
-Als Demonstrationsszenario dient die Migration eines Go-basierten Lizenz-Checkers. Das Modul wurde gewählt, weil es ausreichend fachliche und technische Komplexität besitzt, um einen vollständigen Durchstich durch alle Pipelinephasen zu zeigen, ohne den Rahmen der Projektarbeit zu überschreiten. Es umfasst eine Kommandozeilenschnittstelle, Datei- und Verzeichnisverarbeitung, die Auswertung von Paketmetadaten sowie die Ausgabe strukturierter Lizenzberichte. Diese Funktionalitäten lassen sich klar in einzelne Use Cases zergliedern, sodass die Spec-Writer-Fan-out-Logik des Orchestrators gezielt demonstriert werden kann. Das Modul enthält darüber hinaus externe Abhängigkeiten, die ein konkretes Bibliotheks-Mapping zwischen Quell- und Zielökosystem erfordern, und besitzt hinreichend definiertes Ein- und Ausgabeverhalten für einen manuellen Input-Output-Vergleich im Evaluationsschritt.
+Als Demonstrationsszenario dient die Migration eines Node.js-basierten Lizenz-Checkers nach Go. Das Modul wurde gewählt, weil es ausreichend fachliche und technische Komplexität besitzt, um einen vollständigen Durchstich durch alle Pipelinephasen zu zeigen, ohne den Rahmen der Projektarbeit zu überschreiten. Es umfasst eine Kommandozeilenschnittstelle, Datei- und Verzeichnisverarbeitung, die Auswertung von Paketmetadaten sowie die Ausgabe strukturierter Lizenzberichte. Diese Funktionalitäten lassen sich klar in einzelne Use Cases zergliedern, sodass die Spec-Writer-Fan-out-Logik des Orchestrators gezielt demonstriert werden kann. Das Modul enthält externe Abhängigkeiten, die ein konkretes Bibliotheks-Mapping zwischen Node.js- und Go-Ökosystem erfordern, und besitzt hinreichend definiertes Ein- und Ausgabeverhalten für einen manuellen Input-Output-Vergleich im Evaluationsschritt.
 
 \subsection{Durchführung des spezifikationsgetriebenen Workflows}
 
-Im Fallbeispiel wird der vollständige Ablauf des für die Projektarbeit gewählten Minimal-Setups exemplarisch nachvollzogen. Der Orchestrator steuert die Übergaben zwischen Analyzer, mehreren funktionsbezogenen Spec-Writer-Läufen, Architect und Builder, sodass Analyse, Spezifikation, Planung und Code-Synthese in einem bewusst schlanken Rollenmodell durchgeführt werden. Dadurch wird sichtbar, welche Informationen in welcher Phase benötigt werden und wie die textuelle Spezifikation den Gesamtprozess strukturiert.
+Im Fallbeispiel wird der vollständige Ablauf des für die Projektarbeit gewählten Minimal-Setups exemplarisch nachvollzogen. Der Orchestrator steuert die Übergaben zwischen Analyzer, mehreren funktionsbezogenen Spec-Writer-Läufen, Architect und Builder, sodass Analyse, Spezifikation, Planung und Code-Synthese in einem bewusst schlanken Rollenmodell durchgeführt werden.
+
+In Phase~1 erschließt der Analyzer die Quellbasis: Er identifiziert Einstiegspunkte, Abhängigkeiten, Datenstrukturen und das Verarbeitungsmodell des Lizenz-Checkers und erzeugt daraus \texttt{ANALYSIS.md}, \texttt{OVERVIEW.md} und \texttt{FUNCTIONALITY-INDEX.md}. Die Funktionalitätsliste umfasst unter anderem das Einlesen und Parsen von \texttt{package.json}-Dateien, das rekursive Traversieren von Abhängigkeitsbäumen, die Klassifikation von Lizenzen nach Zulässigkeit sowie die Ausgabe als JSON- oder CSV-Bericht. Der Orchestrator löst für jede dieser Funktionalitäten einen eigenen Spec-Writer-Lauf aus, der eine dedizierte \texttt{SPEC.md} in einem separaten Unterordner erzeugt.
+
+In Phase~2 leitet der Architect aus der konsolidierten Spezifikationsbasis eine Go-Zielarchitektur ab: Paketstruktur, Fehlerbehandlungskonventionen, geeignete Standardbibliotheksfunktionen und externe Go-Bibliotheken werden mit Context7-Unterstützung festgelegt. Der Planner überführt diese Entscheidungen anschließend in einen geordneten Migrationsplan. In Phase~3 zerlegt der Task Decomposer den Plan in umsetzbare Arbeitseinheiten und der Builder erzeugt Go-Zielcode, der in \texttt{BUILD.md} mit Verifikationsnachweis dokumentiert wird.
+
+\subsection{Beispiel: Quellcode, Spezifikation und Zielcode im Vergleich}
+
+Um den spec-getriebenen Ansatz konkret zu illustrieren, zeigen die folgenden Listings einen repräsentativen Ausschnitt des Migrationspfads für die Kernfunktionalität \emph{Lizenz-Scan}. Listing~\ref{lst:source} zeigt den vereinfachten Node.js-Quellcode, Listing~\ref{lst:spec} einen Auszug aus der zugehörigen \texttt{SPEC.md} und Listing~\ref{lst:target} den daraus generierten Go-Zielcode.
+
+\begin{lstlisting}[style=codestyle, language=JavaScript, caption={Vereinfachter Node.js-Quellcode: Lizenz-Scan (repräsentativ)}, label=lst:source]
+// scanner.js
+const fs = require('fs');
+const path = require('path');
+
+function scanLicenses(projectPath) {
+  const pkgPath = path.join(projectPath, 'package.json');
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+  const results = {};
+
+  for (const [name, version] of
+       Object.entries(pkg.dependencies || {})) {
+    const depPkg = require(
+      path.join(projectPath, 'node_modules', name, 'package.json')
+    );
+    results[name] = {
+      version: version,
+      license: depPkg.license || 'UNKNOWN',
+    };
+  }
+  return results;
+}
+
+module.exports = { scanLicenses };
+\end{lstlisting}
+
+\begin{lstlisting}[style=codestyle, caption={Auszug aus SPEC.md fuer F-001: Lizenz-Scan}, label=lst:spec]
+# Feature Specification: License Scan (F-001)
+
+## Requirements
+
+- FR-001: Module MUST read package.json at the given projectPath
+- FR-002: Module MUST traverse all entries in dependencies{}
+- FR-003: For each dependency, module MUST read its package.json
+           and extract the license field
+- FR-004: If license field is absent, result MUST use "UNKNOWN"
+- FR-005: Module MUST return a map of
+           packageName -> {version, license}
+
+## Input / Output
+
+- Input:  projectPath (string) -- absolute path to Node.js project
+- Output: map[string]PackageInfo{Version string; License string}
+- Precondition: package.json exists at projectPath
+
+## Acceptance Scenario
+
+Given a project with two dependencies (MIT, Apache-2.0),
+When scanLicenses is called with the project path,
+Then the result contains both packages with correct license values.
+\end{lstlisting}
+
+\begin{lstlisting}[style=codestyle, language=Go, caption={Generierter Go-Zielcode: Lizenz-Scan (repräsentativ)}, label=lst:target]
+// scanner/scan.go
+package scanner
+
+import (
+  "encoding/json"
+  "os"
+  "path/filepath"
+)
+
+type PackageInfo struct {
+  Version string `json:"version"`
+  License string `json:"license"`
+}
+
+type PackageJSON struct {
+  License      string            `json:"license"`
+  Dependencies map[string]string `json:"dependencies"`
+}
+
+func ScanLicenses(projectPath string) (map[string]PackageInfo, error) {
+  data, err := os.ReadFile(filepath.Join(projectPath, "package.json"))
+  if err != nil {
+    return nil, err
+  }
+  var pkg PackageJSON
+  if err := json.Unmarshal(data, &pkg); err != nil {
+    return nil, err
+  }
+
+  results := make(map[string]PackageInfo)
+  for name, version := range pkg.Dependencies {
+    depPath := filepath.Join(
+      projectPath, "node_modules", name, "package.json",
+    )
+    depData, err := os.ReadFile(depPath)
+    license := "UNKNOWN"
+    if err == nil {
+      var depPkg PackageJSON
+      if json.Unmarshal(depData, &depPkg) == nil &&
+         depPkg.License != "" {
+        license = depPkg.License
+      }
+    }
+    results[name] = PackageInfo{Version: version, License: license}
+  }
+  return results, nil
+}
+\end{lstlisting}
+
+Die Listings verdeutlichen, wie die Spezifikation als Brücke zwischen Quell- und Zielcode fungiert: Die Anforderungen FR-001 bis FR-005 in \texttt{SPEC.md} sind direkt auf konkrete Implementierungsschritte in Go abbildbar, ohne dass der Builder Annahmen über die Quellimplementierung treffen muss. Offene Punkte wie Fehlerbehandlung bei fehlenden Abhängigkeiten sind in der Spezifikation explizit als Akzeptanzszenarien festgehalten und müssen vom Spec-Quality-Skill als erfüllt markiert sein, bevor der Architect die Architekturphase beginnt.
 
 \subsection{Funktionale Validierung und Feature Parity}
 
-Die funktionale Validierung des PoC erfolgt durch einen manuellen Vergleich von Eingaben und erwarteten Ausgaben zwischen Ausgangs- und Zielsystem. Für jede identifizierte Funktionalität werden repräsentative Eingaben definiert und die tatsächlichen Ausgaben beider Systeme gegenübergestellt. Dieser Ansatz ist für den PoC-Rahmen bewusst pragmatisch gewählt: Er ist nachvollziehbar, ohne zusätzliche Evaluationsinfrastruktur auszuführbar und fokussiert auf die wesentliche Frage, ob die migrierte Implementierung das fachliche Verhalten des Originals erhält. Ergänzend werden statische Analysen genutzt, um zu prüfen, ob strukturelle Eigenschaften wie Korrektheit und Wartbarkeit im generierten Zielcode erhalten bleiben \parencite{nunes2025maintainability}. Darüber hinaus sollte die Evaluation nicht auf reine Erfolgsraten verengt werden, sondern auch robuste, softwareengineeringnahe Qualitätsdimensionen berücksichtigen \parencite{rodriguezcardenas2026behelm}.
+Die funktionale Validierung erfolgt durch einen manuellen Vergleich von Eingaben und erwarteten Ausgaben zwischen Quell- und Zielsystem. Tabelle~\ref{tab:io-vergleich} zeigt den strukturierten I/O-Vergleich für die drei Kernfunktionalitäten des Lizenz-Checkers.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{3.2cm}|p{4.0cm}|p{3.5cm}|p{2.5cm}|}
+\hline
+\textbf{Funktionalität} & \textbf{Eingabe} & \textbf{Erwartete Ausgabe} & \textbf{Ergebnis} \\
+\hline
+Lizenz-Scan & Projektpfad mit \texttt{package.json} & Map: Paketname $\to$ \{Version, Lizenz\} & zu prüfen \\
+\hline
+Lizenz-Klassifikation & Lizenz-String (z.\,B. \texttt{MIT}) & Zulässigkeitsstatus (\texttt{allowed}/\texttt{forbidden}/\texttt{unknown}) & zu prüfen \\
+\hline
+Berichtsausgabe & Scan-Ergebnis, Format-Flag & JSON- oder CSV-Datei & zu prüfen \\
+\hline
+\end{tabular}
+\caption{Strukturierter I/O-Vergleich für die Kernfunktionalitäten des Lizenz-Checkers}
+\label{tab:io-vergleich}
+\end{table}
+
+Für jede Zeile wird dasselbe Testset an Eingaben gegen Quell- und Zielimplementierung ausgeführt und die Ausgaben verglichen. Abweichungen werden dokumentiert und auf die jeweilige Spec zurückverfolgt. Dieser Ansatz ist für den PoC-Rahmen bewusst pragmatisch: Er ist ohne zusätzliche Testinfrastruktur durchführbar und fokussiert auf die wesentliche Frage, ob die migrierte Implementierung das fachliche Verhalten des Originals erhält \parencite{nunes2025maintainability,rodriguezcardenas2026behelm}.
 
 Ein automatisierter Evaluationsansatz auf Basis von LLM-as-a-Judge, bei dem ein Sprachmodell die Qualität generierter Spezifikationen und des Zielcodes bewertet, ist für die Bachelorarbeit vorgesehen. Dort soll dieser Ansatz in einen reproduzierbaren Evaluationsrahmen eingebettet werden, der Spezifikationsabgleich, Testläufe und statische Analysen zu einer wiederholbaren Prüfkette zusammenführt.
 
 \subsection{Qualität und Wartbarkeit der Spezifikationsartefakte}
 
-Neben dem Zielcode stehen auch die generierten Spezifikationsartefakte selbst im Fokus. Diskutiert werden insbesondere ihre Präzision, Verständlichkeit, Wartbarkeit und ihr Beitrag zur Nachvollziehbarkeit der Migrationsentscheidungen. Wie \textcite{midolo2026promptguidelines} zeigen, sind für hochwertige Spezifikationen vor allem explizite Angaben zu I/O-Formaten, Vor- und Nachbedingungen sowie Beispiele relevant, weil gerade diese Elemente die Präzision nachgelagerter Codegenerierung verbessern. Dabei ist auch zu berücksichtigen, dass generative Modelle zu Halluzinationen neigen und Unsicherheiten explizit behandelt werden müssen \parencite{feng2024abstain}. Für die Aussagekraft der Evaluation ist zudem relevant, wie transparent Prompt- und Kontextentscheidungen dokumentiert werden, da \textcite{korn2026reportingprompting} hier deutliche Reproduzierbarkeitslücken in der SE-Forschung aufzeigen. Ergänzend können stilometrische Ansätze interessant werden, wenn später stärker zwischen menschlich und KI-generiertem Code oder zwischen unterschiedlichen Generierungsprofilen unterschieden werden soll \parencite{gurioli2025stylometry}.
+Neben dem Zielcode stehen auch die generierten Spezifikationsartefakte selbst im Fokus. Diskutiert werden insbesondere ihre Präzision, Verständlichkeit, Wartbarkeit und ihr Beitrag zur Nachvollziehbarkeit der Migrationsentscheidungen. Wie \textcite{midolo2026promptguidelines} zeigen, sind für hochwertige Spezifikationen vor allem explizite Angaben zu I/O-Formaten, Vor- und Nachbedingungen sowie Beispiele relevant, weil gerade diese Elemente die Präzision nachgelagerter Codegenerierung verbessern. Dabei ist auch zu berücksichtigen, dass generative Modelle zu Halluzinationen neigen und Unsicherheiten explizit behandelt werden müssen \parencite{feng2024abstain}. Für die Aussagekraft der Evaluation ist zudem relevant, wie transparent Prompt- und Kontextentscheidungen dokumentiert werden, da \textcite{korn2026reportingprompting} hier deutliche Reproduzierbarkeitslücken in der SE-Forschung aufzeigen.
+
+Ein zentrales Qualitätskriterium ist die Rückverfolgbarkeit: Jede funktionale Anforderung in \texttt{SPEC.md} muss auf eine konkrete Evidenzstelle in \texttt{ANALYSIS.md} verweisen. Ist diese Rückverfolgbarkeit lückenlos, kann bei Abweichungen zwischen Quell- und Zielverhalten direkt geprüft werden, ob die Ursache in der Spezifikation, der Architekturentscheidung oder der Implementierung liegt.
+
+\subsection{Sicherstellung der Vollständigkeit}
+
+Ein strukturelles Risiko agentischer Pipelines ist das vorzeitige Beenden eines Laufs, bevor alle Funktionalitäten tatsächlich verarbeitet wurden. Zur Sicherstellung der Vollständigkeit werden im PoC drei Mechanismen kombiniert.
+
+Erstens dient \texttt{FUNCTIONALITY-INDEX.md} als verbindliche Vollständigkeitsliste für Phase~1: Jedes identifizierte Funktionalitätselement trägt einen expliziten Status (\emph{ready}, \emph{needs-clarification}, \emph{blocked}), und der Orchestrator darf Phase~2 erst beginnen, wenn für jedes \emph{ready}-Element eine \texttt{SPEC.md} im zugehörigen Unterordner vorliegt. Der Orchestrator-Completion-Skill operationalisiert diese Prüfung als artefaktbasierte Checkliste, die vor jedem Phasenübergang durchlaufen werden muss.
+
+Zweitens fungiert \texttt{TASKS.md} als Vollständigkeitsliste für Phase~3: Jede Aufgabe ist als Checkbox modelliert, und der Builder hakt sie erst ab, wenn der zugehörige Code und ein Verifikationsnachweis in \texttt{BUILD.md} vorliegen. Eine \texttt{TASKS.md} mit offenen Checkboxen signalisiert dem Orchestrator, dass Phase~3 noch nicht abgeschlossen ist.
+
+Drittens schreibt der Spec-Quality-Skill vor, dass eine \texttt{SPEC.md} keine stillen Annahmen enthalten darf: Alle unklaren Punkte müssen explizit als offene Fragen markiert sein. Damit ist auch auf Spezifikationsebene keine implizite Vollständigkeit möglich, die den Evaluationsschritt verfälschen könnte.

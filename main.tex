@@ -13,6 +13,29 @@
 \usepackage{multirow}
 \usepackage[ruled,longend]{algorithm2e}
 \usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstdefinestyle{codestyle}{
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  frame=single,
+  numbers=left,
+  numberstyle=\tiny,
+  keywordstyle=\bfseries,
+  commentstyle=\itshape\color{gray},
+  stringstyle=\color{gray},
+  showstringspaces=false,
+  tabsize=2
+}
+
+\lstdefinelanguage{JavaScript}{
+  keywords={const,let,var,function,return,if,else,for,of,require,module,exports,true,false,null},
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]"
+}
 \usepackage[nohyperlinks]{acronym}
 
 
@@ -125,13 +148,13 @@
 \markboth{Zusammenfassung}{Zusammenfassung}
 \section*{Zusammenfassung}
 
-Die vorliegende Projektarbeit untersucht, wie eine subagent-basierte Pipeline zur KI-gestützten Code-Migration gestaltet werden kann. Ausgangspunkt ist die Beobachtung, dass Reverse Engineering (RE) und Re-Implementierung gewachsener Softwaresysteme in der Praxis häufig an hoher kognitiver Last, fehlender Dokumentation und technologischen Paradigmenwechseln scheitern. Direkte Transpilierungsansätze reichen dabei oft nicht aus, um fachliche und architektonische Intentionen zuverlässig in ein Zielsystem zu überführen.
+Die vorliegende Projektarbeit untersucht, wie eine subagent-basierte Pipeline zur KI-gestützten Code-Migration gestaltet werden kann. Ausgangspunkt ist die Beobachtung, dass Reverse Engineering (RE) und Re-Implementierung gewachsener Softwaresysteme in der Praxis häufig an hoher kognitiver Last, fehlender Dokumentation und technologischen Paradigmenwechseln scheitern. Direkte LLM-gestützte Transpilierungsansätze ohne explizite Zwischenartefakte erzeugen dabei systematisch Halluzinationen, verlieren Fachlogik bei größeren Codebasen und machen Migrationsentscheidungen kaum nachvollziehbar.
 
-Als methodischer Rahmen wird daher ein Ansatz verfolgt, der spec-getriebenes RE mit einer anschließenden Re-Implementierung verbindet. Bestehender Quellcode soll zunächst analysiert, in einzelne Funktionalitäten zerlegt und anschließend in textuelle technische Spezifikationen überführt werden, bevor auf dieser Grundlage Zielcode erzeugt wird. Die Spezifikation fungiert dabei als zentrales Zwischenartefakt zwischen Wissensextraktion und Code-Synthese. Zur Umsetzung wird eine orchestrierte Pipeline spezialisierter Agenten konzipiert, die Rollen für Analyse, Spezifikation, Planung und Generierung übernehmen.
+Als methodischer Rahmen wird daher ein Ansatz verfolgt, der Spec-Driven Development mit orchestriertem Re-Engineering verbindet. Bestehender Quellcode wird zunächst analysiert, in einzelne Funktionalitäten zerlegt und in textuelle technische Spezifikationen überführt, bevor auf dieser Grundlage Zielcode erzeugt wird. Die Spezifikation fungiert als zentrales, überprüfbares Zwischenartefakt zwischen Wissensextraktion und Code-Synthese. Zur Umsetzung wird eine orchestrierte Pipeline spezialisierter Agenten konzipiert, die Rollen für Analyse, Spezifikation, Architektur, Planung, Aufgabenzerlegung und Implementierung übernehmen.
 
-Technisch stützt sich der Ansatz auf das Model Context Protocol (MCP), um Analysewerkzeuge, Code-Repräsentationen und weitere Hilfsdienste standardisiert einzubinden. Ergänzend wird Context Engineering genutzt, um den Wissenszugriff für einzelne Agenten gezielt zu steuern und relevante Informationen bedarfsorientiert bereitzustellen. Dadurch soll der Umgang mit Kontext-Limits großer Sprachmodelle (LLMs) verbessert und das Risiko von Halluzinationen reduziert werden.
+Technisch stützt sich der Ansatz auf das Model Context Protocol (MCP), um Code-Intelligence und Bibliotheksdokumentation standardisiert einzubinden. Ergänzend werden Agent-Skills als plattformunabhängige Verhaltens- und Qualitätsleitfäden eingesetzt, die jeden Agenten auf gebundene, nachvollziehbare Werkzeugnutzung und explizite Qualitätskriterien für seine Ausgabeartefakte verpflichten.
 
-Ziel der Arbeit ist ein prototypischer Proof of Concept (PoC) an einem repräsentativen Quell-Modul. Die Evaluation orientiert sich an den Kriterien Vollständigkeit im Sinne von Feature Parity, Qualität und Wartbarkeit der erzeugten Artefakte sowie an der Nachvollziehbarkeit der Migrationsentscheidungen. Die Arbeit schafft damit eine konzeptionelle Grundlage für eine spätere wissenschaftliche Vertiefung im Rahmen der Bachelorarbeit, insbesondere im Hinblick auf hybride Ansätze aus textuellen Spezifikationen und visuellen Modellen.
+Als prototypischer Proof of Concept dient die Migration eines Node.js-basierten Lizenz-Checkers nach Go. Das Quell-Modul umfasst Kommandozeilenintegration, Datei- und Paketmetadatenverarbeitung sowie strukturierte Lizenzberichte und besitzt damit ausreichend Komplexität für einen vollständigen Pipelinedurchstich. Die Evaluation erfolgt durch manuellen Vergleich von Eingaben und Ausgaben zwischen Quell- und Zielimplementierung sowie durch Beurteilung der Spezifikationsartefakte hinsichtlich Präzision und Vollständigkeit. Die Arbeit schafft damit eine konzeptionelle und prototypische Grundlage für eine spätere wissenschaftliche Vertiefung im Rahmen der Bachelorarbeit, insbesondere im Hinblick auf hybride Ansätze aus textuellen Spezifikationen und visuellen Modellen sowie auf automatisierte Evaluationsrahmen.
 
 \clearpage
 
