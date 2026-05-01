@@ -60,15 +60,21 @@ Für die Pipeline sind vier Skills vorgesehen, die in der folgenden Tabelle den 
 
 \begin{table}[H]
 \centering
-\begin{tabular}{|p{4.5cm}|p{3.2cm}|p{5.0cm}|}
+\begin{tabular}{|p{4.2cm}|p{3.0cm}|p{5.3cm}|}
 \hline
 \textbf{Skill} & \textbf{Genutzt von} & \textbf{Zweck} \\
 \hline
 Sourcebot-Skill & Analyzer, Spec-Writer & Nutzungsleitfaden: Scope begrenzen, Evidenz strukturieren, Beobachtungen von Inferenzen trennen \\
 \hline
-Context7-Skill & Architect, Planner, Task Decomposer, Builder & Nutzungsleitfaden: Library-ID zuerst auflösen, fokussiert abfragen, Fakten von Designentscheidungen trennen \\
+CLI-Analyzer-Skill & Analyzer & Domänenerweiterung: CLI-Einstiegspunkt, Flag-Inventar, abhängigkeitsgeordnete Anforderungsreihenfolge \\
 \hline
-Spec-Quality-Skill & Spec-Writer & Qualitätsleitfaden: Definiert wann eine SPEC.md implementierungsbereit ist (I/O, Akzeptanzszenarien, Rückverfolgbarkeit) \\
+Context7-Skill & Architect, Planner, Task Decomposer, Builder & Nutzungsleitfaden: Library-ID auflösen, fokussiert abfragen, Fakten von Designentscheidungen trennen \\
+\hline
+Spec-Quality-Skill & Spec-Writer & Qualitätsleitfaden: Definiert wann eine SPEC.md implementierungsbereit ist (I/O, Gherkin-Szenarien, Rückverfolgbarkeit) \\
+\hline
+Go-Architect-Skill & Architect & Best Practices: Paketlayout, Interface-Design, Fehlerbehandlung, Stdlib-First, Testbarkeit \\
+\hline
+Go-Craftsman-Skill & Builder & Implementierungsqualität: Idiomatisches Go, Namenskonventionen, Abschluss-Checkliste pro Task \\
 \hline
 Orchestrator-Completion-Skill & Orchestrator & Abschluss-Checkliste: Artefaktbasierte Exit-Kriterien für jeden Phasenübergang \\
 \hline
