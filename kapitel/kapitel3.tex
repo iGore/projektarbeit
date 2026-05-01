@@ -38,15 +38,13 @@ Die Neuimplementierungsphase wird durch Task Decomposer und Builder getragen. De
 
 Ergänzend kann ein Orchestrator eingesetzt werden, der Übergaben zwischen den Phasen koordiniert, Artefakte versioniert und Freigaberegeln überwacht. Er ist keinem einzelnen Horseshoe-Abschnitt zugeordnet, sondern stabilisiert die Gesamtpipeline organisatorisch. Seine zentrale Zusatzaufgabe in der Rekonstruktionsphase besteht darin, das Analyseinventar des Analyzers in einzelne Arbeitspunkte zu zerlegen und daraus gezielt parallele Spec-Writer-Läufe pro Funktionalität oder Use Case zu starten.
 
-\subsection{MCPs und Agentenprofile}
+\subsection{MCPs, Agentenprofile und Skills}
 
-Für den hier beschriebenen Workflow wird vorausgesetzt, dass die beteiligten Agenten nicht nur über Prompt-Kontext, sondern auch über standardisierte Tool- und Kontextzugriffe verfügen. Das Model Context Protocol (MCP) dient dabei als Integrationsschicht, über die externe Werkzeuge und strukturierte Informationsquellen einheitlich ansprechbar werden. Relevant ist dabei nicht die vollständige Breite möglicher Toolchains, sondern ein kleines Set von MCP-gebundenen Fähigkeiten, das die drei Phasen Rekonstruktion, Transformationsplanung und Neuimplementierung gezielt unterstützt. Ergänzend dazu fungiert \texttt{AGENTS.md} als persistente Instruktionsschicht, die für alle Rollen denselben Rahmen aus Arbeitsregeln, Build-Kommandos und projektbezogenen Konventionen bereitstellt. Mit \textcite{agentsmd} liegt dafür zudem ein offenes, agentübergreifend lesbares Format vor.
-
-Neben den MCPs wird für die vorliegende Arbeit keine eigenständige Skill-Schicht modelliert. Wiederverwendbare Arbeitsmuster wie Rekonstruktion, Funktionszerlegung, Spezifikationsverdichtung oder Build-Prüfung werden direkt in den Beschreibungen der jeweiligen Agenten verankert. Dadurch bleibt die Pipeline konzeptionell auf die drei zentralen Ebenen Phasen, Agenten und MCP-Zugriffe konzentriert.
+Die Migrations-Pipeline stützt sich auf drei ergänzende Konfigurationsebenen: MCPs als standardisierte Werkzeugzugriffsschicht, Agentenprofile als rollenspezifische Verhaltensbeschreibungen und Skills als verhaltensgebende Leitfäden für Werkzeugnutzung und Artefaktqualität. Ergänzend fungiert \texttt{AGENTS.md} als persistente Instruktionsschicht mit projektweiten Arbeitsregeln, Build-Kommandos und Konventionen, die für alle Rollen gleichermaßen gilt \parencite{agentsmd}.
 
 \subsubsection{MCPs}
 
-Für die geplante Pipeline sind nur wenige, aber funktional klar abgegrenzte MCPs vorgesehen. Sourcebot dient als Code-Intelligence für Repository-Strukturen, Symbolauflösung und Referenzsuche. Context7 ergänzt dies um Dokumentations- und Bibliothekskontext für Zieltechnologien. Die folgende Matrix zeigt ausschließlich, welcher Agent in welcher Phase auf welchen MCP zugreifen soll. Dabei ist bewusst nicht jede Rolle an einen direkten MCP-Zugriff gebunden, weil einzelne Agenten nur auf übergebene Artefakte arbeiten, während planungs- und umsetzungsnahe Rollen bei Bedarf gezielt externes Zielstack-Wissen nachladen.
+Für die geplante Pipeline sind zwei funktional klar abgegrenzte MCPs vorgesehen. Sourcebot dient als Code-Intelligence für Repository-Strukturen, Symbolauflösung und Referenzsuche. Context7 ergänzt dies um Dokumentations- und Bibliothekskontext für Zieltechnologien. Die folgende Matrix zeigt, welcher Agent in welcher Phase auf welchen MCP zugreift. Nicht jede Rolle ist an einen direkten MCP-Zugriff gebunden, weil einzelne Agenten ausschließlich auf übergebene Artefakte arbeiten.
 
 \begin{table}[H]
 \centering
@@ -73,10 +71,34 @@ Orchestrator &  &  \\
 \end{table}
 
 \begin{description}
-    \item[Sourcebot] Dient als Code-Intelligence für den Bestand und ermöglicht strukturierte Zugriffe auf Repository-Strukturen, Symbolauflösung und Referenzbeziehungen. Der MCP ist daher vor allem für Analyse, Funktionszerlegung und Spezifikation in Phase 1 relevant.
-    \item[Context7] Liefert externen Dokumentations- und Bibliothekskontext für Zieltechnologien. Der MCP unterstützt damit insbesondere Architektur, Planung, Aufgabenzerlegung und Implementierung, wenn Framework-, API- oder Paketwissen benötigt wird.
-    \item[Orchestrator] Erhält keinen direkten MCP-Zugriff, da seine Aufgabe ausschließlich in der Koordination von Übergaben, Artefaktgates und Retry-Entscheidungen besteht. Benötigter externer Kontext wird durch die jeweils zuständigen Fachagenten abgerufen, nicht durch den Orchestrator selbst.
+    \item[Sourcebot] Dient als Code-Intelligence für den Bestand und ermöglicht strukturierte Zugriffe auf Repository-Strukturen, Symbolauflösung und Referenzbeziehungen. Relevant für Analyse, Funktionszerlegung und Spezifikation in Phase~1.
+    \item[Context7] Liefert externen Dokumentations- und Bibliothekskontext für Zieltechnologien. Unterstützt Architektur, Planung, Aufgabenzerlegung und Implementierung in Phase~2 und~3.
+    \item[Orchestrator] Erhält keinen direkten MCP-Zugriff, da seine Aufgabe ausschließlich in der Koordination von Übergaben, Artefaktgates und Retry-Entscheidungen besteht.
 \end{description}
+
+\subsubsection{Skills}
+
+Skills ergänzen die MCPs und Agentenprofile als dritte Konfigurationsebene. Ein Agentenprofil beschreibt, \emph{was} eine Rolle tut; ein Skill beschreibt, \emph{wie gut} ein Ergebnis sein muss oder \emph{wie} ein Werkzeug genutzt werden soll. Diese Trennung hält die Agentenprofile schlank und konzentriert das spezifische Detailwissen in wiederverwendbaren Leitfäden \parencite{agentskillsspecification}.
+
+Für die Pipeline sind vier Skills vorgesehen, die in der folgenden Tabelle den jeweiligen Agenten zugeordnet sind.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4.5cm}|p{3.2cm}|p{5.0cm}|}
+\hline
+\textbf{Skill} & \textbf{Genutzt von} & \textbf{Zweck} \\
+\hline
+Sourcebot-Skill & Analyzer, Spec-Writer & Nutzungsleitfaden: Scope begrenzen, Evidenz strukturieren, Beobachtungen von Inferenzen trennen \\
+\hline
+Context7-Skill & Architect, Planner, Task Decomposer, Builder & Nutzungsleitfaden: Library-ID zuerst auflösen, fokussiert abfragen, Fakten von Designentscheidungen trennen \\
+\hline
+Spec-Quality-Skill & Spec-Writer & Qualitätsleitfaden: Definiert wann eine SPEC.md implementierungsbereit ist (I/O, Akzeptanzszenarien, Rückverfolgbarkeit) \\
+\hline
+Orchestrator-Completion-Skill & Orchestrator & Abschluss-Checkliste: Artefaktbasierte Exit-Kriterien für jeden Phasenübergang \\
+\hline
+\end{tabular}
+\caption{Zuordnung der Skills zu den Agenten der Pipeline}
+\end{table}
 
 \subsection{Feedback und iterative Validierung}
 
