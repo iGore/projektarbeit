@@ -40,6 +40,37 @@ Der Orchestrator koordiniert Übergaben zwischen den Phasen, versioniert Artefak
 
 Der \emph{Verifier} ergänzt den Orchestrator als unabhängige Prüfinstanz an jedem Phasengate. Während der Orchestrator koordiniert, hat der Verifier einen einzigen Auftrag: prüfen, ob alle geforderten Artefakte auf Disk existieren und intern vollständig sind, und ein granulares, schrittbasiertes Pass/Fail-Ergebnis zurückgeben. Die Prüfung geht dabei über reine Dateiexistenz hinaus: Für Phase~1 wird etwa geprüft, ob jede \texttt{SPEC.md} mindestens ein Gherkin-Szenario, vollständig referenzierte funktionale Anforderungen und einen ausgefüllten Scope-Abschnitt enthält. Für Phase~3 prüft der Verifier zusätzlich, ob \texttt{go build} und \texttt{go vet} fehlerfrei durchlaufen. Die Trennung ist bewusst: Ein Orchestrator, der seine eigene Arbeit verifiziert, läuft Gefahr, das Ergebnis unbewusst zu bestätigen. Ein unabhängiger Verifier mit frischem Kontext und dem expliziten Auftrag, Probleme zu finden, ist robuster. Der Verifier hat keinen MCP-Zugriff, liest ausschließlich Artefakte und modifiziert nichts — er berichtet nur. Auf Basis des Verifier-Ergebnisses entscheidet der Orchestrator, ob er zur nächsten Phase übergeht oder Arbeit zurück an die verantwortliche Rolle leitet.
 
+\subsubsection{Artefakt-Zuordnung}
+
+Tabelle~\ref{tab:artefakte} fasst zusammen, welcher Agent welche Artefakte produziert und wo sie abgelegt werden. Jeder Agent ist für genau seine Ausgabeartefakte verantwortlich — kein Agent darf Artefakte eines anderen Agenten schreiben.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{3.0cm}|p{5.5cm}|p{4.0cm}|}
+\hline
+\textbf{Agent} & \textbf{Erzeugte Artefakte} & \textbf{Pfad} \\
+\hline
+Analyzer & \texttt{ANALYSIS.md}, \texttt{OVERVIEW.md}, \texttt{FUNCTIONALITY-INDEX.md} & \texttt{target/specs/} \\
+\hline
+Spec-Writer & \texttt{SPEC.md} (je Funktionalität) & \texttt{target/specs/<slug>/} \\
+\hline
+Architect & \texttt{ARCHITECTURE.md} & \texttt{target/specs/} \\
+\hline
+Planner & \texttt{PLAN.md} (je Use Case) & \texttt{target/specs/<slug>/} \\
+\hline
+Task Decomposer & \texttt{TASKS.md} (je Use Case) & \texttt{target/specs/<slug>/} \\
+\hline
+Builder & Go-Quellcode + \texttt{BUILD.md} & \texttt{target/} + \texttt{target/specs/<slug>/} \\
+\hline
+Orchestrator & \texttt{SPEC-INDEX.md} (Koordinationsartefakt) & \texttt{target/specs/} \\
+\hline
+Verifier & Verifier-Report (ephemer) & — \\
+\hline
+\end{tabular}
+\caption{Artefakt-Zuordnung der Pipeline-Agenten}
+\label{tab:artefakte}
+\end{table}
+
 \subsection{MCPs, Agentenprofile und Skills}
 
 Die Migrations-Pipeline stützt sich auf drei ergänzende Konfigurationsebenen: MCPs als standardisierte Werkzeugzugriffsschicht, Agentenprofile als rollenspezifische Verhaltensbeschreibungen und Skills als verhaltensgebende Leitfäden für Werkzeugnutzung und Artefaktqualität. Ergänzend fungiert \texttt{AGENTS.md} als persistente Instruktionsschicht mit projektweiten Arbeitsregeln, Build-Kommandos und Konventionen, die für alle Rollen gleichermaßen gilt \parencite{agentsmd}.
