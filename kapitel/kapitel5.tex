@@ -136,13 +136,13 @@ Für die Aussagekraft der Evaluation ist zudem relevant, wie transparent Prompt-
 
 \subsubsection{Qualitätsdimensionen des Zielcodes}
 
-\textbf{Korrektheit:} Erzielt der generierte Go-Code für alle definierten I/O-Testfälle dieselben Ausgaben wie die Quellimplementierung? Dies ist das primäre Kriterium des manuellen I/O-Vergleichs.
+\textbf{Korrektheit (I/O-Äquivalenz):} Erzielt der generierte Go-Code für alle definierten I/O-Testfälle dieselben Ausgaben wie die Quellimplementierung? Dieses Kriterium ist formal als I/O-Äquivalenz definiert: Für identische Eingaben müssen Quell- und Zielimplementierung identische Ausgaben produzieren. Eniser et al.\ entwickeln mit Fluorine einen cross-language Differenzfuzzer, der diese Äquivalenz automatisch prüft; für den vorliegenden PoC erfolgt der Abgleich manuell an repräsentativen Testfällen \parencite{eniser2025realworld}.
 
 \textbf{Vollständigkeit (Feature Parity):} Sind alle acht identifizierten Funktionalitäten im Zielcode implementiert? Nicht abgedeckte Funktionalitäten gelten als Parity-Lücken.
 
 \textbf{Wartbarkeit:} Ist der generierte Code lesbar, strukturiert und dokumentiert? Als Maßstab dienen messbare Wartbarkeitskriterien wie Methodenlänge, zyklomatische Komplexität und Kommentartiefe \parencite{nunes2025maintainability}. Code, der zwar korrekt, aber kaum wartbar ist, gilt als Qualitätsmangel.
 
-\textbf{Idiomatizität:} Folgt der Code den Konventionen des Zielstacks? Für Go bedeutet das: explizite Fehlerbehandlung, stdlib-first, kurze Receiver-Namen, Interfaces an der Consumer-Seite. Der Go-Craftsman-Skill operationalisiert diese Kriterien als implementierungsbegleitende Checkliste.
+\textbf{Idiomatizität:} Folgt der Code den Konventionen des Zielstacks? Für Go bedeutet das: explizite Fehlerbehandlung, stdlib-first, kurze Receiver-Namen, Interfaces an der Consumer-Seite. Der Go-Craftsman-Skill operationalisiert diese Kriterien als implementierungsbegleitende Checkliste. Dass LLMs auch bei korrekt übersetztem Code in 1--15 Prozent der Fälle nicht-idiomatischen Stil produzieren, belegen Eniser et al.\ mit einer Clippy-Analyse generierter Rust-Übersetzungen \parencite{eniser2025realworld}; ein analoges Muster ist für Go-Generierungen plausibel und wird im Evaluationsdurchlauf mit \texttt{go vet} und manuellem Code-Review geprüft.
 
 \textbf{Rückverfolgbarkeit zur Spec:} Lässt sich jeder implementierte Codeabschnitt auf ein Akzeptanzszenario in \texttt{SPEC.md} zurückführen? Die Inline-Kommentare im generierten Code (z.\,B. \texttt{// FR-001/FR-002}) ermöglichen diese Prüfung direkt im Code-Review.
 
