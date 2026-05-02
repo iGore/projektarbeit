@@ -12,11 +12,11 @@ Die erste Phase entspricht dem Reverse Engineering auf der linken Seite des Hors
 
 \subsubsection{Phase 2: Transformationsplanung für den Zielstack}
 
-Die zweite Phase nutzt die erzeugte Spezifikationsbasis als Eingabe für die eigentliche Migrationsplanung. Auf dieser Grundlage werden Zielarchitektur, Modulzuschnitte, Paketentscheidungen und Umsetzungsreihenfolge des Zielsystems entworfen. Diese Phase arbeitet damit nicht mehr primär am Bestandscode, sondern an der planvollen Überführung des Rekonstruktionsartefakts in ein umsetzbares Zielbild des neuen Stacks. Die zuständigen Agenten Architect und Planner werden in Abschnitt~\ref{sec:agenten} beschrieben.
+Die zweite Phase nutzt die konsolidierte Spezifikationsbasis aus Phase~1 als alleinige Eingabe für die Migrationsplanung. Sie arbeitet nicht mehr am Bestandscode, sondern überführt das Rekonstruktionsartefakt planvoll in ein umsetzbares Zielbild. Dazu werden Zielarchitektur, Modulzuschnitte, Paketentscheidungen und Umsetzungsreihenfolge des neuen Stacks festgelegt. Erst nach dieser expliziten Planungsebene beginnt die eigentliche Codegenerierung — ein zentrales Unterscheidungsmerkmal des spec-getriebenen Ansatzes gegenüber direkter Transpilierung. Die zuständigen Agenten Architect und Planner werden in Abschnitt~\ref{sec:agenten} beschrieben.
 
 \subsubsection{Phase 3: Neuimplementierung im Zielstack}
 
-Die dritte Phase entspricht der rechten Seite des Horseshoe-Modells. Ausgehend von der geplanten Zielarchitektur und den erzeugten Spezifikationen wird der Zielcode erzeugt und technisch abgesichert. Die Neuimplementierung basiert damit nicht direkt auf dem Ausgangscode, sondern auf einer zuvor analysierten und geplanten Abstraktionsebene. Die zuständigen Agenten Task Decomposer und Builder werden in Abschnitt~\ref{sec:agenten} beschrieben.
+Die dritte Phase entspricht der rechten Seite des Horseshoe-Modells und setzt die in Phase~2 geplante Zielarchitektur in lauffähigen Code um. Entscheidend ist, dass die Neuimplementierung ausschließlich auf der Spezifikation und dem Architekturartefakt basiert — nicht auf dem Ausgangscode. Der Ursprungsquellcode ist zu diesem Zeitpunkt durch die Spezifikation vollständig abstrahiert und wird nicht mehr direkt referenziert. Zusätzlich werden statische Analysen und Tests durchgeführt, um zu belegen, dass das erzeugte Zielsystem die in der Spezifikation festgehaltenen Akzeptanzszenarien erfüllt. Die zuständigen Agenten Task Decomposer und Builder werden in Abschnitt~\ref{sec:agenten} beschrieben.
 
 \subsection{Agenten je Phase} \label{sec:agenten}
 
