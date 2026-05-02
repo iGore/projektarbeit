@@ -6,7 +6,7 @@ Dieses Kapitel demonstriert die Pipeline am konkreten Migrationsszenario und bes
 
 Als Demonstrationsszenario dient die Migration eines Node.js-basierten Lizenz-Checkers nach Go. Das Modul wurde gewählt, weil es ausreichend fachliche und technische Komplexität besitzt, um einen vollständigen Durchstich durch alle Pipelinephasen zu zeigen, ohne den Rahmen der Projektarbeit zu überschreiten. Es umfasst eine Kommandozeilenschnittstelle, Datei- und Verzeichnisverarbeitung, die Auswertung von Paketmetadaten sowie die Ausgabe strukturierter Lizenzberichte. Diese Funktionalitäten lassen sich klar in einzelne Use Cases zergliedern, sodass die Spec-Writer-Fan-out-Logik des Orchestrators gezielt demonstriert werden kann. Das Modul enthält externe Abhängigkeiten, die ein konkretes Bibliotheks-Mapping zwischen Node.js- und Go-Ökosystem erfordern, und besitzt hinreichend definiertes Ein- und Ausgabeverhalten für einen manuellen Input-Output-Vergleich im Evaluationsschritt.
 
-\subsection{Durchführung des spezifikationsgetriebenen Workflows}
+\subsection{Durchführung des spezifikationsgetriebenen Workflows und Zwischenstand}
 
 Im Fallbeispiel wurde die vollständige Pipeline ausgeführt. Der Orchestrator steuerte die Übergaben zwischen allen sieben Rollen — Analyzer, Spec-Writer, Architect, Planner, Task Decomposer, Builder und Verifier — sodass Analyse, Spezifikation, Architektur, Planung, Aufgabenzerlegung und Code-Synthese vollständig durchgeführt wurden. Der manuelle I/O-Vergleich zwischen Quell- und Zielimplementierung als abschließender Evaluationsschritt steht noch aus und wird im Rahmen der vorliegenden Arbeit als geplante Prüfstruktur dokumentiert.
 
@@ -148,7 +148,7 @@ Für die Aussagekraft der Evaluation ist zudem relevant, wie transparent Prompt-
 
 \subsection{Sicherstellung der Vollständigkeit}
 
-Ein strukturelles Risiko agentischer Pipelines ist das vorzeitige Beenden eines Laufs, bevor alle Funktionalitäten tatsächlich verarbeitet wurden. Zur Sicherstellung der Vollständigkeit werden im PoC drei Mechanismen kombiniert.
+Ein strukturelles Risiko agentischer Pipelines ist das vorzeitige Beenden eines Laufs, bevor alle Funktionalitäten tatsächlich verarbeitet wurden. Dies adressiert das in Kapitel~\ref{implementierung} beschriebene Completion-Promise-Prinzip: Ein subjektives Fertigkeitsgefühl des Orchestrators gilt erst dann als bestätigt, wenn die Verifier-Prüfung alle Artefakte auf Disk verifiziert hat. Zur Sicherstellung der Vollständigkeit werden im PoC drei komplementäre Mechanismen kombiniert.
 
 Erstens dient \texttt{FUNCTIONALITY-INDEX.md} als verbindliche Vollständigkeitsliste für Phase~1: Jedes identifizierte Funktionalitätselement trägt einen expliziten Status (\emph{ready}, \emph{needs-clarification}, \emph{blocked}), und der Orchestrator darf Phase~2 erst beginnen, wenn für jedes \emph{ready}-Element eine \texttt{SPEC.md} im zugehörigen Unterordner vorliegt. Der Orchestrator-Completion-Skill operationalisiert diese Prüfung als artefaktbasierte Checkliste, die vor jedem Phasenübergang durchlaufen werden muss.
 
