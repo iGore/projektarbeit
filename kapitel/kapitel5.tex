@@ -108,7 +108,7 @@ Die funktionale Validierung erfolgt durch einen manuellen Vergleich von Eingaben
 008 & Stack-Utility & Lifecycle-Operationen der Hilfsklasse & zu prüfen \\
 \hline
 \end{tabular}
-\caption{I/O-Vergleichsstruktur für alle acht identifizierten Funktionalitäten des Lizenz-Checkers}
+\caption{Geplante I/O-Vergleichsstruktur für alle acht identifizierten Funktionalitäten des Lizenz-Checkers; Ergebnisspalte wird im Evaluationsdurchlauf ausgefüllt}
 \label{tab:io-vergleich}
 \end{table}
 
@@ -116,7 +116,7 @@ Für jede Zeile wird dasselbe Testset an Eingaben gegen Quell- und Zielimplement
 
 Ein automatisierter Evaluationsansatz auf Basis von LLM-as-a-Judge, bei dem ein Sprachmodell die Qualität generierter Spezifikationen und des Zielcodes bewertet, ist für die Bachelorarbeit vorgesehen. Dort soll dieser Ansatz in einen reproduzierbaren Evaluationsrahmen eingebettet werden, der Spezifikationsabgleich, Testläufe und statische Analysen zu einer wiederholbaren Prüfkette zusammenführt.
 
-\subsection{Qualität und Wartbarkeit der Spezifikationsartefakte}
+\subsection{Qualität und Rückverfolgbarkeit der Spezifikationsartefakte}
 
 Neben dem Zielcode stehen auch die generierten Spezifikationsartefakte selbst im Fokus. Diskutiert werden insbesondere ihre Präzision, Verständlichkeit, Wartbarkeit und ihr Beitrag zur Nachvollziehbarkeit der Migrationsentscheidungen. Wie \textcite{midolo2026promptguidelines} zeigen, sind für hochwertige Spezifikationen vor allem explizite Angaben zu I/O-Formaten, Vor- und Nachbedingungen sowie Beispiele relevant, weil gerade diese Elemente die Präzision nachgelagerter Codegenerierung verbessern. Dabei ist auch zu berücksichtigen, dass generative Modelle zu Halluzinationen neigen und Unsicherheiten explizit behandelt werden müssen \parencite{feng2024abstain}. Für die Aussagekraft der Evaluation ist zudem relevant, wie transparent Prompt- und Kontextentscheidungen dokumentiert werden, da \textcite{korn2026reportingprompting} hier deutliche Reproduzierbarkeitslücken in der SE-Forschung aufzeigen.
 

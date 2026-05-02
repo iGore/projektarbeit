@@ -12,13 +12,13 @@ Die erste Phase entspricht dem Reverse Engineering auf der linken Seite des Hors
 
 \subsubsection{Phase 2: Transformationsplanung für den Zielstack}
 
-Die zweite Phase nutzt die erzeugte Spezifikationsbasis als Eingabe für die eigentliche Migrationsplanung. Auf dieser Grundlage werden Zielarchitektur, Modulzuschnitte, Paketentscheidungen und Umsetzungsreihenfolge des Zielsystems entworfen. Diese Phase arbeitet damit nicht mehr primär am Bestandscode, sondern an der planvollen Überführung des Rekonstruktionsartefakts in ein umsetzbares Zielbild des neuen Stacks.
+Die zweite Phase nutzt die erzeugte Spezifikationsbasis als Eingabe für die eigentliche Migrationsplanung. Auf dieser Grundlage werden Zielarchitektur, Modulzuschnitte, Paketentscheidungen und Umsetzungsreihenfolge des Zielsystems entworfen. Diese Phase arbeitet damit nicht mehr primär am Bestandscode, sondern an der planvollen Überführung des Rekonstruktionsartefakts in ein umsetzbares Zielbild des neuen Stacks. Die zuständigen Agenten Architect und Planner werden in Abschnitt~\ref{sec:agenten} beschrieben.
 
 \subsubsection{Phase 3: Neuimplementierung im Zielstack}
 
-Die dritte Phase entspricht der rechten Seite des Horseshoe-Modells. Ausgehend von der geplanten Zielarchitektur und den erzeugten Spezifikationen wird der Zielcode erzeugt und technisch abgesichert. Die Neuimplementierung basiert damit nicht direkt auf dem Ausgangscode, sondern auf einer zuvor analysierten und geplanten Abstraktionsebene.
+Die dritte Phase entspricht der rechten Seite des Horseshoe-Modells. Ausgehend von der geplanten Zielarchitektur und den erzeugten Spezifikationen wird der Zielcode erzeugt und technisch abgesichert. Die Neuimplementierung basiert damit nicht direkt auf dem Ausgangscode, sondern auf einer zuvor analysierten und geplanten Abstraktionsebene. Die zuständigen Agenten Task Decomposer und Builder werden in Abschnitt~\ref{sec:agenten} beschrieben.
 
-\subsection{Agenten je Phase}
+\subsection{Agenten je Phase} \label{sec:agenten}
 
 Die drei Phasen werden jeweils durch spezialisierte Agenten bearbeitet. Dadurch bleibt die Pipeline anschlussfähig an das Horseshoe-Modell, ohne auf feiner granulierte Rollenlogik zu verzichten. Einzelne Agenten verantworten also nicht die gesamte Migration, sondern jeweils einen klar abgegrenzten Beitrag innerhalb einer Phase.
 
