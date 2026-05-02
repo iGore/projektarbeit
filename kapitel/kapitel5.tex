@@ -10,7 +10,7 @@ Als Demonstrationsszenario dient die Migration eines Node.js-basierten Lizenz-Ch
 
 Dieser Abschnitt dokumentiert den Ausführungsstand der Pipeline. Die drei Phasen wurden vollständig durchlaufen und alle Artefakte erzeugt; der abschließende manuelle I/O-Vergleich als Validierungsschritt steht noch aus und wird am Ende dieses Abschnitts als offener Punkt ausgewiesen.
 
-Im Fallbeispiel wurde die vollständige Pipeline ausgeführt. Der Orchestrator steuerte die Übergaben zwischen allen sieben Rollen — Analyzer, Spec-Writer, Architect, Planner, Task Decomposer, Builder und Verifier — sodass Analyse, Spezifikation, Architektur, Planung, Aufgabenzerlegung und Code-Synthese vollständig durchgeführt wurden. Der manuelle I/O-Vergleich zwischen Quell- und Zielimplementierung als abschließender Evaluationsschritt steht noch aus und wird im Rahmen der vorliegenden Arbeit als geplante Prüfstruktur dokumentiert.
+Im Fallbeispiel wurde die vollständige Pipeline ausgeführt. Der Orchestrator steuerte die Übergaben zwischen allen sieben Rollen (Analyzer, Spec-Writer, Architect, Planner, Task Decomposer, Builder und Verifier) sodass Analyse, Spezifikation, Architektur, Planung, Aufgabenzerlegung und Code-Synthese vollständig durchgeführt wurden. Der manuelle I/O-Vergleich zwischen Quell- und Zielimplementierung als abschließender Evaluationsschritt steht noch aus und wird im Rahmen der vorliegenden Arbeit als geplante Prüfstruktur dokumentiert.
 
 In Phase~1 erschließt der Analyzer die Quellbasis und erzeugt \texttt{ANALYSIS.md} und \texttt{FUNCTIONALITY-INDEX.md}. Die ausgeführte Pipeline identifizierte acht Funktionalitätselemente: F-001 (CLI-Optionsmodell und Normalisierung), F-002 (Abhängigkeitsgraph-Laden und Traversierungssteuerung), F-003 (Abflachen des Graphen zu einem Modulinventar), F-004 (Lizenzerkennungs- und Normalisierungspipeline), F-005 (Filterung, Paketeinschränkung und Policy-Exits), F-006 (Ausgabe-Rendering und Persistenz), F-007 (Custom-Format und JSON-Konfigurationsladung) sowie F-008 (Stack-Hilfsklassen-Lifecycle). Alle acht wurden vom Analyzer als \emph{ready} klassifiziert. Der Orchestrator löste daraufhin acht parallele Spec-Writer-Läufe aus, einer pro Funktionalitätselement, und sammelte die Ergebnisse in \texttt{SPEC-INDEX.md}.
 
@@ -18,7 +18,7 @@ In Phase~2 leitete der Architect aus der konsolidierten Spezifikationsbasis eine
 
 \subsection{Beispiel: Spezifikation und Zielcode im Vergleich}
 
-Die folgenden Listings zeigen den tatsächlichen Output der Pipeline für die Funktionalität \textbf{F-004 — License detection and normalization pipeline}. Listing~\ref{lst:spec} gibt einen Auszug aus der vom Spec-Writer erzeugten \texttt{SPEC.md}, Listing~\ref{lst:target} den daraus vom Builder generierten Go-Zielcode.
+Die folgenden Listings zeigen den tatsächlichen Output der Pipeline für die Funktionalität \textbf{F-004: License detection and normalization pipeline}. Listing~\ref{lst:spec} gibt einen Auszug aus der vom Spec-Writer erzeugten \texttt{SPEC.md}, Listing~\ref{lst:target} den daraus vom Builder generierten Go-Zielcode.
 
 \begin{lstlisting}[style=codestyle, caption={Auszug aus der erzeugten SPEC.md fuer F-004 (License detection and normalization pipeline)}, label=lst:spec]
 ## Requirements
