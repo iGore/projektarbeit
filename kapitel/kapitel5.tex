@@ -91,12 +91,27 @@ Die funktionale Validierung folgt einem Black-Box-Ansatz im Sinne des klassische
 
 Damit Abweichungen sich nicht in einem Gesamtoutput verschleiern, wird der Vergleich getrennt nach den acht identifizierten Funktionalitäten geführt. Wo das Zielsystem während Phase~3 bereits Integrationstests mit Golden-Files erzeugt hat (etwa \texttt{render\_export} oder \texttt{license\_resolution\_compat}), werden diese Fixtures wiederverwendet und gegen die Outputs des Quellsystems gespiegelt, statt die Vergleichsmenge neu aufzubauen. Tabelle~\ref{tab:io-vergleich} fasst das Verifikationsverfahren und die konkreten Testszenarien pro Funktionalität zusammen.
 
-\begin{table}[H]
-\centering
-\begin{tabular}{|p{0.5cm}|p{3.4cm}|p{8.0cm}|}
+\begin{small}
+\begin{longtable}{|p{0.7cm}|p{4.0cm}|p{10.5cm}|}
+\caption{Black-Box-Verifikationsverfahren je Funktionalität für den I/O-Vergleich zwischen \texttt{davglass/license-checker} (Node.js) und der Go-Zielimplementierung. Wo vorhandene Integrationstests und Golden-Files des Zielsystems verwendbar sind, werden sie als Vergleichsbasis wiederverwendet.} \label{tab:io-vergleich} \\
 \hline
 \textbf{F} & \textbf{Funktionalität} & \textbf{Black-Box-Verifikationsverfahren} \\
 \hline
+\endfirsthead
+
+\multicolumn{3}{l}{\textit{Fortsetzung von Tabelle~\ref{tab:io-vergleich}}} \\
+\hline
+\textbf{F} & \textbf{Funktionalität} & \textbf{Black-Box-Verifikationsverfahren} \\
+\hline
+\endhead
+
+\hline
+\multicolumn{3}{r}{\textit{Fortsetzung auf der nächsten Seite}} \\
+\endfoot
+
+\hline
+\endlastfoot
+
 001 & CLI-Optionsmodell & Vergleich von Stdout, Stderr und Exit-Code für alle dokumentierten Flag-Kombinationen, für \texttt{-{}-help}/\texttt{-{}-version} sowie für gezielt ungültige Flag-Kombinationen. \\
 \hline
 002 & Abhängigkeitsgraph laden & Drei Referenz-Repositories durchlaufen: ein flaches Projekt mit wenigen Direkt-Abhängigkeiten, ein mittelgroßes Projekt mit Dev-/Peer-Abhängigkeiten und ein Projekt mit zyklischen Verweisen. Vergleich der traversierten Modulmengen. \\
@@ -112,11 +127,9 @@ Damit Abweichungen sich nicht in einem Gesamtoutput verschleiern, wird der Vergl
 007 & Custom-Format & Wiederverwendung der Fixtures aus \texttt{custom\_format\_inline} und \texttt{custom\_format\_exclusion}: identische Custom-JSON-Konfiguration in beide Systeme laden; Vergleich der gerenderten Felder und der Default-Wert-Auflösung bei unvollständiger Konfiguration. \\
 \hline
 008 & Stack-Utility & Interner Hilfsdatentyp ohne direkt beobachtbare CLI-Schnittstelle; indirekt abgedeckt durch korrektes Verhalten der nachgelagerten Funktionalitäten F-002 und F-003. \\
-\hline
-\end{tabular}
-\caption{Black-Box-Verifikationsverfahren je Funktionalität für den I/O-Vergleich zwischen \texttt{davglass/license-checker} (Node.js) und der Go-Zielimplementierung. Wo vorhandene Integrationstests und Golden-Files des Zielsystems verwendbar sind, werden sie als Vergleichsbasis wiederverwendet.}
-\label{tab:io-vergleich}
-\end{table}
+
+\end{longtable}
+\end{small}
 
 \subsubsection{Befunddokumentation und Fehlerzuordnung}
 
