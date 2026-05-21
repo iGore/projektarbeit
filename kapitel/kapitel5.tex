@@ -14,7 +14,7 @@ Im Fallbeispiel wurde die vollständige Pipeline ausgeführt. Der Orchestrator s
 
 In Phase~1 erschließt der Analyzer die Quellbasis und erzeugt \texttt{ANALYSIS.md} und \texttt{FUNCTIONALITY-INDEX.md}. Die ausgeführte Pipeline identifizierte acht Funktionalitätselemente: F-001 (CLI-Optionsmodell und Normalisierung), F-002 (Abhängigkeitsgraph-Laden und Traversierungssteuerung), F-003 (Abflachen des Graphen zu einem Modulinventar), F-004 (Lizenzerkennungs- und Normalisierungspipeline), F-005 (Filterung, Paketeinschränkung und Policy-Exits), F-006 (Ausgabe-Rendering und Persistenz), F-007 (Custom-Format und JSON-Konfigurationsladung) sowie F-008 (Stack-Utility-Lifecycle). Alle acht wurden vom Analyzer als \emph{ready} klassifiziert. Der Orchestrator löste daraufhin acht parallele Spec-Writer-Läufe aus, einer pro Funktionalitätselement, und sammelte die Ergebnisse in \texttt{SPEC-INDEX.md}.
 
-In Phase~2 leitete der Architect aus der konsolidierten Spezifikationsbasis eine Go-Zielarchitektur ab: Paketstruktur, Fehlerbehandlungskonventionen, geeignete Standardbibliotheksfunktionen und externe Go-Bibliotheken wurden mit Context7-Unterstützung festgelegt. Der Planner überführte diese Entscheidungen anschließend in einen geordneten Migrationsplan. In Phase~3 zerlegte der Task Decomposer den Plan in umsetzbare Arbeitseinheiten und der Builder erzeugte Go-Zielcode, der in \texttt{BUILD.md} mit Verifikationsnachweis dokumentiert ist. Die in Tabelle~\ref{tab:io-vergleich} aufgeführten acht Funktionalitäten wurden vollständig durch die Pipeline geführt und sind zielseitig durch \texttt{go build}, \texttt{go vet} und \texttt{go test} abgesichert; der manuelle I/O-Abgleich zwischen Quell- und Zielsystem an konkreten Beispieleingaben steht als abschließender Evaluationsschritt noch aus.
+In Phase~2 leitete der Architect aus der konsolidierten Spezifikationsbasis eine Go-Zielarchitektur ab: Paketstruktur, Fehlerbehandlungskonventionen, geeignete Standardbibliotheksfunktionen und externe Go-Bibliotheken wurden mit Context7-Unterstützung festgelegt. Der Planner überführte diese Entscheidungen anschließend in einen geordneten Migrationsplan. In Phase~3 zerlegte der Task Decomposer den Plan in umsetzbare Arbeitseinheiten und der Builder erzeugte Go-Zielcode, der in \texttt{BUILD.md} mit Verifikationsnachweis dokumentiert ist. Alle acht Funktionalitäten wurden vollständig durch die Pipeline geführt; der abschließende Vergleich des beobachtbaren CLI-Verhaltens zwischen Quell- und Zielsystem an konkreten Beispieleingaben erfolgt nach dem in Abschnitt~\ref{sec:funktionale-validierung} beschriebenen Verifikationsplan und steht zum Stand der Arbeit noch aus.
 
 \subsection{Beispiel: Spezifikation und Zielcode im Vergleich}
 
@@ -83,40 +83,46 @@ func (Detector) Resolve(
 
 Die Listings zeigen den tatsächlichen Output der ausgeführten Pipeline. Die Anforderungen FR-001 bis FR-006 aus \texttt{SPEC.md} sind direkt auf Implementierungsschritte im Go-Zielcode abbildbar: Die Fallback-Reihenfolge (Metadata $\to$ README $\to$ Dateien) entspricht den in der Spezifikation nummerierten Teilschritten, und die beiden offenen Entscheidungen OD-001 und OD-002 sind als Kommentare im generierten Code explizit markiert. Das zeigt, wie der spec-getriebene Ansatz Unsicherheiten aus der Analyse nicht wegabstrahiert, sondern als \emph{NEEDS CLARIFICATION}-Marker durch die gesamte Pipeline trägt, bis sie manuell oder durch weitere Analyse aufgelöst werden können.
 
-\subsection{Funktionale Validierung und Feature Parity}
+\subsection{Funktionale Validierung und Feature Parity} \label{sec:funktionale-validierung}
 
-Die funktionale Validierung gliedert sich in zwei Stufen. Auf Zielseite wird die Implementierung durch \texttt{go build}, \texttt{go vet} und \texttt{go test} abgesichert; der eigentliche, manuelle I/O-Vergleich gegen die Node.js-Quellimplementierung an konkreten Beispieleingaben ist als abschließender Evaluationsschritt geplant und steht zum Stand der Arbeit noch aus. Tabelle~\ref{tab:io-vergleich} fasst den derzeitigen Build- und Teststatus für alle acht identifizierten Funktionalitäten des Lizenz-Checkers zusammen.
+Die funktionale Validierung folgt einem Black-Box-Ansatz im Sinne des klassischen \emph{Differential Testing}, bei dem zwei Implementierungen desselben Programms mit identischen Eingaben ausgeführt und ihre Ausgaben verglichen werden, ohne dass Annahmen über die interne Struktur erforderlich sind \parencite{mckeeman1998differentialtesting}. Für die LLM-gestützte Code-Übersetzung hat dieses Vorgehen unter dem Begriff der I/O-Äquivalenz aktuelle Aufmerksamkeit erfahren \parencite{eniser2025realworld}. In der vorliegenden Arbeit werden Quell- und Zielimplementierung als geschlossene CLI-Werkzeuge betrachtet und an identischen Eingaben gegeneinander ausgeführt; die Beurteilung der Feature Parity ergibt sich aus dem Vergleich der beobachtbaren Ausgaben. Als Quellsystem dient \texttt{davglass/license-checker}, dessen sechs Use Cases von der Auflistung aller Dependency-Lizenzen über die Erzeugung maschinenlesbarer Compliance-Artefakte bis hin zur Policy-Durchsetzung in CI-Umgebungen reichen und in den Spezifikationen vollständig abgebildet sind. Statische Analysen und Tests des Zielsystems (\texttt{go build}, \texttt{go vet}, \texttt{go test}) dienen lediglich als Vorab-Filter, der sicherstellt, dass das Zielbinär ausführbar und gegen die Akzeptanzszenarien der Spezifikationen abgesichert ist; die Aussage über die Verhaltensgleichheit gegenüber dem Quellsystem entsteht erst durch den nachgelagerten I/O-Vergleich, der zum Stand der Arbeit als geplanter Evaluationsschritt vorbereitet ist.
+
+\subsubsection{Verifikationsverfahren pro Funktionalität}
+
+Damit Abweichungen sich nicht in einem Gesamtoutput verschleiern, wird der Vergleich getrennt nach den acht identifizierten Funktionalitäten geführt. Wo das Zielsystem während Phase~3 bereits Integrationstests mit Golden-Files erzeugt hat (etwa \texttt{render\_export} oder \texttt{license\_resolution\_compat}), werden diese Fixtures wiederverwendet und gegen die Outputs des Quellsystems gespiegelt, statt die Vergleichsmenge neu aufzubauen. Tabelle~\ref{tab:io-vergleich} fasst das Verifikationsverfahren und die konkreten Testszenarien pro Funktionalität zusammen.
 
 \begin{table}[H]
 \centering
-\begin{tabular}{|p{0.5cm}|p{4.2cm}|p{4.0cm}|p{2.5cm}|}
+\begin{tabular}{|p{0.5cm}|p{3.4cm}|p{8.0cm}|}
 \hline
-\textbf{F} & \textbf{Funktionalität} & \textbf{Kernverhalten (Spec-Grundlage)} & \textbf{Build/Test} \\
+\textbf{F} & \textbf{Funktionalität} & \textbf{Black-Box-Verifikationsverfahren} \\
 \hline
-001 & CLI-Optionsmodell & Flags parsen, normalisieren, \texttt{-{}-help}/\texttt{-{}-version} behandeln & bestanden \\
+001 & CLI-Optionsmodell & Vergleich von Stdout, Stderr und Exit-Code für alle dokumentierten Flag-Kombinationen, für \texttt{-{}-help}/\texttt{-{}-version} sowie für gezielt ungültige Flag-Kombinationen. \\
 \hline
-002 & Abhängigkeitsgraph laden & \texttt{npm ls}-Output traversieren, Dev-/Depth-Filter anwenden & bestanden \\
+002 & Abhängigkeitsgraph laden & Drei Referenz-Repositories durchlaufen: ein flaches Projekt mit wenigen Direkt-Abhängigkeiten, ein mittelgroßes Projekt mit Dev-/Peer-Abhängigkeiten und ein Projekt mit zyklischen Verweisen. Vergleich der traversierten Modulmengen. \\
 \hline
-003 & Graph abflachen & Rekursives Inventar, Deduplizierung, Zirkel-Guard & bestanden \\
+003 & Graph abflachen & Vergleich des sortierten Modulinventars über den bereits vorhandenen \texttt{flatten\_contract}-Integrationstest des Zielsystems. Deduplizierung und Zirkel-Guard werden zusätzlich über konstruierte Sonderfälle geprüft. \\
 \hline
-004 & Lizenzerkennung & Precedence Metadata $\to$ README $\to$ Datei; \texttt{*}-Marker; \texttt{Custom:} & bestanden \\
+004 & Lizenzerkennung & Wiederverwendung der \texttt{license\_resolution\_compat}- und \texttt{license\_resolution\_fallback}-Fixtures: Testpakete mit nur \texttt{license}-Metadatum, nur README-Hinweis, nur LICENSE-Datei, allen drei kombiniert sowie ohne Signatur. Verifiziert werden Precedence-Reihenfolge, \texttt{*}-Marker und \texttt{Custom:}-Normalisierung gegen die Outputs des Quellsystems. \\
 \hline
-005 & Filter und Policy & SPDX-Ausschlüsse, \texttt{failOn}/\texttt{onlyAllow}-Exits, Private-Filter & bestanden \\
+005 & Filter und Policy & Wiederverwendung der Fixtures aus \texttt{filter\_policy\_integration}: gezielte Konfigurationen für \texttt{-{}-failOn}, \texttt{-{}-onlyAllow} und Private-Filter (Manifest mit \texttt{private: true}). Verifiziert werden Exit-Codes, Filtermengen und Policy-Verhalten bei verletzten Bedingungen. \\
 \hline
-006 & Ausgabe-Rendering & JSON, CSV, Markdown, Tree, Summary; Dateiexport & bestanden \\
+006 & Ausgabe-Rendering & Für ein Referenz-Repository wird jedes Ausgabeformat erzeugt und gegen die im Zielsystem hinterlegten Golden-Files (\texttt{json.golden}, \texttt{csv.golden}, \texttt{markdown.golden}, \texttt{tree.golden}, \texttt{summary.golden}) sowie spiegelbildlich gegen die Quellausgabe verglichen; reine Formatierungsunterschiede werden als semantisch identisch klassifiziert. \\
 \hline
-007 & Custom-Format & \texttt{customPath} laden, JSON-Konfiguration, Feld-Defaults & bestanden \\
+007 & Custom-Format & Wiederverwendung der Fixtures aus \texttt{custom\_format\_inline} und \texttt{custom\_format\_exclusion}: identische Custom-JSON-Konfiguration in beide Systeme laden; Vergleich der gerenderten Felder und der Default-Wert-Auflösung bei unvollständiger Konfiguration. \\
 \hline
-008 & Stack-Utility & Lifecycle-Operationen des Hilfsdatentyps & bestanden \\
+008 & Stack-Utility & Interner Hilfsdatentyp ohne direkt beobachtbare CLI-Schnittstelle; indirekt abgedeckt durch korrektes Verhalten der nachgelagerten Funktionalitäten F-002 und F-003. \\
 \hline
 \end{tabular}
-\caption{Build- und Teststatus für alle acht identifizierten Funktionalitäten des Lizenz-Checkers nach Abschluss von Phase~3 (\texttt{go build ./...}, \texttt{go vet ./...}, \texttt{go test ./...}). Der abschließende manuelle I/O-Vergleich gegen die Node.js-Quellimplementierung steht noch aus.}
+\caption{Black-Box-Verifikationsverfahren je Funktionalität für den I/O-Vergleich zwischen \texttt{davglass/license-checker} (Node.js) und der Go-Zielimplementierung. Wo vorhandene Integrationstests und Golden-Files des Zielsystems verwendbar sind, werden sie als Vergleichsbasis wiederverwendet.}
 \label{tab:io-vergleich}
 \end{table}
 
-Alle acht Funktionalitäten wurden im Evaluationsdurchlauf mit \texttt{go test ./...} geprüft; sämtliche Unit- und Integrationstests bestehen, \texttt{go vet ./...} meldet keine Befunde und \texttt{go build ./...} erzeugt ein fehlerfreies Binary. F-006 (Ausgabe-Rendering) ist dabei ausschließlich durch Integrationstests unter \texttt{test/integration/render\_export/} abgedeckt, da das Renderpaket selbst keine eigenen Testdateien enthält. Damit ist die Zielimplementierung gegen die in den Spezifikationen festgehaltenen Akzeptanzszenarien abgesichert; eine empirische Aussage über die Verhaltensgleichheit zwischen Quell- und Zielsystem bleibt jedoch dem ausstehenden manuellen I/O-Vergleich vorbehalten. Dieser zweistufige Ansatz ist für den PoC-Rahmen bewusst pragmatisch: Er ist ohne zusätzliche Testinfrastruktur durchführbar und fokussiert auf die wesentliche Frage, ob die migrierte Implementierung das fachliche Verhalten des Originals erhält \parencite{nunes2025maintainability,rodriguezcardenas2026behelm}.
+\subsubsection{Befunddokumentation und Fehlerzuordnung}
 
-Ein automatisierter Evaluationsansatz auf Basis von LLM-as-a-Judge, bei dem ein Sprachmodell die Qualität generierter Spezifikationen und des Zielcodes bewertet, ist für die Bachelorarbeit vorgesehen. Dort soll dieser Ansatz in einen reproduzierbaren Evaluationsrahmen eingebettet werden, der Spezifikationsabgleich, Testläufe und statische Analysen zu einer wiederholbaren Prüfkette zusammenführt.
+Pro Funktionalität wird ein Vergleichsbefund festgehalten: \emph{identisch}, \emph{semantisch identisch} bei reinen Formatabweichungen, oder \emph{abweichend} mit konkreter Beschreibung. Tritt eine Abweichung auf, wird sie auf die ursprüngliche Pipelinephase zurückgeführt. Liegt der Befund daran, dass die zugrunde liegende \texttt{SPEC.md} eine relevante Anforderung nicht eindeutig festgelegt hat, gilt der Befund als \emph{Spec-Lücke}; war die Anforderung dort eindeutig formuliert, der Zielcode weicht aber dennoch ab, gilt er als \emph{Builder-Fehler}. Diese Zuordnung ist diagnostisch wichtig, weil sie zeigt, an welcher Stelle der Pipeline (Spezifikations- oder Implementierungsphase) eine Korrektur ansetzen muss, und damit die Aussagekraft der Verifikation über reine Funktionsergebnisse hinaus erhöht.
+
+Der Vergleich wird im PoC-Rahmen bewusst manuell geführt, weil die acht Funktionalitäten überschaubar sind und der diagnostische Wert in der Phasenzuordnung liegt, nicht in der Skalierung der Vergleichsmenge. Eine automatisierte Variante über einen Cross-Language-Differenzfuzzer wie Fluorine~\parencite{eniser2025realworld} ist für die Bachelorarbeit als Erweiterung vorgesehen; sie würde den hier definierten Verifikationsplan in einen wiederholbaren Prüfrahmen überführen und denselben Befund-Schema-Aufbau übernehmen.
 
 \subsection{Qualitätsdimensionen der erzeugten Artefakte}
 
