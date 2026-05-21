@@ -12,9 +12,9 @@ Dieser Abschnitt dokumentiert den Ausführungsstand der Pipeline. Die drei Phase
 
 Im Fallbeispiel wurde die vollständige Pipeline ausgeführt. Der Orchestrator steuerte die Übergaben zwischen allen sieben Rollen (Analyzer, Spec-Writer, Architect, Planner, Task Decomposer, Builder und Verifier) sodass Analyse, Spezifikation, Architektur, Planung, Aufgabenzerlegung und Code-Synthese vollständig durchgeführt wurden. Der manuelle I/O-Vergleich zwischen Quell- und Zielimplementierung als abschließender Evaluationsschritt steht noch aus und wird im Rahmen der vorliegenden Arbeit als geplante Prüfstruktur dokumentiert.
 
-In Phase~1 erschließt der Analyzer die Quellbasis und erzeugt \texttt{ANALYSIS.md} und \texttt{FUNCTIONALITY-INDEX.md}. Die ausgeführte Pipeline identifizierte acht Funktionalitätselemente: F-001 (CLI-Optionsmodell und Normalisierung), F-002 (Abhängigkeitsgraph-Laden und Traversierungssteuerung), F-003 (Abflachen des Graphen zu einem Modulinventar), F-004 (Lizenzerkennungs- und Normalisierungspipeline), F-005 (Filterung, Paketeinschränkung und Policy-Exits), F-006 (Ausgabe-Rendering und Persistenz), F-007 (Custom-Format und JSON-Konfigurationsladung) sowie F-008 (Stack-Hilfsklassen-Lifecycle). Alle acht wurden vom Analyzer als \emph{ready} klassifiziert. Der Orchestrator löste daraufhin acht parallele Spec-Writer-Läufe aus, einer pro Funktionalitätselement, und sammelte die Ergebnisse in \texttt{SPEC-INDEX.md}.
+In Phase~1 erschließt der Analyzer die Quellbasis und erzeugt \texttt{ANALYSIS.md} und \texttt{FUNCTIONALITY-INDEX.md}. Die ausgeführte Pipeline identifizierte acht Funktionalitätselemente: F-001 (CLI-Optionsmodell und Normalisierung), F-002 (Abhängigkeitsgraph-Laden und Traversierungssteuerung), F-003 (Abflachen des Graphen zu einem Modulinventar), F-004 (Lizenzerkennungs- und Normalisierungspipeline), F-005 (Filterung, Paketeinschränkung und Policy-Exits), F-006 (Ausgabe-Rendering und Persistenz), F-007 (Custom-Format und JSON-Konfigurationsladung) sowie F-008 (Stack-Utility-Lifecycle). Alle acht wurden vom Analyzer als \emph{ready} klassifiziert. Der Orchestrator löste daraufhin acht parallele Spec-Writer-Läufe aus, einer pro Funktionalitätselement, und sammelte die Ergebnisse in \texttt{SPEC-INDEX.md}.
 
-In Phase~2 leitete der Architect aus der konsolidierten Spezifikationsbasis eine Go-Zielarchitektur ab: Paketstruktur, Fehlerbehandlungskonventionen, geeignete Standardbibliotheksfunktionen und externe Go-Bibliotheken wurden mit Context7-Unterstützung festgelegt. Der Planner überführte diese Entscheidungen anschließend in einen geordneten Migrationsplan. In Phase~3 zerlegte der Task Decomposer den Plan in umsetzbare Arbeitseinheiten und der Builder erzeugte Go-Zielcode, der in \texttt{BUILD.md} mit Verifikationsnachweis dokumentiert ist. Die in Tabelle~\ref{tab:io-vergleich} aufgeführten acht Funktionalitäten wurden vollständig durch die Pipeline geführt; der manuelle I/O-Abgleich zwischen Quell- und Zielsystem steht als ausstehender Evaluationsschritt noch aus.
+In Phase~2 leitete der Architect aus der konsolidierten Spezifikationsbasis eine Go-Zielarchitektur ab: Paketstruktur, Fehlerbehandlungskonventionen, geeignete Standardbibliotheksfunktionen und externe Go-Bibliotheken wurden mit Context7-Unterstützung festgelegt. Der Planner überführte diese Entscheidungen anschließend in einen geordneten Migrationsplan. In Phase~3 zerlegte der Task Decomposer den Plan in umsetzbare Arbeitseinheiten und der Builder erzeugte Go-Zielcode, der in \texttt{BUILD.md} mit Verifikationsnachweis dokumentiert ist. Die in Tabelle~\ref{tab:io-vergleich} aufgeführten acht Funktionalitäten wurden vollständig durch die Pipeline geführt und sind zielseitig durch \texttt{go build}, \texttt{go vet} und \texttt{go test} abgesichert; der manuelle I/O-Abgleich zwischen Quell- und Zielsystem an konkreten Beispieleingaben steht als abschließender Evaluationsschritt noch aus.
 
 \subsection{Beispiel: Spezifikation und Zielcode im Vergleich}
 
@@ -85,36 +85,36 @@ Die Listings zeigen den tatsächlichen Output der ausgeführten Pipeline. Die An
 
 \subsection{Funktionale Validierung und Feature Parity}
 
-Die funktionale Validierung erfolgt durch einen manuellen Vergleich von Eingaben und erwarteten Ausgaben zwischen Quell- und Zielsystem. Tabelle~\ref{tab:io-vergleich} zeigt den strukturierten I/O-Vergleich für die drei Kernfunktionalitäten des Lizenz-Checkers.
+Die funktionale Validierung gliedert sich in zwei Stufen. Auf Zielseite wird die Implementierung durch \texttt{go build}, \texttt{go vet} und \texttt{go test} abgesichert; der eigentliche, manuelle I/O-Vergleich gegen die Node.js-Quellimplementierung an konkreten Beispieleingaben ist als abschließender Evaluationsschritt geplant und steht zum Stand der Arbeit noch aus. Tabelle~\ref{tab:io-vergleich} fasst den derzeitigen Build- und Teststatus für alle acht identifizierten Funktionalitäten des Lizenz-Checkers zusammen.
 
 \begin{table}[H]
 \centering
 \begin{tabular}{|p{0.5cm}|p{4.2cm}|p{4.0cm}|p{2.5cm}|}
 \hline
-\textbf{F} & \textbf{Funktionalität} & \textbf{Kernverhalten (Spec-Grundlage)} & \textbf{Ergebnis} \\
+\textbf{F} & \textbf{Funktionalität} & \textbf{Kernverhalten (Spec-Grundlage)} & \textbf{Build/Test} \\
 \hline
-001 & CLI-Optionsmodell & Flags parsen, normalisieren, \texttt{-{}-help}/\texttt{-{}-version} behandeln & zu prüfen \\
+001 & CLI-Optionsmodell & Flags parsen, normalisieren, \texttt{-{}-help}/\texttt{-{}-version} behandeln & bestanden \\
 \hline
-002 & Abhängigkeitsgraph laden & \texttt{npm ls}-Output traversieren, Dev-/Depth-Filter anwenden & zu prüfen \\
+002 & Abhängigkeitsgraph laden & \texttt{npm ls}-Output traversieren, Dev-/Depth-Filter anwenden & bestanden \\
 \hline
-003 & Graph abflachen & Rekursives Inventar, Deduplizierung, Zirkel-Guard & zu prüfen \\
+003 & Graph abflachen & Rekursives Inventar, Deduplizierung, Zirkel-Guard & bestanden \\
 \hline
-004 & Lizenzerkennung & Precedence Metadata $\to$ README $\to$ Datei; \texttt{*}-Marker; \texttt{Custom:} & zu prüfen \\
+004 & Lizenzerkennung & Precedence Metadata $\to$ README $\to$ Datei; \texttt{*}-Marker; \texttt{Custom:} & bestanden \\
 \hline
-005 & Filter und Policy & SPDX-Ausschlüsse, \texttt{failOn}/\texttt{onlyAllow}-Exits, Private-Filter & zu prüfen \\
+005 & Filter und Policy & SPDX-Ausschlüsse, \texttt{failOn}/\texttt{onlyAllow}-Exits, Private-Filter & bestanden \\
 \hline
-006 & Ausgabe-Rendering & JSON, CSV, Markdown, Tree, Summary; Dateiexport & zu prüfen \\
+006 & Ausgabe-Rendering & JSON, CSV, Markdown, Tree, Summary; Dateiexport & bestanden \\
 \hline
-007 & Custom-Format & \texttt{customPath} laden, JSON-Konfiguration, Feld-Defaults & zu prüfen \\
+007 & Custom-Format & \texttt{customPath} laden, JSON-Konfiguration, Feld-Defaults & bestanden \\
 \hline
-008 & Stack-Utility & Lifecycle-Operationen der Hilfsklasse & zu prüfen \\
+008 & Stack-Utility & Lifecycle-Operationen des Hilfsdatentyps & bestanden \\
 \hline
 \end{tabular}
-\caption{Geplante I/O-Vergleichsstruktur für alle acht identifizierten Funktionalitäten des Lizenz-Checkers; Ergebnisspalte wird im Evaluationsdurchlauf ausgefüllt}
+\caption{Build- und Teststatus für alle acht identifizierten Funktionalitäten des Lizenz-Checkers nach Abschluss von Phase~3 (\texttt{go build ./...}, \texttt{go vet ./...}, \texttt{go test ./...}). Der abschließende manuelle I/O-Vergleich gegen die Node.js-Quellimplementierung steht noch aus.}
 \label{tab:io-vergleich}
 \end{table}
 
-Für jede Zeile wird dasselbe Testset an Eingaben gegen Quell- und Zielimplementierung ausgeführt und die Ausgaben verglichen. Abweichungen werden dokumentiert und auf die jeweilige Spec zurückverfolgt. Dieser Ansatz ist für den PoC-Rahmen bewusst pragmatisch: Er ist ohne zusätzliche Testinfrastruktur durchführbar und fokussiert auf die wesentliche Frage, ob die migrierte Implementierung das fachliche Verhalten des Originals erhält \parencite{nunes2025maintainability,rodriguezcardenas2026behelm}.
+Alle acht Funktionalitäten wurden im Evaluationsdurchlauf mit \texttt{go test ./...} geprüft; sämtliche Unit- und Integrationstests bestehen, \texttt{go vet ./...} meldet keine Befunde und \texttt{go build ./...} erzeugt ein fehlerfreies Binary. F-006 (Ausgabe-Rendering) ist dabei ausschließlich durch Integrationstests unter \texttt{test/integration/render\_export/} abgedeckt, da das Renderpaket selbst keine eigenen Testdateien enthält. Damit ist die Zielimplementierung gegen die in den Spezifikationen festgehaltenen Akzeptanzszenarien abgesichert; eine empirische Aussage über die Verhaltensgleichheit zwischen Quell- und Zielsystem bleibt jedoch dem ausstehenden manuellen I/O-Vergleich vorbehalten. Dieser zweistufige Ansatz ist für den PoC-Rahmen bewusst pragmatisch: Er ist ohne zusätzliche Testinfrastruktur durchführbar und fokussiert auf die wesentliche Frage, ob die migrierte Implementierung das fachliche Verhalten des Originals erhält \parencite{nunes2025maintainability,rodriguezcardenas2026behelm}.
 
 Ein automatisierter Evaluationsansatz auf Basis von LLM-as-a-Judge, bei dem ein Sprachmodell die Qualität generierter Spezifikationen und des Zielcodes bewertet, ist für die Bachelorarbeit vorgesehen. Dort soll dieser Ansatz in einen reproduzierbaren Evaluationsrahmen eingebettet werden, der Spezifikationsabgleich, Testläufe und statische Analysen zu einer wiederholbaren Prüfkette zusammenführt.
 
