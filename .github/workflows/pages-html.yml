@@ -27,7 +27,9 @@ jobs:
 
       - name: Prepare bibliography for HTML citations
         run: |
-          latexmk -pdf -interaction=nonstopmode -file-line-error main.tex
+          # -f (force) erlaubt latexmk, trotz "undefined citation"-Warnungen
+          # beim ersten Pass alle weiteren Passes (biber, pdflatex) auszufuehren.
+          latexmk -pdf -f -interaction=nonstopmode -file-line-error main.tex
 
       - name: Build HTML from LaTeX
         run: |

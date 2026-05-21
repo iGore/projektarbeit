@@ -24,7 +24,11 @@ jobs:
           root_file: main.tex
           work_in_root_file_dir: true
           latexmk_use_xelatex: false
-          args: -pdf -file-line-error -halt-on-error -interaction=nonstopmode
+          # -halt-on-error bewusst entfernt: bei biblatex+biber gibt es beim ersten Pass
+          # immer "undefined citation"-Warnungen, bevor biber ueberhaupt laeuft.
+          # -f (force) laesst latexmk trotz Warnungen weiterarbeiten und alle Passes
+          # (pdflatex -> biber -> pdflatex -> pdflatex) durchlaufen.
+          args: -pdf -f -file-line-error -interaction=nonstopmode
 
       - name: Capture commit message
         id: commit
