@@ -1,12 +1,85 @@
-% bitte Inhalt der anhang.tex löschen oder auskommentieren, falls kein Anhang benötigt werden sollte
+\clearpage
+\renewcommand{\thesection}{\Alph{section}}
+\setcounter{section}{0}
+\addcontentsline{toc}{section}{Anhang}
 
-\section*{Anhang}
-\label{Anhang}
+\section{Manueller I/O-Vergleich und Verifikationsstand} \label{anhang:io-compare}
 
-Ein Anhang zur wissenschaftlichen Arbeit ist notwendig, wenn Materialien, die die Arbeit als Ganzes oder auch größere Teile derselben betreffen, jedoch nur schwer im Ausführungsteil unterzubringen sind. Das ist insbesondere dann der Fall, wenn sie aufgrund ihres Umfangs den Gesamtzusammenhang der Ausführung stören würden. Inhaltlich darf im Anhang nichts stehen, was zum Verständnis des Textes notwendig ist, der Text der Arbeit darf an dieser Stelle nicht „unter anderen Vorzeichen“ fortgesetzt werden. Er sollte nicht dazu verwendet werden, der Arbeit einen größeren Umfang zu geben und diese „dicker“ erscheinen zu lassen!
+Dieser Anhang dokumentiert den manuell durchgeführten Black-Box-Vergleich zwischen Quell- und Zielimplementierung, der die in Abschnitt~\ref{sec:funktionale-validierung} beschriebene funktionale Validierung operationalisiert.
 
-Der Anhang eignet sich für ergänzende Dokumente und Materialien, vor allem, falls diese für den Leser nur schwer oder gar nicht zugänglich sind, wie bspw. unveröffentlichte Betriebsunterlagen.
-Vor allem in den empirischen Arbeiten kann der Anhang dazu dienen, verwendete Datensätze, eingesetzte mathematisch-statistische Verfahren oder Programme näher zu kennzeichnen. Werden im Rahmen der Untersuchungen Befragungen durchgeführt, sind die Fragestellungen und Ergebnisse im Anhang zu dokumentieren. Auf Gespräche darf im Rahmen der Ausführungen nur dann Bezug genommen werden, wenn ein vom Gesprächspartner unterzeichnetes Ergebnis-Protokoll im Anhang der Arbeit beigefügt ist.
+\subsection{Methodischer Befund: nachträglich ergänzter Entry-Point}\label{anhang:builder-gap}
 
-Besteht der Anhang aus mehreren Elementen, so sind die einzelnen Elemente durch Nummerierung voneinander zu trennen.
+Vor der eigentlichen Durchführung des Vergleichs trat ein methodisch relevanter Befund auf, der in der Arbeit selbst transparent gemacht werden soll: Der Builder-Agent hat in seinem Pipelinedurchlauf für die acht Funktionalitäten Library-Code unter \texttt{target/internal/} sowie Integrationstests unter \texttt{target/test/integration/} erzeugt, jedoch keinen lauffähigen Entry-Point in Form eines \texttt{main.go} unter \texttt{target/cmd/}. Damit fehlte die End-to-End-Verkabelung der Stufen \emph{Loader}~$\rightarrow$~\emph{Flatten}~$\rightarrow$~\emph{License-Resolution}~$\rightarrow$~\emph{Filter}~$\rightarrow$~\emph{Render}, ohne die ein I/O-Vergleich gegen das Quellsystem \texttt{davglass/license-checker} nicht möglich ist.
 
+Auffällig ist, dass dies vom Verifier in der ursprünglichen Konfiguration nicht erkannt wurde: \texttt{go build ./...} und \texttt{go vet ./...} laufen auch ohne Entry-Point fehlerfrei durch, weil die Werkzeuge nur die vorhandenen Pakete kompilieren. Die Verifier-Checkliste enthielt keinen expliziten Check auf ein lauffähiges Binary für CLI-orientierte Use Cases. Dies passt zu den in Kapitel~\ref{konzeption} angeführten Befunden zur Selbstüberschätzung agentischer Systeme \parencite{huang2024cannotselfcorrect,korn2026reportingprompting}: Eine Phase galt artefaktbasiert als bestanden, obwohl ein für die Akzeptanzszenarien zentrales Artefakt fehlte.
+
+Als unmittelbare Konsequenz wurden zwei Eingriffe vorgenommen:
+
+\begin{enumerate}
+\item In \texttt{.opencode/agents/verifier.md} wurde ein neuer Phase-3.4-Checkblock ergänzt, der für jeden CLI-orientierten Use Case explizit prüft, ob ein \texttt{target/cmd/<tool>/main.go} existiert, ob \texttt{go build -o /tmp/cli-bin ./cmd/...} ein ausführbares Binary erzeugt und ob das Binary auf \texttt{-{}-help} und \texttt{-{}-version} mit Exit-Code~0 reagiert. Die Anweisung „eine reine Library-Übersetzung gilt als FAIL für CLI-Migrationen" wurde explizit aufgenommen.
+\item In \texttt{.opencode/agents/builder.md} wurde unter \emph{Output Rules} und \emph{Guardrails} ergänzt, dass der Builder für jeden CLI-orientierten Use Case ein \texttt{cmd/<tool>/main.go} produzieren muss, das die relevanten Stufen end-to-end verkabelt; eine reine Pakete-Übersetzung gilt nicht als abgeschlossen.
+\end{enumerate}
+
+Für die vorliegende Projektarbeit wurde \texttt{target/cmd/license-checker/main.go} \emph{nachträglich und außerhalb der regulären Subagent-Pipeline} angelegt, um den I/O-Vergleich überhaupt durchführen zu können. Der Kopfkommentar dieser Datei weist explizit auf den ergänzten Status hin. Damit ist die methodische Trennung gewahrt: Der Builder-Output bleibt unangetastet als das, was die Pipeline tatsächlich erzeugt hat; die nachträgliche Verkabelung ist als Evaluationswerkzeug ausgewiesen und nicht als Bestandteil des PoC-Outputs.
+
+\subsection{Vorgehen beim Vergleich}\label{anhang:vorgehen}
+
+Der Vergleich wurde manuell und nach einem festen Schema pro Funktionalität durchgeführt. Für jede zu prüfende Funktionalität wurden folgende Schritte durchlaufen:
+
+\begin{enumerate}
+\item Eingabe vorbereiten: Ein minimales Node.js-Projekt mit den für die jeweilige Funktionalität relevanten Eigenschaften (z.\,B. ein \texttt{package.json} mit definierten Abhängigkeiten und Lizenzfeldern) wird angelegt und einmalig per \texttt{npm install} initialisiert.
+\item Quellsystem aufrufen: \texttt{davglass/license-checker} wird über \texttt{npx -{}-yes license-checker} mit den vereinbarten Argumenten im Verzeichnis des Eingabeprojekts ausgeführt; \texttt{stdout}, \texttt{stderr} und Exit-Code werden protokolliert.
+\item Zielsystem aufrufen: Das aus \texttt{target/cmd/license-checker} kompilierte Binary wird mit denselben Argumenten und im selben Verzeichnis ausgeführt; \texttt{stdout}, \texttt{stderr} und Exit-Code werden ebenfalls protokolliert.
+\item Vergleichen: Die beobachtbaren Ausgaben werden gegeneinander gestellt und entsprechend dem in Abschnitt~\ref{sec:funktionale-validierung} eingeführten Schema einer der drei Äquivalenzklassen zugeordnet: \emph{identisch} bei byte-genauer Übereinstimmung, \emph{semantisch identisch} bei reinen Format- oder Schemaunterschieden ohne semantische Abweichung, \emph{abweichend} bei inhaltlichen Differenzen.
+\item Befund zuordnen: Liegt eine Abweichung vor, wird sie gemäß Abschnitt~\ref{sec:funktionale-validierung} als \emph{Spec-Lücke} oder \emph{Builder-Fehler} klassifiziert und in der Befundtabelle dokumentiert.
+\end{enumerate}
+
+Das Verfahren folgt dem in Abschnitt~\ref{sec:funktionale-validierung} beschriebenen Black-Box-Ansatz nach \textcite{mckeeman1998differentialtesting} und der I/O-Äquivalenzauffassung von \textcite{eniser2025realworld}. Es ist bewusst manuell gehalten, weil die acht Funktionalitäten überschaubar sind und der diagnostische Wert in der Phasenzuordnung der Befunde liegt, nicht in der Skalierung der Vergleichsmenge. Eine automatisierte Variante über einen Cross-Language-Differenzfuzzer wie Fluorine~\parencite{eniser2025realworld} ist als Erweiterung für die Bachelorarbeit vorgesehen.
+
+\subsection{Eingaben und Vergleichsfälle}\label{anhang:faelle}
+
+Für den Vergleich wurden drei Initial-Vergleichsfälle vorbereitet, die den Mindestumfang einer durchstichgetriebenen Verifikation abdecken. Sie adressieren die CLI-Oberfläche (F-001) sowie die zentrale Lizenzerkennungs- und Normalisierungspipeline (F-004). Weitere Fälle für F-002, F-003, F-005, F-006 und F-007 lassen sich nach demselben Schema aus den in Abschnitt~\ref{sec:funktionale-validierung} genannten Theseus-Integrationstest-Fixtures ableiten und sind als Erweiterungspunkt für die Bachelorarbeit ausgewiesen.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{2.0cm}|p{3.2cm}|p{4.0cm}|p{4.0cm}|}
+\hline
+\textbf{F-ID} & \textbf{Vergleichsfall} & \textbf{Argumente} & \textbf{Erwartung} \\
+\hline
+F-001 & Versionsausgabe & \texttt{-{}-version} & Diff zulässig (Versionen unterscheiden sich konzeptionell) \\
+\hline
+F-001 & Hilfetext & \texttt{-{}-help} & Diff zulässig (Hilfetext-Layout unterscheidet sich) \\
+\hline
+F-004 & Minimales Projekt mit JSON-Ausgabe & \texttt{-{}-start . -{}-json -{}-production} & Semantisch zu prüfen (JSON-Top-Level-Schemata unterscheiden sich) \\
+\hline
+\end{tabular}
+\caption{Initial-Vergleichsfälle des manuellen I/O-Vergleichs}
+\label{tab:io-fixtures}
+\end{table}
+
+\subsection{Befundstand zum Abgabezeitpunkt}\label{anhang:befunde}
+
+Tabelle~\ref{tab:io-befunde} dokumentiert die Befunde des manuell durchgeführten Vergleichs. Die als \emph{n.\,a.}\ markierte Funktionalität F-008 ist ein interner Hilfsdatentyp ohne direkt beobachtbare CLI-Oberfläche und wird indirekt über F-002 und F-003 abgedeckt. Die als \emph{offen} markierten Funktionalitäten F-002, F-003, F-005, F-006 und F-007 sind nach demselben Vorgehen aus den vorhandenen Integrationstest-Fixtures abzuleiten und in der Bachelorarbeit zu ergänzen.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{1.5cm}|p{3.5cm}|p{3.0cm}|p{5.0cm}|}
+\hline
+\textbf{F-ID} & \textbf{Vergleichsfall} & \textbf{Befund} & \textbf{Anmerkung} \\
+\hline
+F-001 & Versionsausgabe & \emph{Diff vorhanden} & Erwartet; die Versionsangaben unterscheiden sich naturgemäß zwischen Quell- und Zielsystem. \\
+\hline
+F-001 & Hilfetext & \emph{Diff vorhanden} & Erwartet; das Hilfetext-Layout der Cobra-basierten Go-Implementierung weicht vom Commander.js-Layout des Quellsystems ab. \\
+\hline
+F-004 & Minimales Projekt mit JSON-Ausgabe & \emph{Semantisch zu prüfen} & Die JSON-Top-Level-Schemata unterscheiden sich systematisch. Klassifikation als \emph{Spec-Lücke}: die zugrunde liegende \texttt{SPEC.md} hat das Top-Level-Schema nicht eindeutig fixiert. \\
+\hline
+F-002, F-003, F-005, F-006, F-007 & noch nicht durchgeführt & \emph{offen} & In der Bachelorarbeit aus den vorhandenen Integrationstest-Fixtures abzuleiten. \\
+\hline
+F-008 & -- & n.\,a. & Interner Hilfsdatentyp ohne CLI-Oberfläche; indirekt über F-002 und F-003 abgedeckt. \\
+\hline
+\end{tabular}
+\caption{Befundstand des manuellen I/O-Vergleichs zum Abgabezeitpunkt}
+\label{tab:io-befunde}
+\end{table}
+
+Aus den durchgeführten Vergleichen lassen sich zwei Beobachtungen festhalten. Erstens verhält sich die CLI-Oberfläche des Zielsystems erwartungsgemäß: \texttt{-{}-version} und \texttt{-{}-help} liefern jeweils eine Ausgabe und einen sinnvollen Exit-Code; die Divergenzen gegenüber dem Quellsystem sind auf der Ebene des Werkzeugrahmens (\texttt{cobra} statt \texttt{commander.js}) zu erklären und nicht funktional. Zweitens zeigt der erste Vergleichsfall der Lizenzerkennung (F-004) eine systematische Schema-Divergenz im JSON-Output, die methodisch besonders aufschlussreich ist: Sie ist nicht auf einen Builder-Fehler zurückzuführen, sondern auf eine fehlende Festlegung im Spezifikationsartefakt. Damit wird das in Abschnitt~\ref{sec:funktionale-validierung} eingeführte Befund-Schema unmittelbar bestätigt -- die Phasenzuordnung erlaubt es, Korrekturansätze gezielt auf die Spezifikationsebene zu richten und nicht erst auf die Implementierung.
