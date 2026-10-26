@@ -10,7 +10,34 @@ Als Demonstrationsszenario dient die Migration eines Node.js-basierten Lizenz-Ch
 
 Dieser Abschnitt dokumentiert den Ausführungsstand der Pipeline. Die drei Phasen wurden vollständig durchlaufen und alle Artefakte erzeugt. Der abschließende Black-Box-Vergleich zwischen Quell- und Zielsystem wurde manuell nach dem in Abschnitt~\ref{sec:funktionale-validierung} beschriebenen Verfahren durchgeführt; die Befunde sind in Abschnitt~\ref{sec:io-befunde} dokumentiert. Im Zuge des Vergleichs traten zwei methodisch eigenständige Defektklassen zutage, die in iterativen Skill-Anpassungen aufgearbeitet wurden (Abschnitte~\ref{sec:builder-gap} und~\ref{sec:datafluss-gap}).
 
-Im Fallbeispiel wurde die vollständige Pipeline ausgeführt. Der Orchestrator steuerte die Übergaben zwischen den sechs Fachagenten (Analyzer, Spec-Writer, Architect, Planner, Task Decomposer, Builder) sowie dem Verifier als unabhängiger Prüfinstanz.
+Im Fallbeispiel wurde die vollständige Pipeline ausgeführt. Der Orchestrator steuerte die Übergaben zwischen den sechs Fachagenten (Analyzer, Spec-Writer, Architect, Planner, Task Decomposer, Builder) sowie dem Verifier als unabhängiger Prüfinstanz. Tabelle~\ref{tab:versuchsumgebung} fasst die Versuchsumgebung der beiden ausgewerteten Durchläufe zusammen.
+
+\begin{table}[H]
+\centering
+\begin{small}
+\begin{tabular}{|p{4.2cm}|p{4.6cm}|p{4.6cm}|}
+\hline
+ & \textbf{Ursprünglicher Durchlauf} & \textbf{Durchlauf nach erster Skill-Iteration} \\
+\hline
+Datum & 01.05.2026 & 24.05.2026 \\
+\hline
+Laufzeitumgebung & OpenCode 1.14.20 & OpenCode 1.15.10 \\
+\hline
+Sprachmodell (alle Agenten) & \texttt{gpt-5.3-codex} (OpenAI) & \texttt{gpt-5.3-codex} (OpenAI) \\
+\hline
+Subagent-Aufrufe & 31 & 56 \\
+\hline
+Code-Intelligence-MCP & Sourcebot & Sourcebot \\
+\hline
+Quellsystem im I/O-Vergleich & \multicolumn{2}{p{9.2cm}|}{\texttt{davglass/license-checker} über \texttt{npx -{}-yes}, Version nicht fest gepinnt} \\
+\hline
+\end{tabular}
+\end{small}
+\caption{Versuchsumgebung der ausgewerteten Pipelinedurchläufe, rekonstruiert aus den Sitzungsdaten von OpenCode und der Versionshistorie des PoC-Repositorys}
+\label{tab:versuchsumgebung}
+\end{table}
+
+Beide Durchläufe nutzten noch Sourcebot als Code-Intelligence-MCP, mit einem entsprechenden Nutzungsleitfaden als Skill; die in Kapitel~\ref{implementierung} beschriebene Umstellung auf CodeGraphContext erfolgte erst danach. Funktional erfüllt Sourcebot dieselbe Rolle des Repository-Zugriffs, arbeitet aber über eine Code-Suche statt über einen Aufrufgraphen.
 
 In Phase~1 erschließt der Analyzer die Quellbasis und erzeugt \texttt{ANALYSIS.md} und \texttt{USE-CASES.md}. Die ausgeführte Pipeline identifizierte acht Funktionalitäten: F-001 (CLI-Optionsmodell und Normalisierung), F-002 (Abhängigkeitsgraph-Laden und Traversierungssteuerung), F-003 (Abflachen des Graphen zu einem Modulinventar), F-004 (Lizenzerkennungs- und Normalisierungspipeline), F-005 (Filterung, Paketeinschränkung und Policy-Exits), F-006 (Ausgabe-Rendering und Persistenz), F-007 (Custom-Format und JSON-Konfigurationsladung) sowie F-008 (Stack-Utility-Lifecycle). Alle acht wurden vom Analyzer als \emph{ready} klassifiziert. Der Orchestrator löste daraufhin acht parallele Spec-Writer-Läufe aus, einer pro Funktionalität, und sammelte die Ergebnisse in \texttt{SPECS.md}.
 
@@ -222,7 +249,7 @@ Die Befunde dieses Kapitels sind als explorative Einzelfallbeobachtung zu verste
 
 \textbf{Externe Validität.} Untersucht wurde ein einziges, vergleichsweise kleines CLI-Werkzeug mit einer festen Sprachkombination (Node.js nach Go). Ob sich die Befunde auf größere Systeme, andere Domänen oder andere Sprachpaare übertragen lassen, bleibt offen.
 
-\textbf{Reproduzierbarkeit.} Agentenprofile, Skills und Konfiguration sind im PoC-Repository versioniert. Das Quellsystem wurde im Vergleich jedoch über \texttt{npx -{}-yes license-checker} aufgerufen, also in der zum Ausführungszeitpunkt aktuellen npm-Version und nicht in einem festgelegten Stand. Als Konsequenz bindet die weiterentwickelte Pipeline das Quellsystem inzwischen als Git-Submodul auf einem festen Commit ein und hält beobachtete Referenzausgaben als versionierte Golden-Dateien fest.
+\textbf{Reproduzierbarkeit.} Agentenprofile, Skills und Konfiguration sind im PoC-Repository versioniert; Modell- und Werkzeugversionen der ausgewerteten Durchläufe dokumentiert Tabelle~\ref{tab:versuchsumgebung}. Das Quellsystem wurde im Vergleich jedoch über \texttt{npx -{}-yes license-checker} aufgerufen, also in der zum Ausführungszeitpunkt aktuellen npm-Version und nicht in einem festgelegten Stand. Als Konsequenz bindet die weiterentwickelte Pipeline das Quellsystem inzwischen als Git-Submodul auf einem festen Commit ein und hält beobachtete Referenzausgaben als versionierte Golden-Dateien fest.
 
 \subsection{Qualitätsdimensionen der erzeugten Artefakte}
 
