@@ -36,13 +36,13 @@ Die Neuimplementierungsphase wird durch Task Decomposer und Builder getragen. De
 
 \subsubsection{Phasenübergreifend: Orchestrator und Verifier}
 
-Der Orchestrator koordiniert Übergaben zwischen den Phasen, versioniert Artefakte und überwacht Freigaberegeln. Er ist keinem einzelnen Horseshoe-Abschnitt zugeordnet, sondern stabilisiert die Gesamtpipeline organisatorisch. Seine zentrale Zusatzaufgabe in der Rekonstruktionsphase besteht darin, das Analyseinventar des Analyzers in einzelne Arbeitspunkte zu zerlegen und daraus gezielt parallele Spec-Writer-Läufe pro Funktionalität oder Use Case zu starten.
+Der Orchestrator koordiniert Übergaben zwischen den Phasen, versioniert Artefakte und überwacht Freigaberegeln. Er ist keinem einzelnen Horseshoe-Abschnitt zugeordnet, sondern stabilisiert die Gesamtpipeline organisatorisch. Seine zentrale Zusatzaufgabe in der Rekonstruktionsphase besteht darin, das Analyseinventar des Analyzers in einzelne Arbeitspunkte zu zerlegen und daraus gezielt parallele Spec-Writer-Läufe pro Funktionalität oder Use Case zu starten. Dieses Muster, bei dem der Orchestrator aus einem Dispatch-Artefakt mehrere parallele Subagenten-Aufrufe ableitet, wird im Folgenden als \emph{Fan-out} bezeichnet.
 
 Der \emph{Verifier} ergänzt den Orchestrator als unabhängige Prüfinstanz an jedem Phasengate. Während der Orchestrator koordiniert, hat der Verifier einen einzigen Auftrag: prüfen, ob alle geforderten Artefakte auf Disk existieren und intern vollständig sind, und ein granulares, schrittbasiertes Pass/Fail-Ergebnis zurückgeben. Die Prüfung geht dabei über reine Dateiexistenz hinaus: Für Phase~1 wird etwa geprüft, ob jede \texttt{SPEC.md} mindestens ein Gherkin-Szenario, vollständig referenzierte funktionale Anforderungen und einen ausgefüllten Scope-Abschnitt enthält. Für Phase~3 prüft der Verifier zusätzlich, ob \texttt{go build} und \texttt{go vet} fehlerfrei durchlaufen. Die Trennung ist bewusst: Ein Orchestrator, der seine eigene Arbeit verifiziert, läuft Gefahr, das Ergebnis unbewusst zu bestätigen. \textcite{huang2024cannotselfcorrect} zeigen, dass LLMs ohne externes Feedback Probleme nicht zuverlässig in ihren eigenen Antworten erkennen und ihre Leistung nach intrinsischer Selbstkorrektur sogar abnehmen kann. Ergänzend belegen \textcite{panickssery2024selfrecognition}, dass LLM-basierte Evaluatoren eigene Ausgaben systematisch höher bewerten als gleichwertige fremde Ausgaben; \textcite{wataoka2024selfpreference} quantifizieren diesen Self-Preference Bias und führen ihn auf eine erhöhte Vertrautheit des Modells mit den eigenen Formulierungen zurück. Ein unabhängiger Verifier mit frischem Kontext und dem expliziten Auftrag, Probleme zu finden, ist daher robuster als eine Selbstprüfung durch denselben Agenten. Der Verifier hat keinen MCP-Zugriff, liest ausschließlich Artefakte und modifiziert nichts; er berichtet nur. Auf Basis des Verifier-Ergebnisses entscheidet der Orchestrator, ob er zur nächsten Phase übergeht oder Arbeit zurück an die verantwortliche Rolle leitet.
 
 \subsubsection{Artefakt-Zuordnung}
 
-Tabelle~\ref{tab:artefakte} fasst zusammen, welcher Agent welche Artefakte produziert und wo sie abgelegt werden. Jeder Agent ist für genau seine Ausgabeartefakte verantwortlich; kein Agent darf Artefakte eines anderen Agenten schreiben.
+Tabelle~\ref{tab:artefakte} fasst zusammen, welcher Agent welche Artefakte produziert und wo sie abgelegt werden. Dabei sind zwei Ordner strikt getrennt: \texttt{specs/} enthält ausschließlich Dokumentationsartefakte wie Analyse, Spezifikationen, Pläne und Aufgabenlisten, \texttt{target/} ausschließlich den generierten Go-Code. Jeder Agent ist für genau seine Ausgabeartefakte verantwortlich; kein Agent darf Artefakte eines anderen Agenten schreiben.
 
 \begin{table}[H]
 \centering
@@ -50,19 +50,19 @@ Tabelle~\ref{tab:artefakte} fasst zusammen, welcher Agent welche Artefakte produ
 \hline
 \textbf{Agent} & \textbf{Erzeugte Artefakte} & \textbf{Pfad} \\
 \hline
-Analyzer & \texttt{ANALYSIS.md}, \texttt{FUNCTIONALITY-INDEX.md} & \texttt{target/specs/} \\
+Analyzer & \texttt{ANALYSIS.md}, \texttt{USE-CASES.md} & \texttt{specs/} \\
 \hline
-Spec-Writer & \texttt{SPEC.md} (je Funktionalität) & \texttt{target/specs/<slug>/} \\
+Spec-Writer & \texttt{SPEC.md} (je Funktionalität) & \texttt{specs/<slug>/} \\
 \hline
-Architect & \texttt{ARCHITECTURE.md} & \texttt{target/specs/} \\
+Architect & \texttt{ARCHITECTURE.md} & \texttt{specs/} \\
 \hline
-Planner & \texttt{PLAN.md} (je Use Case) & \texttt{target/specs/<slug>/} \\
+Planner & \texttt{PLAN.md} (je Use Case) & \texttt{specs/<slug>/} \\
 \hline
-Task Decomposer & \texttt{TASKS.md} (je Use Case) & \texttt{target/specs/<slug>/} \\
+Task Decomposer & \texttt{TASKS.md} (je Use Case) & \texttt{specs/<slug>/} \\
 \hline
-Builder & Go-Quellcode + \texttt{BUILD.md} & \texttt{target/} + \texttt{target/specs/<slug>/} \\
+Builder & Go-Quellcode + \texttt{BUILD.md} & \texttt{target/} + \texttt{specs/<slug>/} \\
 \hline
-Orchestrator & \texttt{SPEC-INDEX.md} (Koordinationsartefakt) & \texttt{target/specs/} \\
+Orchestrator & \texttt{SPECS.md} (Koordinationsartefakt) & \texttt{specs/} \\
 \hline
 Verifier & Verifier-Report (ephemer) & -- \\
 \hline
@@ -77,11 +77,11 @@ Die Migrations-Pipeline stützt sich auf drei ergänzende Konfigurationsebenen: 
 
 \subsubsection{MCPs}
 
-Für die geplante Pipeline sind zwei MCPs vorgesehen, deren Zuständigkeiten bewusst phasengebunden sind: Sourcebot für die Rekonstruktionsphase, Context7 für Transformationsplanung und Neuimplementierung. Diese Trennung ist keine technische Einschränkung, sondern eine konzeptionelle Entscheidung: Jede Phase greift auf genau das externe Wissen zu, das sie für ihre Aufgabe braucht, ohne unnötig andere Kontextquellen zu öffnen.
+Für die Pipeline sind zwei MCPs vorgesehen, deren Zuständigkeiten bewusst phasengebunden sind: CodeGraphContext für die Rekonstruktionsphase, Context7 für Transformationsplanung und Neuimplementierung. Diese Trennung ist keine technische Einschränkung, sondern eine konzeptionelle Entscheidung: Jede Phase greift auf genau das externe Wissen zu, das sie für ihre Aufgabe braucht, ohne unnötig andere Kontextquellen zu öffnen.
 
-In \textbf{Phase~1 (Rekonstruktion)} ist Sourcebot der zentrale MCP. Analyzer und Spec-Writer arbeiten ausschließlich am Bestandssystem: Sie erschließen Repository-Strukturen, lösen Symbole auf, verfolgen Referenzen und sammeln Evidenz für die Spezifikation. Ihr Wissensgegenstand ist der vorhandene Quellcode, nicht der Zielstack. Context7 hätte hier keine sinnvolle Rolle, weil in Phase~1 noch keine Zielarchitektur existiert, die Bibliotheks- oder Framework-Dokumentation rechtfertigen würde.
+In \textbf{Phase~1 (Rekonstruktion)} ist CodeGraphContext der zentrale MCP. Analyzer und Spec-Writer arbeiten ausschließlich am Bestandssystem: Sie erschließen Repository-Strukturen, lösen Symbole auf, verfolgen Aufrufer und Aufrufketten und sammeln Evidenz für die Spezifikation. Ihr Wissensgegenstand ist der vorhandene Quellcode, nicht der Zielstack. Context7 hätte hier keine sinnvolle Rolle, weil in Phase~1 noch keine Zielarchitektur existiert, die Bibliotheks- oder Framework-Dokumentation rechtfertigen würde.
 
-In \textbf{Phase~2 (Transformationsplanung) und Phase~3 (Neuimplementierung)} dreht sich das Verhältnis um. Architect, Planner, Task Decomposer und Builder arbeiten nicht mehr am Quellcode, sondern an Spezifikationen, Architekturentscheidungen und der Zielimplementierung. Ihr Wissensgegenstand wechselt auf den Zielstack. Context7 liefert dafür aktuell dokumentierte Pakete, APIs und idiomatische Implementierungsmuster für Go. Sourcebot ist hier nicht mehr nötig, weil der Bestandscode durch die Spezifikation bereits vollständig abstrahiert wurde.
+In \textbf{Phase~2 (Transformationsplanung) und Phase~3 (Neuimplementierung)} dreht sich das Verhältnis um. Architect, Planner, Task Decomposer und Builder arbeiten nicht mehr am Quellcode, sondern an Spezifikationen, Architekturentscheidungen und der Zielimplementierung. Ihr Wissensgegenstand wechselt auf den Zielstack. Context7 liefert dafür aktuell dokumentierte Pakete, APIs und idiomatische Implementierungsmuster für Go. CodeGraphContext ist hier nicht mehr nötig, weil der Bestandscode durch die Spezifikation bereits vollständig abstrahiert wurde.
 
 Der Orchestrator und der Verifier erhalten keinen direkten MCP-Zugriff. Der Orchestrator koordiniert ausschließlich Übergaben, Gates und Retry-Entscheidungen; benötigter externer Kontext wird durch die Fachagenten abgerufen. Der Verifier liest nur Artefakte auf Disk; er koordiniert und generiert nichts.
 
@@ -97,7 +97,7 @@ Für die Pipeline sind sieben Skills vorgesehen, die in der folgenden Tabelle de
 \hline
 \textbf{Skill} & \textbf{Genutzt von} & \textbf{Zweck} \\
 \hline
-Sourcebot-Skill & Analyzer, Spec-Writer & Nutzungsleitfaden: Scope begrenzen, Evidenz strukturieren, Beobachtungen von Inferenzen trennen \\
+CodeGraphContext-Skill & Analyzer, Spec-Writer & Nutzungsleitfaden: Scope begrenzen, Evidenz strukturieren, Beobachtungen von Inferenzen trennen \\
 \hline
 CLI-Analyzer-Skill & Analyzer & Domänenerweiterung: CLI-Einstiegspunkt, Flag-Inventar, abhängigkeitsgeordnete Anforderungsreihenfolge \\
 \hline
