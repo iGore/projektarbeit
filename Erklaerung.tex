@@ -18,14 +18,18 @@ In Übereinstimmung mit der Leitlinie der Fachhochschule Dortmund zum Einsatz K�
 \hline
 \textbf{Werkzeug (Version)} & \textbf{Einsatzzweck} & \textbf{Betroffene Arbeitsschritte} \\
 \hline
-% TODO: konkretes Modell/Version eintragen, z.B. ChatGPT (GPT-5), Claude Sonnet 4.5
-ChatGPT / Claude & Sprachliche Überarbeitung, Formulierungshilfen, Strukturvorschläge & Ausformulieren einzelner Absätze, Glättung von Übergängen \\
+% TODO (Igor): Modelle/Versionen pruefen und ergaenzen, z.B. ChatGPT (GPT-5), Claude (Modellversion)
+ChatGPT / Claude (Anthropic) & Sprachliche Überarbeitung, Formulierungshilfen, Strukturvorschläge, kritische Durchsicht & Ausformulieren und Überarbeiten einzelner Absätze, Glättung von Übergängen, \LaTeX-Satz \\
 \hline
-% TODO: ggf. weitere Werkzeuge ergänzen
-Claude (Coding-Agent) & Unterstützung bei der prototypischen Implementierung der Migrations-Pipeline & Erzeugung der Agentenprofile, Skills und des Go-Zielcodes als Untersuchungsgegenstand des PoC \\
+% TODO (Igor): pruefen, ob so zutreffend
+Claude (Anthropic) & Durchführung des byteweisen I/O-Vergleichs im dritten Durchlauf & Ausführung des Vergleichsskripts (Anhang~\ref{anhang:skript}) und Aufbereitung der Einzelergebnisse \\
 \hline
-% TODO: ergänzen, falls Literaturrecherche per KI durchgeführt wurde
--- & Recherche-Unterstützung (Hinweise auf relevante Quellen, anschließend manuell verifiziert) & Vorrecherche zu Themenkomplexen wie Spec-Driven Development und Reverse Engineering \\
+% TODO (Igor): Werkzeug fuer Agentenprofile und Skills pruefen
+Coding-Agenten (Claude, OpenCode) & Unterstützung bei der Erstellung der Pipeline-Konfiguration & Entwurf und Überarbeitung der Agentenprofile und Skills \\
+\hline
+OpenCode 1.14.20 bis 2.1.4 mit gpt-5.3-codex bzw.\ gpt-6.1-sol-ultrafast (OpenAI) & Ausführung der Migrations-Pipeline als Untersuchungsgegenstand & Erzeugung der Analyse-, Spezifikations- und Planungsartefakte sowie des Go-Zielcodes \\
+\hline
+NotebookLM (Google) & Recherche-Unterstützung und Abgleich von Aussagen mit den hinterlegten Quellen, anschließend manuell verifiziert & Vorrecherche und Quellenarbeit zu Themenkomplexen wie Spec-Driven Development und Reverse Engineering \\
 \hline
 \end{tabular}
 \end{table}
