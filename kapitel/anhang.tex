@@ -1,4 +1,174 @@
+\clearpage
+\renewcommand{\thesection}{\Alph{section}}
+\setcounter{section}{0}
+\lhead{Anhang}
 
-%bitte komplett auskommentieren, falls kein Anhang benötigt wird.
+\section{Anhang: Unterlagen zum I/O-Vergleich} \label{anhang}
 
-\section*{Anhang}
+\subsection{Geplantes Verifikationsverfahren und Umsetzungsstand} \label{anhang:plan}
+
+\begin{small}
+\begin{longtable}{|p{0.7cm}|p{2.6cm}|p{7.4cm}|p{3.4cm}|}
+\caption{Geplantes Black-Box-Verifikationsverfahren je Funktionalität für den I/O-Vergleich zwischen \texttt{davglass/license-checker} (Node.js) und der Go-Zielimplementierung. Die rechte Spalte gibt an, was davon im zweiten Durchlauf durchgeführt wurde (vgl.\ Tabelle~\ref{tab:io-befunde}).} \label{tab:io-vergleich} \\
+\hline
+\textbf{F} & \textbf{Funktionalität} & \textbf{Geplantes Verfahren} & \textbf{Im zweiten Durchlauf durchgeführt} \\
+\hline
+\endfirsthead
+
+\multicolumn{4}{l}{\textit{Fortsetzung von Tabelle~\ref{tab:io-vergleich}}} \\
+\hline
+\textbf{F} & \textbf{Funktionalität} & \textbf{Geplantes Verfahren} & \textbf{Im zweiten Durchlauf durchgeführt} \\
+\hline
+\endhead
+
+\hline
+\multicolumn{4}{r}{\textit{Fortsetzung auf der nächsten Seite}} \\
+\endfoot
+
+\hline
+\endlastfoot
+
+001 & CLI-Optionsmodell & Vergleich von Stdout, Stderr und Exit-Code für alle dokumentierten Flag-Kombinationen, für \texttt{-{}-help}/\texttt{-{}-version} sowie für gezielt ungültige Flag-Kombinationen. & teilweise: nur \texttt{-{}-help} und \texttt{-{}-version} \\
+\hline
+002 & Abhängigkeits\-graph laden & Drei Referenz-Repositories durchlaufen: ein flaches Projekt mit wenigen Direkt-Abhängigkeiten, ein mittelgroßes Projekt mit Dev-/Peer-Abhängigkeiten und ein Projekt mit zyklischen Verweisen. Vergleich der traversierten Modulmengen. & teilweise: nur flaches Projekt \\
+\hline
+003 & Graph abflachen & Vergleich des sortierten Modulinventars über den bereits vorhandenen \texttt{flatten\_contract}-Integrationstest des Zielsystems. Deduplizierung und Zirkel-Guard werden zusätzlich über konstruierte Sonderfälle geprüft. & teilweise: transitive Deduplizierung, keine Sonderfälle \\
+\hline
+004 & Lizenz\-erkennung & Wiederverwendung der \texttt{license\_resolution\_compat}- und \texttt{license\_resolution\_fallback}-Fixtures: Testpakete mit nur \texttt{license}-Metadatum, nur README-Hinweis, nur LICENSE-Datei, allen drei kombiniert sowie ohne Signatur. Verifiziert werden Precedence-Reihenfolge, \texttt{*}-Marker und \texttt{Custom:}-Normalisierung gegen die Outputs des Quellsystems. & teilweise: nur Schema und Schlüsselbenennung \\
+\hline
+005 & Filter und Policy & Wiederverwendung der Fixtures aus \texttt{filter\_policy\_integration}: gezielte Konfigurationen für \texttt{-{}-failOn}, \texttt{-{}-onlyAllow} und Private-Filter (Manifest mit \texttt{private: true}). Verifiziert werden Exit-Codes, Filtermengen und Policy-Verhalten bei verletzten Bedingungen. & teilweise: \texttt{-{}-failOn} ohne Verletzung, \texttt{-{}-onlyAllow} \\
+\hline
+006 & Ausgabe-Rendering & Für ein Referenz-Repository wird jedes Ausgabeformat (JSON, CSV, Markdown, Tree, Summary) in beiden Systemen erzeugt und gegen die Ausgabe des Quellsystems verglichen. & teilweise: CSV und Markdown \\
+\hline
+007 & Custom-Format & Wiederverwendung der Fixtures aus \texttt{custom\_format\_inline} und \texttt{custom\_format\_exclusion}: identische Custom-JSON-Konfiguration in beide Systeme laden; Vergleich der gerenderten Felder und der Default-Wert-Auflösung bei unvollständiger Konfiguration. & teilweise: Laden der Konfiguration \\
+\hline
+008 & Stack-Utility-Lifecycle & Interner Hilfsdatentyp ohne direkt beobachtbare CLI-Schnittstelle; indirekt abgedeckt durch korrektes Verhalten der nachgelagerten Funktionalitäten F-002 und F-003. & nein: nicht beobachtbar \\
+
+\end{longtable}
+\end{small}
+
+\subsection{Vergleichsskript des dritten Durchlaufs} \label{anhang:skript}
+
+Listing~\ref{lst:lcdiff} zeigt das Skript, mit dem Quell- und Zielsystem im dritten Durchlauf verglichen wurden. Die Liste der Aufrufe ist gekürzt; die vollständige Liste für Projekt~A entspricht den Zeilen von Tabelle~\ref{tab:anhang-ergebnisse}.
+
+\begin{lstlisting}[style=codestyle, caption={Skript für den byteweisen I/O-Vergleich (gekürzt)}, label=lst:lcdiff, breaklines=true, basicstyle=\ttfamily\footnotesize]
+#!/bin/zsh
+# Aufruf: lcdiff.sh <Projektverzeichnis> <Ausgabeverzeichnis>
+# GO  = aus target/cmd/license-checker gebautes Go-Binary
+# CF  = customFormatExample.json des Quellsystems
+P=$1; O=$2; mkdir -p $O; cd $P; export PWD=$P
+cases=("--json" "--csv" "--markdown" "--summary"
+  "--production --json" "--onlyAllow MIT" "--failOn MIT"
+  "--customPath $CF --json" "--out $O/o.txt --csv"
+  "--files $O/lf --json" "--help" "--version" ...)
+i=0; same=0
+for args in $cases; do
+  i=$((i+1)); rm -rf $O/lf $O/o.txt
+  npx --yes license-checker@25.0.1 ${=args} \
+      > $O/s$i.out 2> $O/s$i.err; se=$?
+  [ -e $O/o.txt ] && mv $O/o.txt $O/s$i.file
+  [ -d $O/lf ]    && mv $O/lf    $O/s$i.lf
+  $GO ${=args} > $O/g$i.out 2> $O/g$i.err; ge=$?
+  [ -e $O/o.txt ] && mv $O/o.txt $O/g$i.file
+  [ -d $O/lf ]    && mv $O/lf    $O/g$i.lf
+  r=""
+  cmp -s $O/s$i.out $O/g$i.out || r="$r stdout"
+  cmp -s $O/s$i.err $O/g$i.err || r="$r stderr"
+  [ $se = $ge ]                || r="$r exit($se/$ge)"
+  [ -e $O/s$i.file ] && { cmp -s $O/s$i.file $O/g$i.file || r="$r outfile"; }
+  [ -d $O/s$i.lf ]   && { diff -rq $O/s$i.lf $O/g$i.lf >/dev/null || r="$r files"; }
+  [ -z "$r" ] && { same=$((same+1)); r=" identisch"; }
+  echo "$i|$args|$se|$r"
+done
+echo "identisch: $same von $i"
+\end{lstlisting}
+
+\subsection{Einzelergebnisse für Projekt A} \label{anhang:ergebnisse}
+
+Projekt~A deklariert die Abhängigkeiten \texttt{express@4.18.2}, \texttt{@babel/code-frame@7.22.13}, \texttt{left-pad@1.3.0} und ein lokales Paket ohne Lizenzangabe sowie die Entwicklungsabhängigkeiten \texttt{mocha@10.2.0} und \texttt{isarray@2.0.5}. Nach \texttt{npm install} umfasst es 158 Pakete mit den Lizenzen MIT (132), ISC (17), BSD-3-Clause (4), Apache-2.0 (2), WTFPL (1), Python-2.0 (1) und \texttt{UNKNOWN} (1). \texttt{OUT} steht für das Ausgabeverzeichnis des Skripts.
+
+\begin{small}
+\begin{longtable}{|p{0.6cm}|p{7.6cm}|p{1.0cm}|p{4.9cm}|}
+\caption{Einzelergebnisse des byteweisen I/O-Vergleichs für Projekt~A im dritten Durchlauf} \label{tab:anhang-ergebnisse} \\
+\hline
+\textbf{Nr.} & \textbf{Argumente} & \textbf{Exit} & \textbf{Befund} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Nr.} & \textbf{Argumente} & \textbf{Exit} & \textbf{Befund} \\
+\hline
+\endhead
+1 & (ohne Argumente) & 0 & identisch \\
+\hline
+2 & \texttt{-{}-json} & 0 & identisch \\
+\hline
+3 & \texttt{-{}-csv} & 0 & identisch \\
+\hline
+4 & \texttt{-{}-markdown} & 0 & identisch \\
+\hline
+5 & \texttt{-{}-summary} & 0 & identisch \\
+\hline
+6 & \texttt{-{}-production -{}-json} & 0 & identisch \\
+\hline
+7 & \texttt{-{}-development -{}-json} & 0 & identisch \\
+\hline
+8 & \texttt{-{}-production -{}-development -{}-json} & 0 & identisch \\
+\hline
+9 & \texttt{-{}-direct -{}-json} & 0 & identisch \\
+\hline
+10 & \texttt{-{}-unknown -{}-json} & 0 & identisch \\
+\hline
+11 & \texttt{-{}-onlyunknown -{}-json} & 0 & identisch \\
+\hline
+12 & \texttt{-{}-relativeLicensePath -{}-json} & 0 & identisch \\
+\hline
+13 & \texttt{-{}-onlyAllow MIT} & 1 & identisch \\
+\hline
+14 & \texttt{-{}-onlyAllow MIT;ISC;Apache-2.0;} \texttt{BSD-3-Clause;BSD-2-Clause} & 1 & identisch \\
+\hline
+15 & \texttt{-{}-failOn MIT} & 1 & identisch \\
+\hline
+16 & \texttt{-{}-failOn GPL-3.0} & 0 & identisch \\
+\hline
+17 & \texttt{-{}-exclude MIT -{}-json} & 0 & identisch \\
+\hline
+18 & \texttt{-{}-exclude MIT,ISC -{}-csv} & 0 & identisch \\
+\hline
+19 & \texttt{-{}-excludePrivatePackages -{}-json} & 0 & identisch \\
+\hline
+20 & \texttt{-{}-packages left-pad@1.3.0 -{}-json} & 0 & identisch \\
+\hline
+21 & \texttt{-{}-excludePackages left-pad@1.3.0 -{}-summary} & 0 & identisch \\
+\hline
+22 & \texttt{-{}-customPath customFormatExample.json -{}-json} & 0 & identisch \\
+\hline
+23 & \texttt{-{}-customPath customFormatExample.json -{}-csv} & 0 & identisch \\
+\hline
+24 & \texttt{-{}-customPath customFormatExample.json -{}-markdown} & 0 & identisch \\
+\hline
+25 & \texttt{-{}-csvComponentPrefix X -{}-csv} & 0 & identisch \\
+\hline
+26 & \texttt{-{}-start node\_modules/left-pad -{}-json} & 0 & identisch \\
+\hline
+27 & \texttt{-{}-out OUT/o.txt -{}-csv} & 0 & identisch (inkl. Datei) \\
+\hline
+28 & \texttt{-{}-out OUT/o.txt -{}-json} & 0 & identisch (inkl. Datei) \\
+\hline
+29 & \texttt{-{}-files OUT/lf -{}-json} & 0 & identisch (inkl. 154 kopierter Dateien) \\
+\hline
+30 & \texttt{-{}-color -{}-summary} & 0 & identisch \\
+\hline
+31 & \texttt{-{}-no-color} & 0 & identisch \\
+\hline
+32 & \texttt{-{}-json -{}-csv} & 0 & identisch \\
+\hline
+33 & \texttt{-{}-help} & 0 & identisch \\
+\hline
+34 & \texttt{-{}-version} & 1 & identisch \\
+\hline
+35 & \texttt{-{}-bogus} & 0 & identisch \\
+\hline
+36 & \texttt{-{}-start /nonexistent -{}-json} & 0 & erwartete Abweichung: \texttt{stderr} ohne Node.js-Stacktrace \\
+\hline
+\end{longtable}
+\end{small}
